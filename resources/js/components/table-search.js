@@ -77,17 +77,12 @@ export function enableTableSearch(config) {
                             </td>
                         </tr>`;
                 } else {
-                    // For FAQs/Divs, just inject the content directly
+                    // For non-table containers, just inject the content directly
                     container.innerHTML = emptyContent;
                 }
             } else {
                 // Join the rowHtml from our objects
                 container.innerHTML = rows.map(row => row.cardHtml ?? row.rowHtml ?? row.html ?? "").join("");
-                
-                // Re-init the accordion so the NEW cards can open
-                import('../utils/faqs/faq-accordion.js').then(module => {
-                    module.initFaqAccordion(`#${tbodyId}`);
-                });
             }
 
             updateCount(rows.length, meta.total);

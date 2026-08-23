@@ -10,14 +10,17 @@
     "file": "css/app.min2.css",
     "src": "_app.min2.css"
   },
-  "_delete-factory-CJd4xO9x.min.js": {
-    "file": "js/delete-factory-CJd4xO9x.min.js",
-    "name": "delete-factory",
-    "imports": [
-      "_modal-factory-D72OMj0_.min.js",
-      "_form-validator-CeXCkSqx.min.js",
-      "_spinner-utils-BGUFcaGl.min.js"
-    ]
+  "_data-table-9SFXZdzb.min.js": {
+    "file": "js/data-table-9SFXZdzb.min.js",
+    "name": "data-table"
+  },
+  "_delete-factory-DhbIOdTj.min.js": {
+    "file": "js/delete-factory-DhbIOdTj.min.js",
+    "name": "delete-factory"
+  },
+  "_divisions-api-Dh-Mql9o.min.js": {
+    "file": "js/divisions-api-Dh-Mql9o.min.js",
+    "name": "divisions-api"
   },
   "_form-validator-CeXCkSqx.min.js": {
     "file": "js/form-validator-CeXCkSqx.min.js",
@@ -27,6 +30,21 @@
     "file": "js/modal-factory-D72OMj0_.min.js",
     "name": "modal-factory"
   },
+  "_profile-modal-DXeqH46Z.min.js": {
+    "file": "js/profile-modal-DXeqH46Z.min.js",
+    "name": "profile-modal",
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_regions-component-BQf5KGOV.min.js",
+      "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js",
+      "_table-pagination-count-JrykreAu.min.js"
+    ]
+  },
+  "_regions-component-BQf5KGOV.min.js": {
+    "file": "js/regions-component-BQf5KGOV.min.js",
+    "name": "regions-component"
+  },
   "_spa-router-Cd9AAa9t.min.js": {
     "file": "js/spa-router-Cd9AAa9t.min.js",
     "name": "spa-router"
@@ -34,6 +52,10 @@
   "_spinner-utils-BGUFcaGl.min.js": {
     "file": "js/spinner-utils-BGUFcaGl.min.js",
     "name": "spinner-utils"
+  },
+  "_table-pagination-count-JrykreAu.min.js": {
+    "file": "js/table-pagination-count-JrykreAu.min.js",
+    "name": "table-pagination-count"
   },
   "resources/css/main.css": {
     "file": "css/app.min.css",
@@ -77,18 +99,59 @@
       "_form-validator-CeXCkSqx.min.js"
     ]
   },
+  "resources/js/pages/league-management-page.js": {
+    "file": "js/league-management-page.min.js",
+    "name": "league-management-page",
+    "src": "resources/js/pages/league-management-page.js",
+    "isEntry": true,
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js",
+      "_divisions-api-Dh-Mql9o.min.js",
+      "_delete-factory-DhbIOdTj.min.js"
+    ]
+  },
   "resources/js/pages/profile-page.js": {
     "file": "js/profile-page.min.js",
     "name": "profile-page",
     "src": "resources/js/pages/profile-page.js",
     "isEntry": true,
     "imports": [
-      "_delete-factory-CJd4xO9x.min.js",
+      "_profile-modal-DXeqH46Z.min.js",
       "_form-validator-CeXCkSqx.min.js",
       "_spa-router-Cd9AAa9t.min.js",
+      "_delete-factory-DhbIOdTj.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
       "_animations-BtDgdX2G.min.js",
-      "_modal-factory-D72OMj0_.min.js"
+      "_modal-factory-D72OMj0_.min.js",
+      "_regions-component-BQf5KGOV.min.js",
+      "_table-pagination-count-JrykreAu.min.js"
+    ]
+  },
+  "resources/js/pages/register-page.js": {
+    "file": "js/register-page.min.js",
+    "name": "register-page",
+    "src": "resources/js/pages/register-page.js",
+    "isEntry": true,
+    "imports": [
+      "_divisions-api-Dh-Mql9o.min.js",
+      "_regions-component-BQf5KGOV.min.js",
+      "_form-validator-CeXCkSqx.min.js"
+    ]
+  },
+  "resources/js/pages/registrations-page.js": {
+    "file": "js/registrations-page.min.js",
+    "name": "registrations-page",
+    "src": "resources/js/pages/registrations-page.js",
+    "isEntry": true,
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js",
+      "_table-pagination-count-JrykreAu.min.js",
+      "_delete-factory-DhbIOdTj.min.js",
+      "_data-table-9SFXZdzb.min.js"
     ]
   },
   "resources/js/pages/reset-password-page.js": {
@@ -107,9 +170,13 @@
     "src": "resources/js/pages/users-page.js",
     "isEntry": true,
     "imports": [
-      "_delete-factory-CJd4xO9x.min.js",
+      "_profile-modal-DXeqH46Z.min.js",
+      "_delete-factory-DhbIOdTj.min.js",
       "_form-validator-CeXCkSqx.min.js",
+      "_table-pagination-count-JrykreAu.min.js",
+      "_data-table-9SFXZdzb.min.js",
       "_modal-factory-D72OMj0_.min.js",
+      "_regions-component-BQf5KGOV.min.js",
       "_spinner-utils-BGUFcaGl.min.js"
     ]
   }

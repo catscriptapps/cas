@@ -22,14 +22,14 @@ $navLinks = NavigationConfig::getNavLinks($isLoggedIn);
 $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", '/');
 ?>
 
-<div class="fixed top-0 left-0 w-full bg-black text-slate-200 px-4 sm:px-6 lg:px-8 py-2 text-sm sm:text-base flex justify-between items-center border-b-2 border-gray-700 min-h-[50px] sm:min-h-[52px] transition-colors duration-200 shadow-xl select-none z-[9999]"
+<div class="fixed top-0 left-0 w-full bg-black text-slate-200 px-4 sm:px-6 lg:px-8 py-2 text-sm sm:text-base flex justify-between items-center border-b-2 border-gray-700 min-h-[76px] sm:min-h-[88px] transition-colors duration-200 shadow-xl select-none z-[9999]"
     x-data="{ mobileMenuOpen: false }"
     x-effect="document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''">
 
     <!-- Logo, far left -->
     <div class="flex items-center shrink-0">
-        <a href="<?= $baseUrl ?>" data-partial data-title="Home" class="flex items-center gap-2.5 sm:gap-3 min-w-0 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg">
-            <img src="<?= $assetBase ?>images/logo/logo.png" alt="<?= htmlspecialchars($appName) ?>" class="h-10 w-10 sm:h-11 sm:w-11 rounded-full object-cover shrink-0">
+        <a href="<?= $baseUrl ?>" data-partial data-title="Home" class="flex items-center gap-3 min-w-0 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg">
+            <img src="<?= $assetBase ?>images/logo/logo.png" alt="<?= htmlspecialchars($appName) ?>" class="h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0">
             <span class="hidden sm:inline-block font-black text-white tracking-tight text-base lg:text-lg whitespace-nowrap truncate">
                 <?= htmlspecialchars($appName) ?>
             </span>
@@ -123,10 +123,9 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                 </div>
             <?php else: ?>
                 <div class="relative group">
-                    <a href="<?= $baseUrl ?>login" data-login-button title="Sign in"
-                        class="flex items-center gap-2 rounded-xl px-4 py-2 bg-secondary-600 hover:bg-secondary-500 text-white shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
-                        <div class="h-5 w-5 rounded-full bg-white/20 flex items-center justify-center text-white font-black shrink-0 text-xs">G</div>
-                        <span class="uppercase tracking-widest text-xs font-black">Sign In</span>
+                    <a href="<?= $baseUrl ?>register" data-partial title="Register"
+                        class="flex items-center rounded-full px-5 py-2 bg-primary-400 hover:bg-secondary-400 border-2 border-primary-400 hover:border-secondary-400 text-white shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
+                        <span class="uppercase tracking-widest text-xs font-black">Register</span>
                     </a>
                 </div>
             <?php endif; ?>
@@ -160,7 +159,7 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         @click="mobileMenuOpen = false"
-        class="absolute top-full left-0 w-full h-[calc(100vh-52px)] 2xl:hidden bg-black/60 z-[9990]">
+        class="absolute top-full left-0 w-full h-[calc(100vh-76px)] sm:h-[calc(100vh-88px)] 2xl:hidden bg-black/60 z-[9990]">
     </div>
 
     <!-- Mobile / large-screen nav drawer -- a proper right-anchored sidebar
@@ -174,7 +173,7 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-x-0"
         x-transition:leave-end="opacity-0 translate-x-6"
-        class="absolute top-full right-0 2xl:hidden border-l-2 border-slate-800 bg-white dark:bg-black px-4 py-5 space-y-3 shadow-2xl w-full max-w-xs sm:max-w-sm h-[calc(100vh-52px)] overflow-y-auto z-[9995]"
+        class="absolute top-full right-0 2xl:hidden border-l-2 border-slate-800 bg-white dark:bg-black px-4 py-5 space-y-3 shadow-2xl w-full max-w-xs sm:max-w-sm h-[calc(100vh-76px)] sm:h-[calc(100vh-88px)] overflow-y-auto z-[9995]"
         x-data="{ activeMobileSection: null }">
 
         <?php foreach ($navLinks as $name => $config): ?>

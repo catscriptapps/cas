@@ -51,6 +51,8 @@ $buildVersion = @filemtime(__DIR__ . '/../../public/assets/js/page-manifest.json
             rootPageScript: <?= json_encode($rootPageScript ?? null) ?>,
             mediaLimit: <?= getMediaLimit() ?>,
             buildVersion: <?= json_encode((string)$buildVersion) ?>,
+            paypalClientId: <?= json_encode(\Src\Service\PayPalService::clientId()) ?>,
+            paypalCurrency: <?= json_encode(\Src\Service\PayPalService::currency()) ?>,
 
             userDefaults: {
                 country_id: <?= json_encode($currentUser->country_id ?? null) ?>,
@@ -133,7 +135,7 @@ $buildVersion = @filemtime(__DIR__ . '/../../public/assets/js/page-manifest.json
 <body class="min-h-screen flex flex-col bg-gray-50 text-gray-800 font-sans antialiased dark:bg-slate-900 dark:text-gray-100 transition-colors duration-300 w-full">
     <?php include __DIR__ . '/../partials/layout-topbar.php'; ?>
 
-    <div id="app-shell-content" class="flex-1 pt-[50px] sm:pt-[52px]">
+    <div id="app-shell-content" class="flex-1 pt-[76px] sm:pt-[88px]">
         <?php include __DIR__ . '/../partials/layout-header.php'; ?>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

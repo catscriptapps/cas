@@ -24,6 +24,17 @@ declare(strict_types=1);
             Canadian All Star Sports runs the leagues, seasons, and game days that keep local players, referees, and rinks
             connected -- schedules, live stats and standings, and everything in between, all in one place.
         </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <a href="<?= $baseUrl ?>register?sport_id=1" data-partial
+                class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-primary-400 hover:bg-secondary-400 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-primary-500/20 transition-all active:scale-[0.98]">
+                Register for Ice Hockey
+            </a>
+            <a href="<?= $baseUrl ?>register?sport_id=2" data-partial
+                class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-secondary-400 hover:bg-primary-400 text-slate-900 hover:text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-secondary-500/20 transition-all active:scale-[0.98]">
+                Register for Ball Hockey
+            </a>
+        </div>
     </div>
 
     <div class="max-w-5xl mx-auto mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">

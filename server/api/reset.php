@@ -21,6 +21,11 @@ Capsule::schema()->disableForeignKeyConstraints();
 $tablesToDrop = [
     'password_resets',
     'recent_activities',
+    'registrations',
+    'divisions',
+    'leagues',
+    'sports',
+    'sources',
     'users',
     'users_types',
     'regions',
@@ -51,6 +56,23 @@ $messages = array_merge($messages, resetRegionsTable());
 require_once __DIR__ . '/../../scripts/reset/users.php';
 $messages = array_merge($messages, resetUsersTable());
 
+// League Management (minimal -- enough for the registration form to work;
+// full admin CRUD for these is a future task)
+require_once __DIR__ . '/../../scripts/reset/sports.php';
+$messages = array_merge($messages, resetSportsTable());
+
+require_once __DIR__ . '/../../scripts/reset/leagues.php';
+$messages = array_merge($messages, resetLeaguesTable());
+
+require_once __DIR__ . '/../../scripts/reset/divisions.php';
+$messages = array_merge($messages, resetDivisionsTable());
+
+require_once __DIR__ . '/../../scripts/reset/sources.php';
+$messages = array_merge($messages, resetSourcesTable());
+
+require_once __DIR__ . '/../../scripts/reset/registrations.php';
+$messages = array_merge($messages, resetRegistrationsTable());
+
 // Support & Transient Auth Tables
 require_once __DIR__ . '/../../scripts/reset/recent-activities.php';
 $messages = array_merge($messages, resetRecentActivitiesTable());
@@ -64,7 +86,7 @@ $messages = array_merge($messages, resetPasswordResetsTable());
  * inspections, cover pages, standards, section diagrams, note hints,
  * notifications, faqs, slideshow, messages, user verifications) are
  * intentionally not (re)created; their reset scripts were removed along
- * with the tables themselves, pending CAS's own league-management tables.
+ * with the tables themselves.
  */
 
 /**

@@ -1,7 +1,10 @@
 [
   "about-page",
   "contact-page",
+  "league-management-page",
   "profile-page",
+  "register-page",
+  "registrations-page",
   "reset-password-page",
   "users-page"
 ]

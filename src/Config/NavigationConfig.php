@@ -51,6 +51,8 @@ class NavigationConfig
             'Dashboard' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z"/></svg>',
             'Profile'   => '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>',
             'Users'     => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75a3 3 0 11-6 0 3 3 0 016 0zM6.75 6.75a3 3 0 116 0 a3 3 0 01-6 0zM3 21a6 6 0 0112 0M9 21a6 6 0 0112 0"></path></svg>',
+            'Registrations' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+            'League Management' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 3.75c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"></path></svg>',
         ];
     }
 
@@ -80,6 +82,16 @@ class NavigationConfig
                 'url' => $base . '/dashboard',
                 'title' => 'Operational Dashboard',
                 'summary' => 'Recent activity across the league, and quick links into every workspace module.'
+            ],
+            'Registrations' => [
+                'url' => $base . '/registrations',
+                'title' => 'Registrations',
+                'summary' => 'Review submitted registrations and manage payment status.'
+            ],
+            'League Management' => [
+                'url' => $base . '/league-management',
+                'title' => 'League Management',
+                'summary' => 'Manage the sports, leagues, and divisions registrants can sign up for.'
             ],
             'Users' => [
                 'url' => $base . '/users',
@@ -131,6 +143,8 @@ class NavigationConfig
             $base . '/dashboard',
             $base . '/profile',
             $base . '/users',
+            $base . '/registrations',
+            $base . '/league-management',
         ];
     }
 

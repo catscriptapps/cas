@@ -135,10 +135,10 @@ if ($isLoggedIn) {
                     Real-time schedules, stats, and standings for every league we run -- built for players, referees, and the communities behind them.
                 </p>
 
-                <a href="<?= $baseUrl ?>contact" data-partial
+                <a href="<?= $baseUrl ?>register" data-partial
                     data-aos="fade-up" data-aos-duration="800" data-aos-delay="300"
-                    class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-secondary-500 hover:bg-secondary-400 text-slate-900 font-black text-xs uppercase tracking-widest shadow-lg shadow-secondary-500/30 transition-all duration-300 active:scale-[0.98]">
-                    Get In Touch
+                    class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-secondary-400 hover:bg-primary-400 text-slate-900 hover:text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-secondary-500/30 transition-all duration-300 active:scale-[0.98]">
+                    Sign Me Up!
                     <i class="fa-solid fa-arrow-right text-[10px]"></i>
                 </a>
             </div>
