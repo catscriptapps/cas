@@ -31,11 +31,10 @@ function resetUserTypesTable(): array
 
         $messages[] = "created {$tableName} table structure.";
 
-        // Seed data with professional formatting (No underscores!)
+        // Only one backend role exists for now -- add more rows here once
+        // CAS needs to distinguish staff permissions.
         $defaultTypes = [
             ['user_type_id' => 1, 'user_type' => 'Admin'],
-            ['user_type_id' => 2, 'user_type' => 'Company Admin'],
-            ['user_type_id' => 3, 'user_type' => 'Inspector'],
         ];
 
         foreach ($defaultTypes as $type) {

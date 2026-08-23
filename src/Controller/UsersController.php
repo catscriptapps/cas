@@ -7,7 +7,6 @@ namespace Src\Controller;
 
 use App\Models\User;
 use App\Models\UserType;
-use App\Models\Follow;
 use App\Utils\IdEncoder;
 use Src\Service\AuthService;
 use App\Traits\RecentActivityLogger;
@@ -24,28 +23,19 @@ class UsersController
     public function delete(?string $id): array
     {
         try {
+            if (!AuthService::isLoggedIn()) {
+                throw new \Exception("You don't have permission to do that.");
+            }
+
             $rawId = (is_string($id) && !is_numeric($id)) ? IdEncoder::decode($id) : (int)$id;
             $user = User::find($rawId);
             if (!$user) throw new \Exception("Failed to delete user.");
-
-            // A Company Admin may only delete users already in their own
-            // company (the same scope UsersController::index() already
-            // limits their list to) -- anyone else signed in (an Inspector)
-            // has no business calling this at all.
-            $isAdmin = AuthService::isAdmin();
-            if (!$isAdmin) {
-                $actingUser = AuthService::currentUser();
-                $isOwnCompanyUser = AuthService::isCompanyAdmin() && (int)$user->company_id === (int)($actingUser->company_id ?? 0);
-                if (!$isOwnCompanyUser) {
-                    throw new \Exception("You don't have permission to do that.");
-                }
-            }
 
             $actingUser = AuthService::currentUser();
             if ($actingUser && (int)$actingUser->id === (int)$user->id) {
                 throw new \Exception("You cannot delete your own account while signed in.");
             }
-            if (in_array((int)$user->id, [1, 2], true)) {
+            if (in_array((int)$user->id, [1], true)) {
                 throw new \Exception("This core account cannot be deleted.");
             }
 
@@ -89,13 +79,6 @@ class UsersController
             ->leftJoin('regions', 'users.region_id', '=', 'regions.id')
             ->leftJoin('users_types', 'users.user_type_id', '=', 'users_types.user_type_id')
             ->select('users.*');
-
-        // A Company Admin only ever sees the users belonging to their own
-        // company -- the global Admin is the only role that browses everyone.
-        if (!AuthService::isAdmin()) {
-            $currentUser = AuthService::currentUser();
-            $builder->where('users.company_id', $currentUser->company_id ?? 0);
-        }
 
         if (!empty($filters['user'])) {
             $needle = $filters['user'];
@@ -232,30 +215,11 @@ class UsersController
             if (!$user) throw new \Exception("User not found.");
 
             // --- PERMISSION GATE ---
-            // Admin: unrestricted. A guest (not signed in at all) is let
-            // through here deliberately -- the public self-registration
-            // flow on the home page (register-new-user.js) reuses this
-            // exact same form/endpoint with no encoded_id, same as it
-            // always has. A signed-in Company Admin may create an Inspector
-            // for their own company, or edit/archive an existing user who
-            // already belongs to their own company (forced below, never
-            // trusted from $data); anyone else signed in (an Inspector) has
-            // no business calling this endpoint at all -- previously there
-            // was no server-side role check here whatsoever.
-            $isAdmin = AuthService::isAdmin();
-            $isCompanyAdmin = AuthService::isCompanyAdmin();
+            // Only one backend role exists (Admin), so any signed-in backend
+            // account may manage the user directory.
             $actingUser = AuthService::currentUser();
-            $actingCompanyId = (int)($actingUser->company_id ?? 0);
-
-            if (!$isAdmin && $actingUser !== null) {
-                if (!$isCompanyAdmin) {
-                    throw new \Exception("You don't have permission to do that.");
-                }
-                if ($isNew) {
-                    if (!$actingCompanyId) throw new \Exception("No company associated with this account.");
-                } elseif ($user->exists && (int)$user->company_id !== $actingCompanyId) {
-                    throw new \Exception("You don't have permission to do that.");
-                }
+            if (!$actingUser) {
+                throw new \Exception("You don't have permission to do that.");
             }
 
             // Email uniqueness check
@@ -279,42 +243,20 @@ class UsersController
                 $user->password = password_hash($data['password'], PASSWORD_BCRYPT);
             }
 
-            if ($isCompanyAdmin && !$isAdmin && $isNew) {
-                // A Company Admin can only ever add Inspectors to their own
-                // company's roster -- forced here regardless of whatever
-                // the client sent, never a free choice.
-                $user->user_type_id = UserType::INSPECTOR;
-                $user->company_id = $actingCompanyId;
-            } elseif ($isAdmin) {
-                // Only the platform Admin may set/override a role directly
-                // -- deliberately NOT reachable by a Company Admin editing
-                // an existing user (isset($data['user_type_id']) alone,
-                // with no role check, used to let exactly that through).
-                if (isset($data['user_type_id'])) {
-                    $user->user_type_id = (int)$data['user_type_id'];
-                } elseif ($isNew) {
-                    $user->user_type_id = UserType::ADMIN;
-                }
-            } elseif ($isNew && $actingUser === null) {
-                // Guest self-registration (home page's public register
-                // button reuses this same form/endpoint) -- same as it's
-                // always been, ends up an Admin.
+            if ($isNew) {
                 $user->user_type_id = UserType::ADMIN;
             }
-            // A Company Admin editing an existing user never reaches any
-            // branch above, so that user's role is left completely
-            // untouched no matter what the request body contains.
 
-            // Core Account Guard: the two founding accounts must stay Admins.
-            if (!$isNew && in_array((int)$user->id, [1, 2], true) && $user->user_type_id !== UserType::ADMIN) {
+            // Core Account Guard: the founding account must stay an Admin.
+            if (!$isNew && in_array((int)$user->id, [1], true) && $user->user_type_id !== UserType::ADMIN) {
                 throw new \Exception("This core account's role cannot be changed.");
             }
 
-            $appEnv = $_ENV['APP_ENV'] ?? '';
-            $isLocal = $appEnv === 'local';
-
             if ($isNew) {
-                $user->status_id = $isLocal ? 1 : 0;
+                // Admin-created accounts are active immediately -- there's no
+                // public self-registration flow to gate behind email
+                // verification.
+                $user->status_id = 1;
             } elseif (array_key_exists('status_id', $data)) {
                 $newStatusId = (int)$data['status_id'] === 1 ? 1 : 0;
 
@@ -326,7 +268,7 @@ class UsersController
                     if ($actingUser && (int)$actingUser->id === (int)$user->id) {
                         throw new \Exception("You cannot archive your own account while signed in.");
                     }
-                    if (in_array((int)$user->id, [1, 2], true)) {
+                    if (in_array((int)$user->id, [1], true)) {
                         throw new \Exception("This core account cannot be archived.");
                     }
                 }
@@ -335,49 +277,6 @@ class UsersController
             }
 
             $user->save();
-
-            if ($isNew && !$isLocal) {
-                // 1. Generate a secure random token (32 bytes = 64 chars)
-                $token = bin2hex(random_bytes(32));
-
-                // 2. Store in your verification table (Emulating PasswordReset logic)
-                \App\Models\UserVerification::updateOrCreate(
-                    ['email' => $email],
-                    [
-                        'token' => password_hash($token, PASSWORD_DEFAULT),
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]
-                );
-
-                // 3. Construct the Activation Link (Using your Env logic)
-                $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
-                $host     = $_SERVER['HTTP_HOST'];
-                $envBase  = trim($_ENV['APP_BASE_PATH'] ?? '', '/');
-                $fullBaseUrl = $protocol . $host . ($envBase ? '/' . $envBase : '');
-
-                $activationLink = rtrim($fullBaseUrl, '/') . "/verify-account?token={$token}&email=" . urlencode($email);
-
-                // 4. Send the Email via MailService
-                $subject = "Activate Your Account";
-                $body = "
-                <div style='font-family: \"Quicksand\", sans-serif; color: #000000;'>
-                    <h2 style='color: #EA580C;'>Welcome to the Team, {$user->first_name}!</h2>
-                    <p>We're excited to have you. Please click the button below to verify your email and activate your account:</p>
-                    <div style='margin: 32px 0;'>
-                        <a href='{$activationLink}' style='background-color: #EA580C; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px rgba(139, 92, 246, 0.2);'>Verify My Account</a>
-                    </div>
-                    <p style='font-size: 0.875rem; color: #818181;'>If the button doesn't work, copy and paste this link: <br>{$activationLink}</p>
-                </div>
-            ";
-
-                \Src\Service\MailService::send($email, $subject, $body);
-
-                return [
-                    'success' => true,
-                    'is_registration' => true,
-                    'messages' => ["Welcome! We've sent an activation link to <strong>{$email}</strong>. Please click it to complete your registration."]
-                ];
-            }
 
             $user->load(['country', 'region']);
 

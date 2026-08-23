@@ -10,7 +10,6 @@ declare(strict_types=1);
 use Src\Config\NavigationConfig;
 use Src\Controller\RecentActivitiesController;
 use Src\Controller\UserTypesController;
-use Src\Service\AuthService;
 use App\Models\User;
 
 // Anyone who isn't a resolvable backend User (staff/admin) has no business
@@ -27,10 +26,7 @@ if (!$currentUser) {
 $navLinks = NavigationConfig::getNavLinks((bool)$isLoggedIn);
 $icons = NavigationConfig::getIcons();
 
-// A Company Admin's "Users" stat is their own team, not the whole platform.
-$totalUsers = AuthService::isAdmin()
-    ? User::count()
-    : User::where('company_id', $currentUser->company_id ?? 0)->count();
+$totalUsers = User::count();
 
 /** @var \App\Models\User|null $currentUser */
 $userName = $currentUser->full_name ?? 'there';

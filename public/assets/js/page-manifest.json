@@ -1,22 +1,7 @@
 [
   "about-page",
-  "companies-page",
   "contact-page",
-  "cover-pages-page",
-  "faqs-page",
-  "history-page",
-  "home-page",
-  "inspections-page",
-  "messages-page",
-  "notifications-page",
-  "pmb-page",
   "profile-page",
-  "questions-page",
-  "report-page",
   "reset-password-page",
-  "settings-page",
-  "slideshow-page",
-  "standards-page",
-  "users-page",
-  "verify-account-page"
+  "users-page"
 ]

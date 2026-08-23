@@ -37,8 +37,8 @@ $buildVersion = @filemtime(__DIR__ . '/../../public/assets/js/page-manifest.json
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <link rel="shortcut icon" type="image/x-icon" href="<?= $assetBase ?>images/logo/favicon.ico">
-    <link rel="icon" type="image/x-icon" href="<?= $assetBase ?>images/logo/favicon.ico">
+    <link rel="shortcut icon" type="image/png" href="<?= $assetBase ?>images/logo/favicon.png">
+    <link rel="icon" type="image/png" href="<?= $assetBase ?>images/logo/favicon.png">
 
     <script>
         window.APP_CONFIG = {
@@ -48,7 +48,6 @@ $buildVersion = @filemtime(__DIR__ . '/../../public/assets/js/page-manifest.json
             protectedPaths: <?= json_encode($protectedPaths ?? []) ?>,
             isLoggedIn: <?= json_encode($isLoggedIn) ?>,
             isAdmin: <?= json_encode(\Src\Service\AuthService::isAdmin()) ?>,
-            isCompanyAdmin: <?= json_encode(\Src\Service\AuthService::isCompanyAdmin()) ?>,
             rootPageScript: <?= json_encode($rootPageScript ?? null) ?>,
             mediaLimit: <?= getMediaLimit() ?>,
             buildVersion: <?= json_encode((string)$buildVersion) ?>,
@@ -147,7 +146,6 @@ $buildVersion = @filemtime(__DIR__ . '/../../public/assets/js/page-manifest.json
 
     <?php
     include __DIR__ . '/../partials/image-preview-modal.php';
-    include __DIR__ . '/../partials/search-modal.php';
     include __DIR__ . '/../partials/layout-footer.php';
     include __DIR__ . '/../components/scroll-top.php';
     ?>

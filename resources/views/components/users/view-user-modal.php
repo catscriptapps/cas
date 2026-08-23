@@ -3,7 +3,7 @@
 
 use Src\Service\AuthService;
 
-$isAdmin = AuthService::isAdmin();
+$isAdmin = AuthService::isLoggedIn();
 ?>
 
 <div id="view-user-modal" class="fixed inset-0 z-[10000] hidden">

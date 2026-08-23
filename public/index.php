@@ -1,12 +1,9 @@
 <?php
 
 /**
- * Project:         CatScript Web Application for Property Management Brokers (PMB)
+ * Project:         Canadian All Star Sports (CAS)
  * Platform:        CatScript-13
- * Version:         1.1.0
- * Client:          Richard Brisson
  * Author:          Chigozie (Cat) Nduanya
- * Date-Created:    2026-06-06
  */
 
 // /public/index.php

@@ -28,60 +28,14 @@ class AuthService
     }
 
     /**
-     * Apps a Company Admin can reach, in addition to the baseline apps below
-     * -- Users/Companies are shared with Admin but get scoped to the Company
-     * Admin's own company at the query level (see CompaniesController /
-     * UsersController::index()).
-     */
-    private const COMPANY_ADMIN_APPS = ['inspections', 'questions', 'companies', 'cover pages', 'standards', 'users', 'profile'];
-
-    /**
-     * Apps an Inspector can reach -- Inspections is their whole world (they
-     * only ever see the inspections they personally created, enforced at
-     * the query level in InspectionsController::index()), plus Profile.
-     */
-    private const INSPECTOR_APPS = ['inspections', 'profile'];
-
-    /**
-     * Apps open to any authenticated backend account regardless of role --
-     * this is also where a fresh login lands (see AuthService::login()'s
-     * '/dashboard' redirect), so it can't be role-restricted even though
-     * "Dashboard" isn't necessarily one of a role's visible nav tabs.
-     */
-    private const BASELINE_APPS = ['dashboard', 'slideshow', 'profile'];
-
-    /**
-     * Check if the user has access to a specific app.
+     * Check if the user has access to a specific app. There's currently
+     * only one backend role (Admin), so any signed-in backend account can
+     * reach any of the (few) modules -- this is a hook for role-gating apps
+     * again once CAS grows a second role.
      */
     public static function hasAccess(string $appName): bool
     {
-        if (self::isAdmin()) {
-            return true;
-        }
-
-        $appName = strtolower($appName);
-        $user = self::currentUser();
-
-        if (!$user) {
-            return false;
-        }
-
-        // Baseline apps apply to any authenticated backend account first --
-        // a role-specific branch below must not shadow these, since that's
-        // what a fresh login redirects to regardless of role.
-        if (in_array($appName, self::BASELINE_APPS, true)) {
-            return true;
-        }
-
-        if ($user->isType(UserType::COMPANY_ADMIN)) {
-            return in_array($appName, self::COMPANY_ADMIN_APPS, true);
-        }
-
-        if ($user->isType(UserType::INSPECTOR)) {
-            return in_array($appName, self::INSPECTOR_APPS, true);
-        }
-
-        return false;
+        return self::isLoggedIn();
     }
 
     /**
@@ -110,40 +64,6 @@ class AuthService
         $user = User::find($uid);
 
         return $user !== null && $user->isType(UserType::ADMIN);
-    }
-
-    /**
-     * Determine if the current user is a Company Admin.
-     */
-    public static function isCompanyAdmin(): bool
-    {
-        self::ensureSession();
-        $uid = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
-
-        if ($uid === 0) {
-            return false;
-        }
-
-        $user = User::find($uid);
-
-        return $user !== null && $user->isType(UserType::COMPANY_ADMIN);
-    }
-
-    /**
-     * Determine if the current user is an Inspector.
-     */
-    public static function isInspector(): bool
-    {
-        self::ensureSession();
-        $uid = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
-
-        if ($uid === 0) {
-            return false;
-        }
-
-        $user = User::find($uid);
-
-        return $user !== null && $user->isType(UserType::INSPECTOR);
     }
 
     /**

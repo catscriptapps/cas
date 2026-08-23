@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Modernized User Model
  * Table: users
- * * Brand Colors: Primary (Orange), Secondary (Navy)
  */
 class User extends Model
 {
@@ -36,7 +35,6 @@ class User extends Model
         'country_id',
         'region_id',
         'city',
-        'company_id',
         'password',
         'api_token',
         'status_id',
@@ -55,7 +53,6 @@ class User extends Model
         'id'             => 'integer',
         'country_id'     => 'integer',
         'region_id'      => 'integer',
-        'company_id'     => 'integer',
         'status_id'      => 'integer',
         'email_verified' => 'boolean',
         'date_created'   => 'datetime',
@@ -92,15 +89,6 @@ class User extends Model
         return $this->belongsTo(Region::class, 'region_id', 'id');
     }
 
-    /**
-     * Link to the Company this user belongs to (Company Admins only).
-     * Maps users.company_id -> companies.id
-     */
-    public function company(): BelongsTo
-    {
-        return $this->belongsTo(Company::class, 'company_id', 'id');
-    }
-
     // ============================================================
     // Accessors & Logic
     // ============================================================
@@ -114,8 +102,7 @@ class User extends Model
     }
 
     /**
-     * Helper to check a user's single type/role.
-     * Admin = 1, Company Admin = 2, Inspector = 3 (see UserType constants).
+     * Helper to check a user's single type/role. Admin = 1 (see UserType).
      */
     public function isType(int $typeId): bool
     {

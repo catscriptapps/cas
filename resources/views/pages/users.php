@@ -9,11 +9,7 @@ $controller = new \Src\Controller\UsersController();
 $controller->index();
 
 $userRows = $GLOBALS['userRows'] ?? '';
-$isAdmin = AuthService::isAdmin();
-// A Company Admin can add Inspectors to their own company's roster from
-// here too (forced server-side in UsersController::save()) -- the modal
-// itself swaps to a locked-to-Inspector form for them, see users-modal.js.
-$canAddUser = $isAdmin || AuthService::isCompanyAdmin();
+$canAddUser = AuthService::isLoggedIn();
 ?>
 
 <div class="space-y-6 max-w-full py-10">

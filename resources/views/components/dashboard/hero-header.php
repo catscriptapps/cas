@@ -20,15 +20,6 @@ declare(strict_types=1);
 $hasAvatar = !empty($currentUser->avatar_url ?? null);
 $avatarUrl = $hasAvatar ? $assetBase . 'images/uploads/avatars/' . $currentUser->avatar_url : '';
 $userInitial = strtoupper(substr($currentUser->first_name ?? $userName, 0, 1)) ?: 'U';
-
-// A platform Admin isn't affiliated with any one company; a Company Admin
-// or Inspector always is. "Barrie, ON" over "Barrie, Ontario" -- same
-// abbreviation accessor the inspection detail page's compact strip uses.
-$company = $currentUser->company_id ? $currentUser->company : null;
-$companyLocationParts = $company ? array_filter([$company->city, $company->region?->abbreviation]) : [];
-$companyDisplay = $company
-    ? trim($company->company_name . (count($companyLocationParts) ? ' - ' . implode(', ', $companyLocationParts) : ''))
-    : null;
 ?>
 
 <div class="w-screen relative left-1/2 -translate-x-1/2 overflow-hidden bg-primary-100 dark:bg-gray-900/50 py-8 lg:py-12 border-y border-gray-200/60 dark:border-white/5 transition-colors duration-300 mt-6 shadow-sm">
@@ -59,18 +50,9 @@ $companyDisplay = $company
                             <?= htmlspecialchars($roleLabel) ?>
                         </span>
                     </div>
-                    <?php if ($companyDisplay): ?>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 font-bold flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-primary-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5M4.5 3h15v18h-15V3zm3 3.75h.008v.008H7.5V6.75zm0 3h.008v.008H7.5v-.008zm0 3h.008v.008H7.5v-.008zm3-6h.008v.008h-.008V6.75zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm3-6h.008v.008h-.008V6.75zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zM9.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21" />
-                            </svg>
-                            <?= htmlspecialchars($companyDisplay) ?>
-                        </p>
-                    <?php else: ?>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                            Here's a snapshot of your ecosystem's current state.
-                        </p>
-                    <?php endif; ?>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                        Here's a snapshot of the league's current state.
+                    </p>
                 </div>
 
                 <div class="flex items-center gap-4 shrink-0 self-start md:self-auto ml-auto">

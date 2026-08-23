@@ -38,9 +38,7 @@ class UserType extends Model
     // ============================================================
     // Type Constants (For Logic Checks)
     // ============================================================
-    const ADMIN         = 1;
-    const COMPANY_ADMIN = 2;
-    const INSPECTOR     = 3;
+    const ADMIN = 1;
 
     // ============================================================
     // Relationships

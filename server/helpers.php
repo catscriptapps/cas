@@ -1,10 +1,7 @@
 <?php
 // /server/helpers.php
 
-use App\Models\Country;
 use Src\Config\NavigationConfig;
-use App\Models\Invoice;
-use App\Models\UserType;
 
 /**
  * Sends a successful JSON response and logs the API call.
@@ -208,36 +205,9 @@ function resolvePageRoute(string $path): array
  */
 function resolveDynamicPageMeta(string $resource, string $id): ?array
 {
-    if ($resource === 'inspections') {
-        $inspectionId = \App\Utils\IdEncoder::decode($id);
-        $inspection = $inspectionId ? \App\Models\Inspection::find($inspectionId) : null;
-
-        if ($inspection) {
-            return [
-                'title' => $inspection->property_address,
-                'summary' => 'Fill in section answers, notes, and photos for this inspection.',
-            ];
-        }
-
-        return ['title' => 'Inspection Not Found', 'summary' => ''];
-    }
-
-    if ($resource === 'report') {
-        $inspection = \Src\Controller\InspectionsController::findByAccessCode($id);
-
-        if ($inspection) {
-            return [
-                'title' => $inspection->property_address,
-                'summary' => 'View your inspection report.',
-            ];
-        }
-
-        return ['title' => 'Report Not Found', 'summary' => ''];
-    }
-
-    // No other detail-route resource currently defines dynamic meta -- add a
+    // No detail-route resource currently defines dynamic meta -- add a
     // branch here when a page under resources/views/pages/{resource}/detail.php
-    // needs one (see resolvePageRoute() below for how this hook is called).
+    // needs one (see resolvePageRoute() above for how this hook is called).
     return null;
 }
 

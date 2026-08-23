@@ -19,79 +19,12 @@ Capsule::schema()->disableForeignKeyConstraints();
  * This ensures we don't have "ghost" tables blocking the reset scripts.
  */
 $tablesToDrop = [
-    'landlord_services',
-
-    // Inspections (children first, then parents)
-    'inspection_pictures',
-    'inspection_videos',
-    'inspection_section_comments',
-    'inspection_question_fields',
-    'inspection_question_options',
-    'inspection_questions',
-    'inspections',
-
-    // Properties Maintenance (tenant<->landlord ticket conversations) -- children first
-    'pmaint_ticket_media',
-    'pmaint_ticket_messages',
-    'pmaint_tickets',
-    'property_tenants',
-
-    // Maintenance (children first, then parents/lookups) -- mirrors Inspections
-    'maint_report_tenants',
-    'maint_category_videos',
-    'maint_report_category_pics',
-    'maint_report_pics',
-    'maint_report_category_details',
-    'maint_report_categories',
-    'maint_reports',
-    'maint_category_components',
-    'maint_categories',
-    'maint_types',
-
-    // Dynamic Transactional Pipelines
-    'ren_automobiles',
-    'ren_employments',
-    'ren_finances_obligations',
-    'ren_finances',
-    'ren_main_applicants',
-    'ren_last_residences',
-    'ren_other_occupants',
-    'ren_references',
-    'ren_required_docs',
-    'ren_rental_applications',
-    'access_tokens',
-    'tenants',
-    'subscriptions',
-    'properties_pics',
-    'properties',
-    'inspectors',
-    'landlords',
-
-    // Authentication & Core
     'password_resets',
-    'user_verifications', // Added here to ensure it gets cleared out aggressively
-    'messages',
     'recent_activities',
-    'notifications',
-    'question_fields',
-    'question_options',
-    'questions',
-    'sections',
     'users',
-    'user_types',
-    'companies',
-
-    // Static/Lookup Tables
-    'cities',
+    'users_types',
     'regions',
     'countries',
-    'faqs',
-    'services',
-    'slideshow_images',
-    'cover_pages',
-    'standards',
-    'section_diagrams',
-    'note_hints',
 ];
 
 foreach ($tablesToDrop as $table) {
@@ -115,65 +48,23 @@ $messages = array_merge($messages, resetCountriesTable());
 require_once __DIR__ . '/../../scripts/reset/regions.php';
 $messages = array_merge($messages, resetRegionsTable());
 
-require_once __DIR__ . '/../../scripts/reset/cities.php';
-$messages = array_merge($messages, resetCitiesTable());
-
-require_once __DIR__ . '/../../scripts/reset/companies.php';
-$messages = array_merge($messages, resetCompaniesTable());
-
 require_once __DIR__ . '/../../scripts/reset/users.php';
 $messages = array_merge($messages, resetUsersTable());
-
-require_once __DIR__ . '/../../scripts/reset/sections.php';
-$messages = array_merge($messages, resetSectionsTable());
-
-require_once __DIR__ . '/../../scripts/reset/questions.php';
-$messages = array_merge($messages, resetQuestionsTable());
-
-require_once __DIR__ . '/../../scripts/reset/inspections.php';
-$messages = array_merge($messages, resetInspectionsTable());
-
-require_once __DIR__ . '/../../scripts/reset/cover-pages.php';
-$messages = array_merge($messages, resetCoverPagesTable());
-
-require_once __DIR__ . '/../../scripts/reset/standards.php';
-$messages = array_merge($messages, resetStandardsTable());
-
-require_once __DIR__ . '/../../scripts/reset/section-diagrams.php';
-$messages = array_merge($messages, resetSectionDiagramsTable());
-
-require_once __DIR__ . '/../../scripts/reset/note-hints.php';
-$messages = array_merge($messages, resetNoteHintsTable());
 
 // Support & Transient Auth Tables
 require_once __DIR__ . '/../../scripts/reset/recent-activities.php';
 $messages = array_merge($messages, resetRecentActivitiesTable());
 
-require_once __DIR__ . '/../../scripts/reset/notifications.php';
-$messages = array_merge($messages, resetNotificationsTable());
-
-require_once __DIR__ . '/../../scripts/reset/faqs.php';
-$messages = array_merge($messages, resetFaqsTable());
-
-require_once __DIR__ . '/../../scripts/reset/slideshow-images.php';
-$messages = array_merge($messages, resetSlideshowImagesTable());
-
 require_once __DIR__ . '/../../scripts/reset/password-resets.php';
 $messages = array_merge($messages, resetPasswordResetsTable());
 
-// Placed directly next to password resets following your dash naming standards
-require_once __DIR__ . '/../../scripts/reset/user-verifications.php';
-$messages = array_merge($messages, resetUserVerificationsTable());
-
-require_once __DIR__ . '/../../scripts/reset/messages.php';
-$messages = array_merge($messages, resetMessagesTable());
-
-
 /**
- * 4. Everything past Authentication & Core / Static Lookups -- legacy
- * Subscriptions/Services/Properties/Maintenance modules -- is intentionally
- * not (re)created; their reset scripts were removed along with the tables
- * themselves and are on hold pending a future rebuild.
+ * 4. Everything past Authentication & Core / Static Lookups -- the
+ * Home Comfort Reports inspection modules (companies, questions, sections,
+ * inspections, cover pages, standards, section diagrams, note hints,
+ * notifications, faqs, slideshow, messages, user verifications) are
+ * intentionally not (re)created; their reset scripts were removed along
+ * with the tables themselves, pending CAS's own league-management tables.
  */
 
 /**

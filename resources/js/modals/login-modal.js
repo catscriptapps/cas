@@ -5,7 +5,6 @@ import { FormValidator } from '../utils/form-validator.js';
 import { loginFormHTML } from '../forms/login-form.js';
 import { buttonSpinner } from '../utils/spinner-utils.js';
 import { initForgotPassword } from '../utils/login/forgot-password.js';
-import { resendActivationLink } from '../utils/login/resend-activation.js';
 
 export class LoginModal {
     constructor(signInButtonSelector) {
@@ -38,21 +37,6 @@ export class LoginModal {
             setTimeout(() => {
                 document.getElementById('login-email')?.focus();
             }, 100);
-        });
-
-        // 2. Listener for the "Resend" button (Delegated)
-        document.addEventListener('click', async (e) => {
-            const resendBtn = e.target.closest('#resend-verification-btn');
-            if (!resendBtn) return;
-
-            e.preventDefault();
-            const email = document.getElementById('login-email')?.value;
-            const apiMessageContainer = document.getElementById('login-api-message');
-
-            resendBtn.disabled = true;
-            resendBtn.innerHTML = 'Sending...';
-
-            await resendActivationLink(email, apiMessageContainer);
         });
 
         // 💎 NEW: Password Visibility Toggle (Delegated)
@@ -136,19 +120,7 @@ export class LoginModal {
                     }, 1200);
                 } else {
                     if (apiMessageContainer) {
-                        let html = result.messages.map(msg => `<p class="text-red-500 text-sm mt-1">${msg}</p>`).join('');
-
-                        // If the backend says they are unverified, inject the button
-                        if (result.unverified) {
-                            html += `
-                                <button type="button" id="resend-verification-btn" 
-                                    class="mt-2 text-primary-600 font-bold hover:underline text-xs uppercase tracking-tight">
-                                    Resend Activation Link?
-                                </button>
-                            `;
-                        }
-
-                        apiMessageContainer.innerHTML = html;
+                        apiMessageContainer.innerHTML = result.messages.map(msg => `<p class="text-red-500 text-sm mt-1">${msg}</p>`).join('');
                     }
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalBtnText;

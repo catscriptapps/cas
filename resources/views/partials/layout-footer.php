@@ -21,7 +21,7 @@ declare(strict_types=1);
                     <span class="font-black text-white tracking-tight text-lg"><?= htmlspecialchars($appName) ?></span>
                 </div>
                 <p class="text-xs text-slate-400 dark:text-slate-500 max-w-sm leading-relaxed font-normal">
-                    Certified home inspection reports built on structured, room-by-room evaluations backed by photo and video documentation -- so you always know exactly what you're buying.
+                    Empowering communities through hockey since 2008 -- schedules, stats, and standings for every league we run.
                 </p>
             </div>
 
@@ -29,7 +29,7 @@ declare(strict_types=1);
             <div class="sm:justify-self-end">
                 <h3 class="text-[11px] font-black text-white uppercase tracking-[0.2em] mb-3">Ecosystem</h3>
                 <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
-                    <?php foreach (['Home' => '', 'About' => 'about', 'Contact' => 'contact', 'FAQs' => 'faqs'] as $title => $slug): ?>
+                    <?php foreach (['Home' => '', 'About' => 'about', 'Contact' => 'contact'] as $title => $slug): ?>
                         <a href="<?= $baseUrl . $slug ?>" data-partial data-title="<?= $title ?>" class="relative text-slate-400 hover:text-white transition-colors duration-200 w-fit before:absolute before:-bottom-0.5 before:left-0 before:w-0 before:h-px before:bg-primary-500 hover:before:w-full before:transition-all before:duration-300">
                             <?= $title ?>
                         </a>
@@ -46,9 +46,9 @@ declare(strict_types=1);
             </div>
 
             <div class="flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity duration-300">
-                <span class="font-black uppercase tracking-[0.2em] text-[9px] text-slate-500">
-                    A CatScript Application
-                </span>
+                <a href="<?= $baseUrl ?>login" data-login-button class="font-black uppercase tracking-[0.2em] text-[9px] text-slate-500 hover:text-slate-300 transition-colors">
+                    Staff Login
+                </a>
             </div>
         </div>
 

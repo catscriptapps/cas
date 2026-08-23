@@ -4,20 +4,15 @@
 declare(strict_types=1);
 
 use Src\Config\NavigationConfig;
-use Src\Service\AuthService;
-use App\Models\Slideshow;
 
 /** @var bool $isLoggedIn */
 /** @var string $assetBase */
 /** @var string $appName */
 /** @var string $baseUrl */
 
-// Slideshow pictures are managed from the slideshow_images table -- add,
-// remove, or reorder them there (via pos_index) rather than hardcoding here.
-$slideshowImages = Slideshow::where('status_id', 1)
-    ->orderBy('pos_index')
-    ->pluck('image_name')
-    ->toArray();
+// Hero background rotation -- a fixed set of stock images rather than a
+// database-managed slideshow (there's no admin module for this yet).
+$slideshowImages = ['hero-1.png', 'hero-2.png', 'hero-4.png', 'hero-7.png', 'hero-9.png', 'hero-11.png', 'hero-13.png', 'hero-17.png'];
 
 $totalSlides = count($slideshowImages);
 
@@ -34,7 +29,7 @@ $initialIsHome = (normalizePath($currentPath, $currentBasePath) === '/home' || $
 // their own workspace).
 if ($isLoggedIn) {
     $initialPageTitle = 'Operational Dashboard';
-    $initialPageSummary = 'Real-time performance index metrics, pending verification alerts, and systemic portfolio analysis logs.';
+    $initialPageSummary = 'Recent activity across the league, and quick links into every workspace module.';
 } else {
     $initialPageTitle = '';
     $initialPageSummary = '';
@@ -123,22 +118,29 @@ if ($isLoggedIn) {
                 <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-primary-500/20 text-primary-300 border border-primary-500/30 backdrop-blur-sm mb-4 drop-shadow-sm"
                     data-aos="fade-down"
                     data-aos-duration="600">
-                    <i class="fa-solid fa-house-chimney-crack text-[10px] text-primary-400"></i> Trusted Home Inspection Reports
+                    <i class="fa-solid fa-hockey-puck text-[10px] text-primary-400"></i> Empowering Communities Through Hockey Since 2008
                 </span>
 
-                <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] mb-3"
+                <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight uppercase drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] mb-3"
                     data-aos="fade-up"
                     data-aos-duration="800"
                     data-aos-delay="100">
-                    See Every Detail. Decide With Confidence.
+                    Canadian All Star Sports
                 </h1>
 
-                <p class="max-w-2xl mx-auto text-sm sm:text-base text-slate-100 drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] font-medium"
+                <p class="max-w-2xl mx-auto text-sm sm:text-base text-slate-100 drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] font-medium mb-6"
                     data-aos="fade-up"
                     data-aos-duration="800"
                     data-aos-delay="200">
-                    Certified inspectors, structured room-by-room evaluations, and photo-and-video-backed reporting — so you know exactly what you're buying, system by system.
+                    Real-time schedules, stats, and standings for every league we run -- built for players, referees, and the communities behind them.
                 </p>
+
+                <a href="<?= $baseUrl ?>contact" data-partial
+                    data-aos="fade-up" data-aos-duration="800" data-aos-delay="300"
+                    class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-secondary-500 hover:bg-secondary-400 text-slate-900 font-black text-xs uppercase tracking-widest shadow-lg shadow-secondary-500/30 transition-all duration-300 active:scale-[0.98]">
+                    Get In Touch
+                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
             </div>
         </section>
 

@@ -7,7 +7,6 @@ namespace Src\Controller;
 use Src\Service\AuthService;
 use App\Traits\RecentActivityLogger;
 use App\Models\User;
-use App\Models\Inspector;
 use App\Models\PasswordReset;
 
 /**
@@ -62,16 +61,12 @@ class AuthController
     }
 
     /**
-     * Resolve whichever account owns this email, across both account
-     * tables -- mirrors AuthService::login()'s priority order (User, then
-     * Inspector) so forgot-password/reset-password resolve to the same
-     * account login would, even in the rare case the same email exists in
-     * both tables.
+     * Resolve the account owning this email, so forgot-password/reset-password
+     * look up the same account login would.
      */
     private static function findAccountByEmail(string $email): ?object
     {
-        return User::where('email', $email)->first()
-            ?? Inspector::where('email', $email)->first();
+        return User::where('email', $email)->first();
     }
 
     /**

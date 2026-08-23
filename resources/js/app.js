@@ -24,11 +24,7 @@ import { initDarkMode } from './utils/dark-mode.js';
 import { LoginModal } from './modals/login-modal.js';
 import { LogoutModal } from './modals/logout-modal.js';
 import { ResetModal } from './modals/reset-modal.js';
-import { initHeaderIcons } from './ui/header-icons.js';
-import { initHeaderSearch } from './ui/header-search.js';
 import { initFooterLinks } from './ui/footer-links.js';
-import { initUnreadPolling } from './ui/unread-handler.js';
-import { init as initMessagesPage } from './pages/messages-page.js';
 import { cleanupModals } from './utils/modal-cleanup.js';
 import { AnimationEngine } from './utils/animations';
 import { attachPhoneFormatter } from './utils/phone-formatter.js';
@@ -237,22 +233,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Clean the URL so refreshing doesn't keep popping the modal
     window.history.replaceState({}, document.title, window.location.pathname);
-  }
-
-  initHeaderSearch();
-
-  // Unread polling + header icon wiring (notifications bell, etc.) apply to
-  // any signed-in account type (user/landlord/tenant/inspector) -- gate on
-  // general login state, not the backend-user-only sessionUserId global.
-  if (window.APP_CONFIG?.isLoggedIn) {
-    initUnreadPolling();
-    initHeaderIcons();
-  }
-
-  // The admin messages inbox badge/page is backend-User-only.
-  const sessionUserId = window.sessionUserId;
-  if (sessionUserId) {
-    initMessagesPage();
   }
 
   // 🔑 Load manifest first

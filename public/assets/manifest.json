@@ -1,6 +1,6 @@
 {
-  "_animations-CxbAzcCY.min.js": {
-    "file": "js/animations-CxbAzcCY.min.js",
+  "_animations-BtDgdX2G.min.js": {
+    "file": "js/animations-BtDgdX2G.min.js",
     "name": "animations",
     "css": [
       "css/app.min2.css"
@@ -10,59 +10,22 @@
     "file": "css/app.min2.css",
     "src": "_app.min2.css"
   },
-  "_confirm-BnHqL_fD.min.js": {
-    "file": "js/confirm-BnHqL_fD.min.js",
-    "name": "confirm"
-  },
-  "_data-table-9SFXZdzb.min.js": {
-    "file": "js/data-table-9SFXZdzb.min.js",
-    "name": "data-table"
-  },
-  "_delete-factory-DhbIOdTj.min.js": {
-    "file": "js/delete-factory-DhbIOdTj.min.js",
-    "name": "delete-factory"
-  },
-  "_form-validator-CSeXGyW6.min.js": {
-    "file": "js/form-validator-CSeXGyW6.min.js",
-    "name": "form-validator",
+  "_delete-factory-CJd4xO9x.min.js": {
+    "file": "js/delete-factory-CJd4xO9x.min.js",
+    "name": "delete-factory",
     "imports": [
-      "_toast--nIYmWRe.min.js"
+      "_modal-factory-D72OMj0_.min.js",
+      "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js"
     ]
   },
-  "_helpers-CBF1VuX9.min.js": {
-    "file": "js/helpers-CBF1VuX9.min.js",
-    "name": "helpers"
-  },
-  "_home-events-B00vC_ft.min.js": {
-    "file": "js/home-events-B00vC_ft.min.js",
-    "name": "home-events",
-    "imports": [
-      "_animations-CxbAzcCY.min.js",
-      "_form-validator-CSeXGyW6.min.js"
-    ]
+  "_form-validator-CeXCkSqx.min.js": {
+    "file": "js/form-validator-CeXCkSqx.min.js",
+    "name": "form-validator"
   },
   "_modal-factory-D72OMj0_.min.js": {
     "file": "js/modal-factory-D72OMj0_.min.js",
     "name": "modal-factory"
-  },
-  "_preview-B3PUvf1N.min.js": {
-    "file": "js/preview-B3PUvf1N.min.js",
-    "name": "preview"
-  },
-  "_profile-modal-D7ofKs-w.min.js": {
-    "file": "js/profile-modal-D7ofKs-w.min.js",
-    "name": "profile-modal",
-    "imports": [
-      "_modal-factory-D72OMj0_.min.js",
-      "_regions-component-BQf5KGOV.min.js",
-      "_form-validator-CSeXGyW6.min.js",
-      "_spinner-utils-BGUFcaGl.min.js",
-      "_table-pagination-count-JrykreAu.min.js"
-    ]
-  },
-  "_regions-component-BQf5KGOV.min.js": {
-    "file": "js/regions-component-BQf5KGOV.min.js",
-    "name": "regions-component"
   },
   "_spa-router-Cd9AAa9t.min.js": {
     "file": "js/spa-router-Cd9AAa9t.min.js",
@@ -71,28 +34,6 @@
   "_spinner-utils-BGUFcaGl.min.js": {
     "file": "js/spinner-utils-BGUFcaGl.min.js",
     "name": "spinner-utils"
-  },
-  "_table-pagination-count-JrykreAu.min.js": {
-    "file": "js/table-pagination-count-JrykreAu.min.js",
-    "name": "table-pagination-count"
-  },
-  "_table-search-CGMfPSHx.min.js": {
-    "file": "js/table-search-CGMfPSHx.min.js",
-    "name": "table-search",
-    "dynamicImports": [
-      "resources/js/utils/faqs/faq-accordion.js"
-    ]
-  },
-  "_toast--nIYmWRe.min.js": {
-    "file": "js/toast--nIYmWRe.min.js",
-    "name": "toast"
-  },
-  "_upload-modal-4-CDXO24.min.js": {
-    "file": "js/upload-modal-4-CDXO24.min.js",
-    "name": "upload-modal",
-    "imports": [
-      "_toast--nIYmWRe.min.js"
-    ]
   },
   "resources/css/main.css": {
     "file": "css/app.min.css",
@@ -110,13 +51,9 @@
     "imports": [
       "_spa-router-Cd9AAa9t.min.js",
       "_modal-factory-D72OMj0_.min.js",
-      "_form-validator-CSeXGyW6.min.js",
+      "_form-validator-CeXCkSqx.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
-      "_toast--nIYmWRe.min.js",
-      "resources/js/pages/messages-page.js",
-      "_animations-CxbAzcCY.min.js",
-      "_table-pagination-count-JrykreAu.min.js",
-      "_delete-factory-DhbIOdTj.min.js"
+      "_animations-BtDgdX2G.min.js"
     ],
     "css": [
       "css/app.min.css"
@@ -128,25 +65,7 @@
     "src": "resources/js/pages/about-page.js",
     "isEntry": true,
     "imports": [
-      "_animations-CxbAzcCY.min.js"
-    ]
-  },
-  "resources/js/pages/companies-page.js": {
-    "file": "js/companies-page.min.js",
-    "name": "companies-page",
-    "src": "resources/js/pages/companies-page.js",
-    "isEntry": true,
-    "imports": [
-      "_modal-factory-D72OMj0_.min.js",
-      "_regions-component-BQf5KGOV.min.js",
-      "_form-validator-CSeXGyW6.min.js",
-      "_spinner-utils-BGUFcaGl.min.js",
-      "_table-pagination-count-JrykreAu.min.js",
-      "_delete-factory-DhbIOdTj.min.js",
-      "_toast--nIYmWRe.min.js",
-      "_table-search-CGMfPSHx.min.js",
-      "_upload-modal-4-CDXO24.min.js",
-      "_preview-B3PUvf1N.min.js"
+      "_animations-BtDgdX2G.min.js"
     ]
   },
   "resources/js/pages/contact-page.js": {
@@ -155,114 +74,7 @@
     "src": "resources/js/pages/contact-page.js",
     "isEntry": true,
     "imports": [
-      "_form-validator-CSeXGyW6.min.js",
-      "_toast--nIYmWRe.min.js"
-    ]
-  },
-  "resources/js/pages/cover-pages-page.js": {
-    "file": "js/cover-pages-page.min.js",
-    "name": "cover-pages-page",
-    "src": "resources/js/pages/cover-pages-page.js",
-    "isEntry": true,
-    "imports": [
-      "_animations-CxbAzcCY.min.js",
-      "_upload-modal-4-CDXO24.min.js",
-      "_preview-B3PUvf1N.min.js",
-      "_helpers-CBF1VuX9.min.js",
-      "_confirm-BnHqL_fD.min.js",
-      "_toast--nIYmWRe.min.js"
-    ]
-  },
-  "resources/js/pages/faqs-page.js": {
-    "file": "js/faqs-page.min.js",
-    "name": "faqs-page",
-    "src": "resources/js/pages/faqs-page.js",
-    "isEntry": true,
-    "imports": [
-      "_modal-factory-D72OMj0_.min.js",
-      "_form-validator-CSeXGyW6.min.js",
-      "_spinner-utils-BGUFcaGl.min.js",
-      "_table-pagination-count-JrykreAu.min.js",
-      "resources/js/utils/faqs/faq-accordion.js",
-      "_delete-factory-DhbIOdTj.min.js",
-      "_toast--nIYmWRe.min.js",
-      "_table-search-CGMfPSHx.min.js"
-    ]
-  },
-  "resources/js/pages/history-page.js": {
-    "file": "js/history-page.min.js",
-    "name": "history-page",
-    "src": "resources/js/pages/history-page.js",
-    "isEntry": true,
-    "imports": [
-      "_data-table-9SFXZdzb.min.js",
-      "_toast--nIYmWRe.min.js",
-      "_table-pagination-count-JrykreAu.min.js",
-      "_delete-factory-DhbIOdTj.min.js"
-    ]
-  },
-  "resources/js/pages/home-page.js": {
-    "file": "js/home-page.min.js",
-    "name": "home-page",
-    "src": "resources/js/pages/home-page.js",
-    "isEntry": true,
-    "imports": [
-      "_home-events-B00vC_ft.min.js",
-      "_animations-CxbAzcCY.min.js",
-      "_form-validator-CSeXGyW6.min.js",
-      "_toast--nIYmWRe.min.js"
-    ]
-  },
-  "resources/js/pages/inspections-page.js": {
-    "file": "js/inspections-page.min.js",
-    "name": "inspections-page",
-    "src": "resources/js/pages/inspections-page.js",
-    "isEntry": true,
-    "imports": [
-      "_animations-CxbAzcCY.min.js",
-      "_modal-factory-D72OMj0_.min.js",
-      "_regions-component-BQf5KGOV.min.js",
-      "_form-validator-CSeXGyW6.min.js",
-      "_spinner-utils-BGUFcaGl.min.js",
-      "_delete-factory-DhbIOdTj.min.js",
-      "_toast--nIYmWRe.min.js",
-      "_data-table-9SFXZdzb.min.js",
-      "_confirm-BnHqL_fD.min.js",
-      "_preview-B3PUvf1N.min.js",
-      "_upload-modal-4-CDXO24.min.js"
-    ]
-  },
-  "resources/js/pages/messages-page.js": {
-    "file": "js/messages-page.min.js",
-    "name": "messages-page",
-    "src": "resources/js/pages/messages-page.js",
-    "isEntry": true,
-    "imports": [
-      "_toast--nIYmWRe.min.js",
-      "_table-pagination-count-JrykreAu.min.js",
-      "_form-validator-CSeXGyW6.min.js",
-      "_spinner-utils-BGUFcaGl.min.js",
-      "_modal-factory-D72OMj0_.min.js",
-      "_delete-factory-DhbIOdTj.min.js",
-      "_animations-CxbAzcCY.min.js"
-    ]
-  },
-  "resources/js/pages/notifications-page.js": {
-    "file": "js/notifications-page.min.js",
-    "name": "notifications-page",
-    "src": "resources/js/pages/notifications-page.js",
-    "isEntry": true
-  },
-  "resources/js/pages/pmb-page.js": {
-    "file": "js/pmb-page.min.js",
-    "name": "pmb-page",
-    "src": "resources/js/pages/pmb-page.js",
-    "isEntry": true,
-    "imports": [
-      "_home-events-B00vC_ft.min.js",
-      "_animations-CxbAzcCY.min.js",
-      "_form-validator-CSeXGyW6.min.js",
-      "_toast--nIYmWRe.min.js"
+      "_form-validator-CeXCkSqx.min.js"
     ]
   },
   "resources/js/pages/profile-page.js": {
@@ -271,44 +83,12 @@
     "src": "resources/js/pages/profile-page.js",
     "isEntry": true,
     "imports": [
-      "_profile-modal-D7ofKs-w.min.js",
-      "_upload-modal-4-CDXO24.min.js",
-      "_toast--nIYmWRe.min.js",
+      "_delete-factory-CJd4xO9x.min.js",
+      "_form-validator-CeXCkSqx.min.js",
       "_spa-router-Cd9AAa9t.min.js",
-      "_delete-factory-DhbIOdTj.min.js",
-      "_preview-B3PUvf1N.min.js",
-      "_form-validator-CSeXGyW6.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
-      "_animations-CxbAzcCY.min.js",
-      "_modal-factory-D72OMj0_.min.js",
-      "_regions-component-BQf5KGOV.min.js",
-      "_table-pagination-count-JrykreAu.min.js"
-    ]
-  },
-  "resources/js/pages/questions-page.js": {
-    "file": "js/questions-page.min.js",
-    "name": "questions-page",
-    "src": "resources/js/pages/questions-page.js",
-    "isEntry": true,
-    "imports": [
-      "_animations-CxbAzcCY.min.js",
-      "_modal-factory-D72OMj0_.min.js",
-      "_form-validator-CSeXGyW6.min.js",
-      "_spinner-utils-BGUFcaGl.min.js",
-      "_upload-modal-4-CDXO24.min.js",
-      "_preview-B3PUvf1N.min.js",
-      "_confirm-BnHqL_fD.min.js",
-      "_toast--nIYmWRe.min.js",
-      "_delete-factory-DhbIOdTj.min.js"
-    ]
-  },
-  "resources/js/pages/report-page.js": {
-    "file": "js/report-page.min.js",
-    "name": "report-page",
-    "src": "resources/js/pages/report-page.js",
-    "isEntry": true,
-    "imports": [
-      "_preview-B3PUvf1N.min.js"
+      "_animations-BtDgdX2G.min.js",
+      "_modal-factory-D72OMj0_.min.js"
     ]
   },
   "resources/js/pages/reset-password-page.js": {
@@ -317,45 +97,8 @@
     "src": "resources/js/pages/reset-password-page.js",
     "isEntry": true,
     "imports": [
-      "_form-validator-CSeXGyW6.min.js",
-      "_spinner-utils-BGUFcaGl.min.js",
-      "_toast--nIYmWRe.min.js"
-    ]
-  },
-  "resources/js/pages/settings-page.js": {
-    "file": "js/settings-page.min.js",
-    "name": "settings-page",
-    "src": "resources/js/pages/settings-page.js",
-    "isEntry": true,
-    "imports": [
-      "_animations-CxbAzcCY.min.js"
-    ]
-  },
-  "resources/js/pages/slideshow-page.js": {
-    "file": "js/slideshow-page.min.js",
-    "name": "slideshow-page",
-    "src": "resources/js/pages/slideshow-page.js",
-    "isEntry": true,
-    "imports": [
-      "_animations-CxbAzcCY.min.js",
-      "_upload-modal-4-CDXO24.min.js",
-      "_preview-B3PUvf1N.min.js",
-      "_helpers-CBF1VuX9.min.js",
-      "_confirm-BnHqL_fD.min.js",
-      "_toast--nIYmWRe.min.js"
-    ]
-  },
-  "resources/js/pages/standards-page.js": {
-    "file": "js/standards-page.min.js",
-    "name": "standards-page",
-    "src": "resources/js/pages/standards-page.js",
-    "isEntry": true,
-    "imports": [
-      "_animations-CxbAzcCY.min.js",
-      "_modal-factory-D72OMj0_.min.js",
-      "_spinner-utils-BGUFcaGl.min.js",
-      "_confirm-BnHqL_fD.min.js",
-      "_toast--nIYmWRe.min.js"
+      "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js"
     ]
   },
   "resources/js/pages/users-page.js": {
@@ -364,30 +107,10 @@
     "src": "resources/js/pages/users-page.js",
     "isEntry": true,
     "imports": [
-      "_profile-modal-D7ofKs-w.min.js",
-      "_delete-factory-DhbIOdTj.min.js",
-      "_toast--nIYmWRe.min.js",
-      "_table-pagination-count-JrykreAu.min.js",
-      "_data-table-9SFXZdzb.min.js",
+      "_delete-factory-CJd4xO9x.min.js",
+      "_form-validator-CeXCkSqx.min.js",
       "_modal-factory-D72OMj0_.min.js",
-      "_regions-component-BQf5KGOV.min.js",
-      "_form-validator-CSeXGyW6.min.js",
       "_spinner-utils-BGUFcaGl.min.js"
     ]
-  },
-  "resources/js/pages/verify-account-page.js": {
-    "file": "js/verify-account-page.min.js",
-    "name": "verify-account-page",
-    "src": "resources/js/pages/verify-account-page.js",
-    "isEntry": true,
-    "imports": [
-      "_animations-CxbAzcCY.min.js"
-    ]
-  },
-  "resources/js/utils/faqs/faq-accordion.js": {
-    "file": "js/faq-accordion-CklwX0PA.min.js",
-    "name": "faq-accordion",
-    "src": "resources/js/utils/faqs/faq-accordion.js",
-    "isDynamicEntry": true
   }
 }

@@ -16,7 +16,7 @@ declare(strict_types=1);
             Get in <span class="text-primary-600">Touch.</span>
         </h1>
         <p class="text-base text-gray-500 dark:text-gray-400 max-w-xl font-medium">
-            Have a question about an existing report, or interested in bringing your inspection company onto the platform? Send us a message and we'll get back to you.
+            Questions about a league, a schedule, or getting your team involved? Send us a message and we'll get back to you.
         </p>
     </div>
 
@@ -29,8 +29,8 @@ declare(strict_types=1);
                 <div class="space-y-8">
                     <div class="group/item">
                         <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-2">Email Us</p>
-                        <a href="mailto:info@homecomfortreports.com" class="text-gray-900 dark:text-white font-bold text-base sm:text-lg break-all hover:text-primary-600 transition-colors">
-                            info@homecomfortreports.com
+                        <a href="mailto:info@canadianallstarsports.com" class="text-gray-900 dark:text-white font-bold text-base sm:text-lg break-all hover:text-primary-600 transition-colors">
+                            info@canadianallstarsports.com
                         </a>
                     </div>
 
@@ -43,7 +43,7 @@ declare(strict_types=1);
                             <h4 class="font-black text-xs uppercase tracking-widest text-gray-900 dark:text-white">Response Time</h4>
                         </div>
                         <p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-relaxed">
-                            We typically reply within one business day. For an existing report, include the access code in your message so we can pull it up quickly.
+                            We typically reply within one business day.
                         </p>
                     </div>
                 </div>
@@ -54,11 +54,11 @@ declare(strict_types=1);
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
                 </svg>
 
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">For Inspection Companies</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">For Teams &amp; Volunteers</p>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-black tracking-tighter">Bring Your Team Aboard</span>
+                    <span class="text-3xl font-black tracking-tighter">Get Your Team Involved</span>
                 </div>
-                <p class="text-xs mt-2 text-slate-400 leading-relaxed">Want your inspectors documenting and delivering reports through Home Comfort Reports? Tell us about your company and we'll be in touch about getting set up.</p>
+                <p class="text-xs mt-2 text-slate-400 leading-relaxed">Looking to register a team, referee, or volunteer with a league? Tell us a bit about what you're looking for and we'll point you in the right direction.</p>
             </div>
         </div>
 
@@ -86,14 +86,14 @@ declare(strict_types=1);
                         <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 ml-1 mb-2 block">Subject</label>
                         <input type="text" name="subject"
                             class="w-full px-5 py-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none font-semibold text-sm placeholder-gray-400"
-                            placeholder="e.g. Question about my inspection report" required>
+                            placeholder="e.g. Question about registering a team" required>
                     </div>
 
                     <div class="group">
                         <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 ml-1 mb-2 block">Message</label>
                         <textarea name="message" rows="5"
                             class="w-full px-5 py-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none resize-none font-semibold text-sm placeholder-gray-400"
-                            placeholder="Tell us about the property and what you need..." required></textarea>
+                            placeholder="Tell us what you're looking for..." required></textarea>
                     </div>
 
                     <div class="pt-4">

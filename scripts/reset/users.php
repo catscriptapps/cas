@@ -17,9 +17,8 @@ function resetUsersTable(): array
         $tableName = 'users';
         Capsule::schema()->dropIfExists($tableName);
 
-        // 2. Create structure -- a user is exactly one type (Admin, Company
-        // Admin, or Inspector), so user_type_id is a plain scalar column,
-        // not a collection.
+        // 2. Create structure -- there's currently only one backend role
+        // (Admin), so user_type_id is a plain scalar column, not a collection.
         Capsule::schema()->create($tableName, function (Blueprint $table) {
             $table->bigIncrements('id'); // This is our BIGINT to match other tables
             $table->string('first_name', 300)->nullable();
@@ -28,7 +27,6 @@ function resetUsersTable(): array
             $table->unsignedInteger('country_id')->nullable();
             $table->unsignedInteger('region_id')->nullable();
             $table->string('city', 300)->nullable();
-            $table->unsignedBigInteger('company_id')->nullable();
             $table->string('password', 300)->nullable();
             $table->string('api_token', 300)->nullable();
             $table->integer('status_id')->nullable();
@@ -42,16 +40,14 @@ function resetUsersTable(): array
 
         $messages[] = "recreated 'users' table with a scalar user_type_id.";
 
-        // 3. Seed data.
+        // 3. Seed data -- the same default staff accounts as the legacy
+        // cas_sports project (country_id 39 = Canada, region_id 866 = Ontario).
         // Order: id, first_name, last_name, email, country_id, region_id, city,
-        // company_id, password, user_type_id, email_verified, status_id
+        // password, user_type_id, email_verified, status_id
         $usersData = [
-            [1, 'Cat',  'Nduanya', 'mindofcat@hotmail.com',              39, 866, 'Barrie', null, '123xxx#A', 1, 1, 1],
-            [2, 'Dale', 'Brown',   'dale@homeworksinspections.info',     39, 866, 'Angus',  null, '#HMWRKS#', 1, 1, 1],
-            [3, 'Cat',  'Nduanya', 'catscriptapps@gmail.com',            39, 866, 'Barrie', 1,    '123xxx#A', 2, 1, 1],
-            [4, 'Dale', 'Brown',   'homeworks.inspections.canada@gmail.com', 39, 866, 'Angus', 2, '#HMWRKS#', 2, 1, 1],
-            [5, 'Cat',  'Nduanya', 'mindofcat@gmail.com',                39, 866, 'Barrie', 1,    '123xxx#A', 3, 1, 1],
-            [6, 'Dale', 'Brown',   'homecomfortreports@gmail.com',       39, 866, 'Angus',  2,    '#HMWRKS#', 3, 1, 1],
+            [1, 'Cat',     'Nduanya',     'mindofcat@hotmail.com', 39, 866, 'Barrie',   '123xxx#A', 1, 1, 1],
+            [2, 'Janelle', 'Bernier',     'janelle@essahockey.com', 39, 866, 'Thornton', '123456#',  1, 1, 1],
+            [3, 'Cory',    'Clapperton',  'cory@essahockey.com',    39, 866, 'Thornton', '123456#',  1, 1, 1],
         ];
 
         $count = 0;
@@ -64,11 +60,10 @@ function resetUsersTable(): array
                 'country_id'     => $row[4],
                 'region_id'      => $row[5],
                 'city'           => $row[6],
-                'company_id'     => $row[7],
-                'password'       => password_hash((string)$row[8], PASSWORD_DEFAULT),
-                'user_type_id'   => $row[9],
-                'email_verified' => (bool)$row[10],
-                'status_id'      => $row[11],
+                'password'       => password_hash((string)$row[7], PASSWORD_DEFAULT),
+                'user_type_id'   => $row[8],
+                'email_verified' => (bool)$row[9],
+                'status_id'      => $row[10],
                 'date_created'   => date('Y-m-d'),
             ]);
             $count++;

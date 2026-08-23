@@ -6,11 +6,7 @@
 
 use Src\Service\AuthService;
 
-$isAdmin = AuthService::isAdmin();
-// A Company Admin only ever sees their own company's users here (scoped by
-// UsersController::index()), so being a Company Admin at all is enough to
-// know this row is already theirs to manage -- edit and delete both.
-$canManage = $isAdmin || AuthService::isCompanyAdmin();
+$canManage = AuthService::isLoggedIn();
 
 // Fetch the real type names from the DB once if not already available
 if (!isset($GLOBALS['allUserTypes'])) {
