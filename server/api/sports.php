@@ -15,13 +15,15 @@ try {
     $controller = new SportsController();
 
     if ($method === 'GET') {
-        // The public registration wizard's plain GET (no ?q=) doesn't
-        // require auth -- only the admin search/list does.
-        if (isset($_GET['q']) && !AuthService::userId()) {
+        // The admin data-table (filter[]/sort/page) and the public
+        // registration wizard's plain GET share this endpoint -- only the
+        // former requires auth.
+        $isAdminQuery = isset($_GET['filter']) || isset($_GET['sort']) || isset($_GET['page']);
+        if ($isAdminQuery && !AuthService::userId()) {
             json_response(['success' => false, 'messages' => ['Authentication required']], 401);
         }
 
-        if (isset($_GET['q'])) {
+        if ($isAdminQuery) {
             $controller->index();
             exit;
         }

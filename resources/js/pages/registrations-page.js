@@ -3,6 +3,7 @@
 import { initRegistrationsModal } from '../modals/registrations-modal.js';
 import { initDeleteRegistration } from '../utils/registrations/delete-registration.js';
 import { initViewRegistration } from '../utils/registrations/view-registration.js';
+import { initTogglePaidStatus } from '../utils/registrations/toggle-paid.js';
 import { initDataTable } from '../components/data-table.js';
 
 /**
@@ -13,6 +14,7 @@ export function init() {
     initRegistrationsModal();
     initDeleteRegistration();
     initViewRegistration();
+    initTogglePaidStatus();
 
     initDataTable({
         tbodyId: 'registrations-tbody',

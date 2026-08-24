@@ -30,6 +30,10 @@
     "file": "js/modal-factory-D72OMj0_.min.js",
     "name": "modal-factory"
   },
+  "_phone-formatter-Cuqgilmj.min.js": {
+    "file": "js/phone-formatter-Cuqgilmj.min.js",
+    "name": "phone-formatter"
+  },
   "_profile-modal-DXeqH46Z.min.js": {
     "file": "js/profile-modal-DXeqH46Z.min.js",
     "name": "profile-modal",
@@ -62,7 +66,8 @@
     "src": "resources/css/main.css",
     "isEntry": true,
     "names": [
-      "main.css"
+      "main.css",
+      "app.css"
     ]
   },
   "resources/js/app.js": {
@@ -75,7 +80,8 @@
       "_modal-factory-D72OMj0_.min.js",
       "_form-validator-CeXCkSqx.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
-      "_animations-BtDgdX2G.min.js"
+      "_animations-BtDgdX2G.min.js",
+      "_phone-formatter-Cuqgilmj.min.js"
     ],
     "css": [
       "css/app.min.css"
@@ -99,12 +105,28 @@
       "_form-validator-CeXCkSqx.min.js"
     ]
   },
+  "resources/js/pages/contacts-page.js": {
+    "file": "js/contacts-page.min.js",
+    "name": "contacts-page",
+    "src": "resources/js/pages/contacts-page.js",
+    "isEntry": true,
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js",
+      "_table-pagination-count-JrykreAu.min.js",
+      "_phone-formatter-Cuqgilmj.min.js",
+      "_delete-factory-DhbIOdTj.min.js",
+      "_data-table-9SFXZdzb.min.js"
+    ]
+  },
   "resources/js/pages/league-management-page.js": {
     "file": "js/league-management-page.min.js",
     "name": "league-management-page",
     "src": "resources/js/pages/league-management-page.js",
     "isEntry": true,
     "imports": [
+      "_data-table-9SFXZdzb.min.js",
       "_modal-factory-D72OMj0_.min.js",
       "_form-validator-CeXCkSqx.min.js",
       "_spinner-utils-BGUFcaGl.min.js",

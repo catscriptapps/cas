@@ -10,12 +10,11 @@ function getPayload(form) {
 
     return {
         encoded_id: form.dataset.encodedId || null,
-        first_name: data.firstName?.trim(),
-        last_name: data.lastName?.trim(),
+        full_name: data.fullName?.trim(),
         email: data.email?.trim(),
         phone: data.phone?.trim(),
         city: data.city?.trim(),
-        desired_position: data.desiredPosition?.trim(),
+        position: data.position?.trim(),
         team_name: data.teamName?.trim(),
         has_paid: form.querySelector('input[name="hasPaid"]')?.checked ? 1 : 0,
         status_id: form.querySelector('input[name="isActive"]')?.checked ? 1 : 0,

@@ -6,13 +6,12 @@
  */
 export function registrationForm({
     formId = 'registrations-edit-form',
-    firstName = '',
-    lastName = '',
+    fullName = '',
     email = '',
     phone = '',
     city = '',
     divisionName = '',
-    desiredPosition = '',
+    position = '',
     teamName = '',
     isActive = true,
     hasPaid = false,
@@ -40,15 +39,9 @@ export function registrationForm({
             <p class="text-sm font-bold text-gray-900 dark:text-white ml-1">${divisionName || 'N/A'}</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label for="reg-first-name" class="${labelClasses}">First Name</label>
-                <input type="text" required id="reg-first-name" name="firstName" value="${firstName}" class="${inputClasses}" />
-            </div>
-            <div>
-                <label for="reg-last-name" class="${labelClasses}">Last Name</label>
-                <input type="text" required id="reg-last-name" name="lastName" value="${lastName}" class="${inputClasses}" />
-            </div>
+        <div>
+            <label for="reg-full-name" class="${labelClasses}">Full Name</label>
+            <input type="text" required id="reg-full-name" name="fullName" value="${fullName}" class="${inputClasses}" />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -68,8 +61,8 @@ export function registrationForm({
                 <input type="text" id="reg-city" name="city" value="${city}" class="${inputClasses}" />
             </div>
             <div>
-                <label for="reg-position" class="${labelClasses}">Desired Position</label>
-                <input type="text" id="reg-position" name="desiredPosition" value="${desiredPosition}" class="${inputClasses}" />
+                <label for="reg-position" class="${labelClasses}">Position</label>
+                <input type="text" id="reg-position" name="position" value="${position}" class="${inputClasses}" />
             </div>
         </div>
 

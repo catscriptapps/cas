@@ -20,19 +20,31 @@ $dataAttrs = [
 ?>
 <tr id="sport-row-<?= $rowItem['sport_id'] ?? '0' ?>" data-encoded-id="<?= $rowItem['encoded_id'] ?? '' ?>" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group font-sans">
     <td class="px-6 py-4">
-        <div class="flex items-center gap-3">
-            <div class="h-9 w-9 shrink-0 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-sm">
-                <?= strtoupper(substr($rowItem['sport_name'] ?? 'S', 0, 1)) ?>
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="h-9 w-9 shrink-0 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-sm">
+                    <?= strtoupper(substr($rowItem['sport_name'] ?? 'S', 0, 1)) ?>
+                </div>
+                <div class="min-w-0">
+                    <div class="text-sm font-bold text-gray-900 dark:text-white truncate"><?= htmlspecialchars($rowItem['sport_name'] ?? '') ?></div>
+                    <div class="text-xs text-gray-400 sm:hidden"><?= (int)($rowItem['league_count'] ?? 0) ?> leagues &middot; <?= $statusBadge ?></div>
+                </div>
             </div>
-            <div class="min-w-0">
-                <div class="text-sm font-bold text-gray-900 dark:text-white truncate"><?= htmlspecialchars($rowItem['sport_name'] ?? '') ?></div>
-                <div class="text-xs text-gray-400 sm:hidden"><?= (int)($rowItem['league_count'] ?? 0) ?> leagues</div>
-            </div>
+            <?php if ($canManage): ?>
+                <div class="sm:hidden shrink-0">
+                    <?php
+                    $editClass = 'edit-sport-btn';
+                    $deleteClass = 'delete-sport-btn';
+                    $isMobile = true;
+                    include __DIR__ . '/../ui/action-buttons.php';
+                    ?>
+                </div>
+            <?php endif; ?>
         </div>
     </td>
     <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-600 dark:text-gray-400"><?= (int)($rowItem['league_count'] ?? 0) ?></td>
-    <td class="px-6 py-4"><?= $statusBadge ?></td>
-    <td class="px-6 py-4 text-right">
+    <td class="px-6 py-4 hidden sm:table-cell"><?= $statusBadge ?></td>
+    <td class="px-6 py-4 text-right hidden sm:table-cell">
         <?php if ($canManage): ?>
             <?php
             $editClass = 'edit-sport-btn';

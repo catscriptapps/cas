@@ -1,7 +1,7 @@
 // /resources/js/pages/league-management-page.js
 
 import { initTabSwitcher } from '../ui/tab-switcher.js';
-import { enableTableSearch } from '../components/table-search.js';
+import { initDataTable } from '../components/data-table.js';
 import { initSportsModal } from '../modals/sports-modal.js';
 import { initLeaguesModal } from '../modals/leagues-modal.js';
 import { initDivisionsModal } from '../modals/divisions-modal.js';
@@ -14,31 +14,34 @@ export function init() {
 
     const baseUrl = window.APP_CONFIG?.baseUrl || '/';
 
-    enableTableSearch({
-        searchInputId: 'sports-search',
+    initDataTable({
         tbodyId: 'sports-tbody',
         countId: 'sports-count',
         endpoint: `${baseUrl}api/sports`,
         resourceLabel: 'sport',
-        addButtonId: 'add-sport-btn',
+        colspan: 4,
+        defaultSort: 'sport',
+        defaultDir: 'asc',
     });
 
-    enableTableSearch({
-        searchInputId: 'leagues-search',
+    initDataTable({
         tbodyId: 'leagues-tbody',
         countId: 'leagues-count',
         endpoint: `${baseUrl}api/leagues`,
         resourceLabel: 'league',
-        addButtonId: 'add-league-btn',
+        colspan: 5,
+        defaultSort: 'league',
+        defaultDir: 'asc',
     });
 
-    enableTableSearch({
-        searchInputId: 'divisions-search',
+    initDataTable({
         tbodyId: 'divisions-tbody',
         countId: 'divisions-count',
         endpoint: `${baseUrl}api/divisions`,
         resourceLabel: 'division',
-        addButtonId: 'add-division-btn',
+        colspan: 6,
+        defaultSort: 'division',
+        defaultDir: 'asc',
     });
 
     initSportsModal();

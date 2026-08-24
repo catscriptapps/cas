@@ -12,8 +12,7 @@ use App\Utils\IdEncoder;
 use Src\Service\AuthService;
 
 /**
- * Admin management of Leagues (Sport -> League -> Division). Search matches
- * the league name or its parent sport's name.
+ * Admin management of Leagues (Sport -> League -> Division).
  */
 class LeaguesController
 {
@@ -49,26 +48,62 @@ class LeaguesController
         return $query->orderBy('league')->get();
     }
 
+    /**
+     * Admin list. Supports the same per-column text filters + sortable
+     * columns + infinite scroll as UsersController::index() (see
+     * resources/js/components/data-table.js): `filter[league]` (league or
+     * sport name), `filter[status]`, `sort` + `dir`, `page`.
+     */
     public function index(): void
     {
-        $query = trim((string)($_GET['q'] ?? ''));
+        $filters = is_array($_GET['filter'] ?? null) ? $_GET['filter'] : [];
+        $sort = $_GET['sort'] ?? null;
+        $dir = strtolower((string)($_GET['dir'] ?? 'asc')) === 'desc' ? 'desc' : 'asc';
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 100;
+        $offset = ($page - 1) * $perPage;
 
-        $builder = League::with('sport')->withCount('divisions')->orderBy('league');
-        if ($query !== '') {
-            $builder->where(function ($q) use ($query) {
-                $q->where('league', 'LIKE', "%{$query}%")
-                    ->orWhereHas('sport', fn($sq) => $sq->where('sport_name', 'LIKE', "%{$query}%"));
+        $builder = League::with('sport')->withCount('divisions');
+
+        if (!empty($filters['league'])) {
+            $needle = $filters['league'];
+            $builder->where(function ($q) use ($needle) {
+                $q->where('league', 'LIKE', "%{$needle}%")
+                    ->orWhereHas('sport', fn($sq) => $sq->where('sport_name', 'LIKE', "%{$needle}%"));
             });
         }
+        if (!empty($filters['status'])) {
+            $needle = strtolower($filters['status']);
+            if (str_contains('active', $needle) && !str_contains('inactive', $needle)) {
+                $builder->where('status_id', League::STATUS_ACTIVE);
+            } elseif (str_contains('inactive', $needle)) {
+                $builder->where('status_id', League::STATUS_INACTIVE);
+            }
+        }
 
-        $leagues = $builder->get();
+        $totalFiltered = (clone $builder)->count();
 
-        if (isset($_GET['q'])) {
+        $sortColumns = ['divisions' => 'divisions_count', 'status' => 'status_id'];
+        if ($sort === 'league') {
+            $builder->orderBy('league', $dir);
+        } elseif (isset($sortColumns[$sort])) {
+            $builder->orderBy($sortColumns[$sort], $dir);
+        } else {
+            $builder->orderBy('league', 'asc');
+        }
+
+        $leagues = $builder->offset($offset)->limit($perPage)->get();
+
+        if (isset($_GET['page']) || isset($_GET['filter']) || isset($_GET['sort'])) {
             header('Content-Type: application/json');
             echo json_encode([
                 'success' => true,
                 'data' => $leagues->map(fn($l) => ['rowHtml' => self::renderRow($l)])->values(),
-                'meta' => ['total' => $leagues->count()],
+                'meta' => [
+                    'total' => $totalFiltered,
+                    'loaded' => $leagues->count(),
+                    'hasMore' => ($offset + $leagues->count()) < $totalFiltered,
+                ],
             ]);
             exit;
         }
@@ -79,7 +114,7 @@ class LeaguesController
         }
 
         $GLOBALS['leagueRows'] = $html;
-        $GLOBALS['totalLeaguesCount'] = $leagues->count();
+        $GLOBALS['totalLeaguesCount'] = $totalFiltered;
     }
 
     public static function renderRow(League $league): string

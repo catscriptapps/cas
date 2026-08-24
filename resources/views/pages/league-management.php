@@ -37,97 +37,186 @@ $canManage = AuthService::isLoggedIn();
 
     <!-- Sports tab -->
     <div id="tab-sports" class="tab-pane block">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-            <input type="text" id="sports-search" placeholder="Search sports…" class="w-full sm:max-w-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm py-2 px-3.5 focus:border-primary-400 focus:ring-primary-400 transition-colors">
-            <?php if ($canManage): ?>
+        <?php if ($canManage): ?>
+            <div class="flex justify-end mb-4">
                 <button type="button" id="add-sport-btn" class="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-2.5 text-sm font-bold text-white shadow-md hover:bg-primary-600 transition-all active:scale-95">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                     Add Sport
                 </button>
-            <?php endif; ?>
-        </div>
-        <div class="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 rounded-2xl overflow-x-auto">
-            <table class="w-full divide-y divide-gray-200 dark:divide-gray-800 min-w-[500px]">
-                <thead>
-                    <tr class="bg-gray-50 dark:bg-gray-800/50">
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sport</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">Leagues</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-right"><span class="sr-only">Actions</span></th>
-                    </tr>
-                </thead>
-                <tbody id="sports-tbody" class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
-                    <?= $sportRows ?>
-                </tbody>
-            </table>
-        </div>
-        <div class="px-1 pt-3">
-            <p id="sports-count" class="text-sm text-gray-600 dark:text-gray-400 font-medium"><?= (int)($GLOBALS['totalSportsCount'] ?? 0) ?> sports</p>
+            </div>
+        <?php endif; ?>
+        <div class="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 rounded-2xl">
+            <div class="w-full">
+                <table class="w-full divide-y divide-gray-200 dark:divide-gray-800 table-fixed">
+                    <thead class="sticky top-[84px] sm:top-[96px] z-[30] shadow-sm rounded-t-2xl overflow-clip">
+                        <tr class="bg-gray-50 dark:bg-gray-800/50">
+                            <th class="px-6 py-4 text-left w-full sm:w-[45%]">
+                                <?php $sortColumn = 'sport';
+                                $sortLabel = 'Sport';
+                                include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                            </th>
+                            <th class="px-6 py-4 text-left hidden sm:table-cell w-[25%]">Leagues</th>
+                            <th class="px-6 py-4 text-left hidden sm:table-cell w-[20%]">
+                                <?php $sortColumn = 'status';
+                                $sortLabel = 'Status';
+                                include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                            </th>
+                            <th class="relative px-6 py-4 text-right w-24 hidden sm:table-cell"><span class="sr-only">Actions</span></th>
+                        </tr>
+                        <tr class="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+                            <th class="px-6 py-2.5">
+                                <?php $filterColumn = 'sport';
+                                $filterPlaceholder = 'Filter sport…';
+                                include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
+                            </th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell"></th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell">
+                                <?php $filterColumn = 'status';
+                                $filterPlaceholder = 'active / inactive…';
+                                include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
+                            </th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="sports-tbody" data-total="<?= (int)($GLOBALS['totalSportsCount'] ?? 0) ?>" class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
+                        <?php if (empty($sportRows)): ?>
+                            <tr><td colspan="4" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400 font-medium">No sports found</td></tr>
+                        <?php else: ?>
+                            <?= $sportRows ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php $footerCountName = 'sports';
+            include __DIR__ . '/../components/ui/footer-count.php'; ?>
         </div>
     </div>
 
     <!-- Leagues tab -->
     <div id="tab-leagues" class="tab-pane hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-            <input type="text" id="leagues-search" placeholder="Search leagues…" class="w-full sm:max-w-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm py-2 px-3.5 focus:border-primary-400 focus:ring-primary-400 transition-colors">
-            <?php if ($canManage): ?>
+        <?php if ($canManage): ?>
+            <div class="flex justify-end mb-4">
                 <button type="button" id="add-league-btn" class="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-2.5 text-sm font-bold text-white shadow-md hover:bg-primary-600 transition-all active:scale-95">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                     Add League
                 </button>
-            <?php endif; ?>
-        </div>
-        <div class="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 rounded-2xl overflow-x-auto">
-            <table class="w-full divide-y divide-gray-200 dark:divide-gray-800 min-w-[600px]">
-                <thead>
-                    <tr class="bg-gray-50 dark:bg-gray-800/50">
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">League</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sport</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">Divisions</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-right"><span class="sr-only">Actions</span></th>
-                    </tr>
-                </thead>
-                <tbody id="leagues-tbody" class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
-                    <?= $leagueRows ?>
-                </tbody>
-            </table>
-        </div>
-        <div class="px-1 pt-3">
-            <p id="leagues-count" class="text-sm text-gray-600 dark:text-gray-400 font-medium"><?= (int)($GLOBALS['totalLeaguesCount'] ?? 0) ?> leagues</p>
+            </div>
+        <?php endif; ?>
+        <div class="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 rounded-2xl">
+            <div class="w-full">
+                <table class="w-full divide-y divide-gray-200 dark:divide-gray-800 table-fixed">
+                    <thead class="sticky top-[84px] sm:top-[96px] z-[30] shadow-sm rounded-t-2xl overflow-clip">
+                        <tr class="bg-gray-50 dark:bg-gray-800/50">
+                            <th class="px-6 py-4 text-left w-full sm:w-[35%]">
+                                <?php $sortColumn = 'league';
+                                $sortLabel = 'League';
+                                include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                            </th>
+                            <th class="px-6 py-4 text-left hidden sm:table-cell w-[20%]">Sport</th>
+                            <th class="px-6 py-4 text-left hidden sm:table-cell w-[20%]">
+                                <?php $sortColumn = 'divisions';
+                                $sortLabel = 'Divisions';
+                                include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                            </th>
+                            <th class="px-6 py-4 text-left hidden sm:table-cell w-[15%]">
+                                <?php $sortColumn = 'status';
+                                $sortLabel = 'Status';
+                                include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                            </th>
+                            <th class="relative px-6 py-4 text-right w-24 hidden sm:table-cell"><span class="sr-only">Actions</span></th>
+                        </tr>
+                        <tr class="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+                            <th class="px-6 py-2.5">
+                                <?php $filterColumn = 'league';
+                                $filterPlaceholder = 'Filter league or sport…';
+                                include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
+                            </th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell"></th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell"></th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell">
+                                <?php $filterColumn = 'status';
+                                $filterPlaceholder = 'active / inactive…';
+                                include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
+                            </th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="leagues-tbody" data-total="<?= (int)($GLOBALS['totalLeaguesCount'] ?? 0) ?>" class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
+                        <?php if (empty($leagueRows)): ?>
+                            <tr><td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400 font-medium">No leagues found</td></tr>
+                        <?php else: ?>
+                            <?= $leagueRows ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php $footerCountName = 'leagues';
+            include __DIR__ . '/../components/ui/footer-count.php'; ?>
         </div>
     </div>
 
     <!-- Divisions tab -->
     <div id="tab-divisions" class="tab-pane hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-            <input type="text" id="divisions-search" placeholder="Search divisions…" class="w-full sm:max-w-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm py-2 px-3.5 focus:border-primary-400 focus:ring-primary-400 transition-colors">
-            <?php if ($canManage): ?>
+        <?php if ($canManage): ?>
+            <div class="flex justify-end mb-4">
                 <button type="button" id="add-division-btn" class="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-2.5 text-sm font-bold text-white shadow-md hover:bg-primary-600 transition-all active:scale-95">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                     Add Division
                 </button>
-            <?php endif; ?>
-        </div>
-        <div class="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 rounded-2xl overflow-x-auto">
-            <table class="w-full divide-y divide-gray-200 dark:divide-gray-800 min-w-[700px]">
-                <thead>
-                    <tr class="bg-gray-50 dark:bg-gray-800/50">
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Division</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">League</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">Sport</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Price</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-right"><span class="sr-only">Actions</span></th>
-                    </tr>
-                </thead>
-                <tbody id="divisions-tbody" class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
-                    <?= $divisionRows ?>
-                </tbody>
-            </table>
-        </div>
-        <div class="px-1 pt-3">
-            <p id="divisions-count" class="text-sm text-gray-600 dark:text-gray-400 font-medium"><?= (int)($GLOBALS['totalDivisionsCount'] ?? 0) ?> divisions</p>
+            </div>
+        <?php endif; ?>
+        <div class="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 rounded-2xl">
+            <div class="w-full">
+                <table class="w-full divide-y divide-gray-200 dark:divide-gray-800 table-fixed">
+                    <thead class="sticky top-[84px] sm:top-[96px] z-[30] shadow-sm rounded-t-2xl overflow-clip">
+                        <tr class="bg-gray-50 dark:bg-gray-800/50">
+                            <th class="px-6 py-4 text-left w-full sm:w-[30%]">
+                                <?php $sortColumn = 'division';
+                                $sortLabel = 'Division';
+                                include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                            </th>
+                            <th class="px-6 py-4 text-left hidden sm:table-cell w-[20%]">League</th>
+                            <th class="px-6 py-4 text-left hidden sm:table-cell w-[15%]">Sport</th>
+                            <th class="px-6 py-4 text-left hidden sm:table-cell w-[15%]">
+                                <?php $sortColumn = 'price';
+                                $sortLabel = 'Price';
+                                include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                            </th>
+                            <th class="px-6 py-4 text-left hidden sm:table-cell w-[10%]">
+                                <?php $sortColumn = 'status';
+                                $sortLabel = 'Status';
+                                include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                            </th>
+                            <th class="relative px-6 py-4 text-right w-24 hidden sm:table-cell"><span class="sr-only">Actions</span></th>
+                        </tr>
+                        <tr class="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+                            <th class="px-6 py-2.5">
+                                <?php $filterColumn = 'division';
+                                $filterPlaceholder = 'Filter division or league…';
+                                include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
+                            </th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell"></th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell"></th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell"></th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell">
+                                <?php $filterColumn = 'status';
+                                $filterPlaceholder = 'active / inactive…';
+                                include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
+                            </th>
+                            <th class="px-6 py-2.5 hidden sm:table-cell"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="divisions-tbody" data-total="<?= (int)($GLOBALS['totalDivisionsCount'] ?? 0) ?>" class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
+                        <?php if (empty($divisionRows)): ?>
+                            <tr><td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400 font-medium">No divisions found</td></tr>
+                        <?php else: ?>
+                            <?= $divisionRows ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php $footerCountName = 'divisions';
+            include __DIR__ . '/../components/ui/footer-count.php'; ?>
         </div>
     </div>
 </div>

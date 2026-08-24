@@ -8,6 +8,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Field set intentionally mirrors the legacy cas-sports `registrations`
+ * table exactly (full_name as one column, age stored as a string,
+ * province_id, position, has_paid as a plain int) -- the only addition is
+ * `paypal_order_id`, needed by the real PayPal Orders API flow this project
+ * has (legacy never had working payment processing to track an order id for).
+ */
 class Registration extends Model
 {
     protected $table = 'registrations';
@@ -24,53 +31,48 @@ class Registration extends Model
 
     protected $fillable = [
         'division_id',
-        'first_name',
-        'last_name',
+        'full_name',
         'age',
-        'email',
-        'phone',
         'address',
         'city',
-        'region_id',
+        'province_id',
         'postal_code',
-        'desired_position',
+        'phone',
+        'email',
+        'position',
         'hear_about_us',
         'team_name',
         'special_requests',
         'has_paid',
         'amount_paid',
-        'paypal_order_id',
-        'transaction_id',
         'status_id',
+        'registration_id',
+        'transaction_id',
+        'paypal_order_id',
         'date_created',
     ];
 
     protected $casts = [
-        'entry_id'    => 'integer',
-        'division_id' => 'integer',
-        'age'         => 'integer',
-        'region_id'   => 'integer',
+        'entry_id'      => 'integer',
+        'division_id'   => 'integer',
+        'province_id'   => 'integer',
         'hear_about_us' => 'integer',
-        'has_paid'    => 'boolean',
-        'amount_paid' => 'decimal:2',
-        'status_id'   => 'integer',
-        'date_created' => 'date',
-        'timestamp'   => 'datetime',
+        'has_paid'      => 'integer',
+        'amount_paid'   => 'float',
+        'status_id'     => 'integer',
+        'registration_id' => 'integer',
+        'date_created'  => 'date',
+        'timestamp'     => 'datetime',
     ];
-
-    public function getFullNameAttribute(): string
-    {
-        return trim("{$this->first_name} {$this->last_name}");
-    }
 
     public function division(): BelongsTo
     {
         return $this->belongsTo(Division::class, 'division_id', 'division_id');
     }
 
-    public function region(): BelongsTo
+    public function province(): BelongsTo
     {
-        return $this->belongsTo(Region::class, 'region_id', 'id');
+        return $this->belongsTo(Region::class, 'province_id', 'id');
     }
 
     public function source(): BelongsTo

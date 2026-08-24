@@ -12,8 +12,7 @@ use Src\Service\AuthService;
 
 /**
  * Admin management of Sports -- the top of the League Management hierarchy
- * (Sport -> League -> Division). Small list, so search returns every match
- * in one shot rather than paging (see resources/js/components/table-search.js).
+ * (Sport -> League -> Division).
  */
 class SportsController
 {
@@ -40,27 +39,56 @@ class SportsController
     }
 
     /**
-     * Admin list: all sports (active + inactive), optionally filtered by
-     * `?q=` (name search). Renders into $GLOBALS on a plain page load, or
-     * answers JSON for the live-search box.
+     * Admin list: all sports (active + inactive). Supports the same
+     * per-column text filters + sortable columns + infinite scroll as
+     * UsersController::index() (see resources/js/components/data-table.js):
+     * `filter[sport]`, `filter[status]` ("active"/"inactive"), `sort` +
+     * `dir`, `page`.
      */
     public function index(): void
     {
-        $query = trim((string)($_GET['q'] ?? ''));
+        $filters = is_array($_GET['filter'] ?? null) ? $_GET['filter'] : [];
+        $sort = $_GET['sort'] ?? null;
+        $dir = strtolower((string)($_GET['dir'] ?? 'asc')) === 'desc' ? 'desc' : 'asc';
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 100;
+        $offset = ($page - 1) * $perPage;
 
-        $builder = Sport::withCount('leagues')->orderBy('sport_name');
-        if ($query !== '') {
-            $builder->where('sport_name', 'LIKE', "%{$query}%");
+        $builder = Sport::withCount('leagues');
+
+        if (!empty($filters['sport'])) {
+            $builder->where('sport_name', 'LIKE', '%' . $filters['sport'] . '%');
+        }
+        if (!empty($filters['status'])) {
+            $needle = strtolower($filters['status']);
+            if (str_contains('active', $needle) && !str_contains('inactive', $needle)) {
+                $builder->where('status_id', Sport::STATUS_ACTIVE);
+            } elseif (str_contains('inactive', $needle)) {
+                $builder->where('status_id', Sport::STATUS_INACTIVE);
+            }
         }
 
-        $sports = $builder->get();
+        $totalFiltered = (clone $builder)->count();
 
-        if (isset($_GET['q'])) {
+        $sortColumns = ['sport' => 'sport_name', 'leagues' => 'leagues_count', 'status' => 'status_id'];
+        if (isset($sortColumns[$sort])) {
+            $builder->orderBy($sortColumns[$sort], $dir);
+        } else {
+            $builder->orderBy('sport_name', 'asc');
+        }
+
+        $sports = $builder->offset($offset)->limit($perPage)->get();
+
+        if (isset($_GET['page']) || isset($_GET['filter']) || isset($_GET['sort'])) {
             header('Content-Type: application/json');
             echo json_encode([
                 'success' => true,
                 'data' => $sports->map(fn($s) => ['rowHtml' => self::renderRow($s)])->values(),
-                'meta' => ['total' => $sports->count()],
+                'meta' => [
+                    'total' => $totalFiltered,
+                    'loaded' => $sports->count(),
+                    'hasMore' => ($offset + $sports->count()) < $totalFiltered,
+                ],
             ]);
             exit;
         }
@@ -71,7 +99,7 @@ class SportsController
         }
 
         $GLOBALS['sportRows'] = $html;
-        $GLOBALS['totalSportsCount'] = $sports->count();
+        $GLOBALS['totalSportsCount'] = $totalFiltered;
     }
 
     public static function renderRow(Sport $sport): string

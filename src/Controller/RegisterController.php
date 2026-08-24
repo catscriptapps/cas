@@ -44,24 +44,27 @@ class RegisterController
                 throw new \Exception('Please choose a valid division.');
             }
 
-            $regionId = (int)($data['region_id'] ?? 0);
+            $provinceId = (int)($data['province_id'] ?? 0);
+            $fullName = trim("{$firstName} {$lastName}");
 
+            // Field set (full_name, age as a string, province_id, position,
+            // has_paid as a plain int) matches the legacy cas-sports
+            // registrations table exactly -- see Registration model docblock.
             $registration = Registration::create([
                 'division_id'      => $division->division_id,
-                'first_name'       => $firstName,
-                'last_name'        => $lastName,
-                'age'              => isset($data['age']) && $data['age'] !== '' ? (int)$data['age'] : null,
+                'full_name'        => $fullName,
+                'age'              => isset($data['age']) && $data['age'] !== '' ? (string)(int)$data['age'] : null,
                 'email'            => $email,
                 'phone'            => $data['phone'] ?? null,
                 'address'          => $data['address'] ?? null,
                 'city'             => $data['city'] ?? null,
-                'region_id'        => $regionId > 0 ? $regionId : null,
+                'province_id'      => $provinceId > 0 ? $provinceId : null,
                 'postal_code'      => $data['postal_code'] ?? null,
-                'desired_position' => $data['desired_position'] ?? null,
+                'position'         => $data['position'] ?? null,
                 'hear_about_us'    => !empty($data['hear_about_us']) ? (int)$data['hear_about_us'] : null,
                 'team_name'        => $data['team_name'] ?? null,
                 'special_requests' => $data['special_requests'] ?? null,
-                'has_paid'         => false,
+                'has_paid'         => 0,
                 'amount_paid'      => 0,
                 'status_id'        => Registration::STATUS_ACTIVE,
             ]);

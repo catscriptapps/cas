@@ -27,9 +27,11 @@ class RegistrationsController
      * Prepare data for the Registrations list page. Supports the same
      * per-column text filters + sortable columns + infinite scroll pattern
      * as UsersController::index() (see resources/js/components/data-table.js):
-     * `filter[user]` (name or email), `filter[division]`, `filter[status]`
-     * ("paid"/"unpaid"/"current"/"archived"), each a case-insensitive LIKE,
-     * ANDed together; `sort` + `dir`; `page`.
+     * `filter[user]` (name, email, or phone), `filter[division]` (division
+     * name or position), `filter[requests]` (heard-about-us source or
+     * special-requests note), `filter[status]` ("paid"/"unpaid"/"current"/
+     * "archived"), each a case-insensitive LIKE, ANDed together; `sort`
+     * (user/division/requests/joined/payment/status) + `dir`; `page`.
      */
     public function index(): void
     {
@@ -40,29 +42,39 @@ class RegistrationsController
         $perPage = 100;
         $offset = ($page - 1) * $perPage;
 
-        $builder = Registration::with(['division', 'region', 'source'])
+        $builder = Registration::with(['division', 'province', 'source'])
             ->leftJoin('divisions', 'registrations.division_id', '=', 'divisions.division_id')
-            ->leftJoin('regions', 'registrations.region_id', '=', 'regions.id')
+            ->leftJoin('sources', 'registrations.hear_about_us', '=', 'sources.entry_id')
             ->select('registrations.*');
 
         if (!empty($filters['user'])) {
             $needle = $filters['user'];
             $builder->where(function ($q) use ($needle) {
-                $q->where('registrations.first_name', 'LIKE', "%{$needle}%")
-                    ->orWhere('registrations.last_name', 'LIKE', "%{$needle}%")
-                    ->orWhereRaw("CONCAT(registrations.first_name, ' ', registrations.last_name) LIKE ?", ["%{$needle}%"])
-                    ->orWhere('registrations.email', 'LIKE', "%{$needle}%");
+                $q->where('registrations.full_name', 'LIKE', "%{$needle}%")
+                    ->orWhere('registrations.email', 'LIKE', "%{$needle}%")
+                    ->orWhere('registrations.phone', 'LIKE', "%{$needle}%");
             });
         }
         if (!empty($filters['division'])) {
-            $builder->where('divisions.division', 'LIKE', '%' . $filters['division'] . '%');
+            $needle = $filters['division'];
+            $builder->where(function ($q) use ($needle) {
+                $q->where('divisions.division', 'LIKE', "%{$needle}%")
+                    ->orWhere('registrations.position', 'LIKE', "%{$needle}%");
+            });
+        }
+        if (!empty($filters['requests'])) {
+            $needle = $filters['requests'];
+            $builder->where(function ($q) use ($needle) {
+                $q->where('sources.hear_about_us', 'LIKE', "%{$needle}%")
+                    ->orWhere('registrations.special_requests', 'LIKE', "%{$needle}%");
+            });
         }
         if (!empty($filters['status'])) {
             $needle = strtolower($filters['status']);
             if (str_contains('paid', $needle)) {
-                $builder->where('registrations.has_paid', true);
+                $builder->where('registrations.has_paid', 1);
             } elseif (str_contains('unpaid', $needle)) {
-                $builder->where('registrations.has_paid', false);
+                $builder->where('registrations.has_paid', 0);
             } elseif (str_contains('archived', $needle)) {
                 $builder->where('registrations.status_id', '!=', 1);
             } elseif (str_contains('current', $needle)) {
@@ -73,13 +85,19 @@ class RegistrationsController
         $totalFiltered = (clone $builder)->count();
 
         $sortColumns = [
+            'user'     => 'registrations.full_name',
             'division' => 'divisions.division',
+            'requests' => 'sources.hear_about_us',
             'joined'   => 'registrations.date_created',
             'status'   => 'registrations.status_id',
         ];
 
-        if ($sort === 'user') {
-            $builder->orderBy('registrations.first_name', $dir)->orderBy('registrations.last_name', $dir);
+        if ($sort === 'payment') {
+            // Groups Unpaid/Paid together first, then orders by dollar amount
+            // within each group -- more useful than has_paid alone since the
+            // Payment column shows both the badge and the amount.
+            $builder->orderBy('registrations.has_paid', $dir)
+                ->orderBy('registrations.amount_paid', $dir);
         } elseif (isset($sortColumns[$sort])) {
             $builder->orderBy($sortColumns[$sort], $dir);
         } else {
@@ -115,9 +133,8 @@ class RegistrationsController
     public static function renderRow(Registration $registration): string
     {
         $rowItem = $registration->toArray();
-        $rowItem['full_name'] = $registration->full_name;
         $rowItem['division_name'] = $registration->division->division ?? 'N/A';
-        $rowItem['region_name'] = $registration->region->region ?? '';
+        $rowItem['province_name'] = $registration->province->region ?? '';
         $rowItem['source_label'] = $registration->source->hear_about_us ?? '';
         $rowItem['encoded_id'] = IdEncoder::encode((int)$registration->entry_id);
         $rowItem['created_at_formatted'] = $registration->date_created ? $registration->date_created->format('M j, Y') : 'N/A';
@@ -159,17 +176,16 @@ class RegistrationsController
                 throw new \Exception('Registration not found.');
             }
 
-            $registration->first_name = $data['first_name'] ?? $registration->first_name;
-            $registration->last_name  = $data['last_name'] ?? $registration->last_name;
-            $registration->email      = $data['email'] ?? $registration->email;
-            $registration->phone      = $data['phone'] ?? $registration->phone;
-            $registration->city       = $data['city'] ?? $registration->city;
-            $registration->desired_position = $data['desired_position'] ?? $registration->desired_position;
-            $registration->team_name  = $data['team_name'] ?? $registration->team_name;
+            $registration->full_name = $data['full_name'] ?? $registration->full_name;
+            $registration->email     = $data['email'] ?? $registration->email;
+            $registration->phone     = $data['phone'] ?? $registration->phone;
+            $registration->city      = $data['city'] ?? $registration->city;
+            $registration->position  = $data['position'] ?? $registration->position;
+            $registration->team_name = $data['team_name'] ?? $registration->team_name;
 
-            $wasPaid = (bool)$registration->has_paid;
+            $wasPaid = (int)$registration->has_paid === 1;
             $nowPaid = array_key_exists('has_paid', $data) ? (bool)$data['has_paid'] : $wasPaid;
-            $registration->has_paid = $nowPaid;
+            $registration->has_paid = $nowPaid ? 1 : 0;
 
             // Only move the dollar amount when an admin is manually turning
             // payment ON for the first time (e.g. e-transfer/cash) -- never
@@ -187,7 +203,7 @@ class RegistrationsController
             }
 
             $registration->save();
-            $registration->load(['division', 'region', 'source']);
+            $registration->load(['division', 'province', 'source']);
 
             static::logActivity("Updated registration: {$registration->full_name}", 'Registrations', $registration->entry_id);
 

@@ -19,8 +19,8 @@ export function initViewRegistration() {
         set('view-reg-division', data.divisionName || 'N/A');
         set('view-reg-amount', `$${parseFloat(data.amountPaid || 0).toFixed(2)}`);
         set('view-reg-phone', data.phone || 'N/A');
-        set('view-reg-location', [data.city, data.regionName].filter(Boolean).join(', ') || 'N/A');
-        set('view-reg-position', data.desiredPosition || 'N/A');
+        set('view-reg-location', [data.city, data.provinceName].filter(Boolean).join(', ') || 'N/A');
+        set('view-reg-position', data.position || 'N/A');
         set('view-reg-source', data.sourceLabel || 'N/A');
         set('view-reg-joined', `Registered ${data.joined || ''}`);
 

@@ -24,16 +24,30 @@ $dataAttrs = [
 ?>
 <tr id="division-row-<?= $rowItem['division_id'] ?? '0' ?>" data-encoded-id="<?= $rowItem['encoded_id'] ?? '' ?>" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group font-sans">
     <td class="px-6 py-4">
-        <div class="text-sm font-bold text-gray-900 dark:text-white"><?= htmlspecialchars($rowItem['division'] ?? '') ?></div>
-        <div class="text-xs text-gray-400 sm:hidden"><?= htmlspecialchars($rowItem['sport_name'] ?? 'N/A') ?> &middot; $<?= $price ?></div>
+        <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0">
+                <div class="text-sm font-bold text-gray-900 dark:text-white truncate"><?= htmlspecialchars($rowItem['division'] ?? '') ?></div>
+                <div class="text-xs text-gray-400 sm:hidden"><?= htmlspecialchars($rowItem['league_name'] ?? 'N/A') ?> &middot; $<?= $price ?> &middot; <?= $statusBadge ?></div>
+            </div>
+            <?php if ($canManage): ?>
+                <div class="sm:hidden shrink-0">
+                    <?php
+                    $editClass = 'edit-division-btn';
+                    $deleteClass = 'delete-division-btn';
+                    $isMobile = true;
+                    include __DIR__ . '/../ui/action-buttons.php';
+                    ?>
+                </div>
+            <?php endif; ?>
+        </div>
     </td>
-    <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400"><?= htmlspecialchars($rowItem['league_name'] ?? 'N/A') ?></td>
+    <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-600 dark:text-gray-400"><?= htmlspecialchars($rowItem['league_name'] ?? 'N/A') ?></td>
     <td class="px-6 py-4 hidden sm:table-cell">
         <span class="inline-flex items-center rounded-md bg-secondary-50 dark:bg-secondary-900/20 px-2 py-0.5 text-xs font-bold text-secondary-700 dark:text-secondary-400 border border-secondary-100 dark:border-secondary-800/30"><?= htmlspecialchars($rowItem['sport_name'] ?? 'N/A') ?></span>
     </td>
-    <td class="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">$<?= $price ?></td>
-    <td class="px-6 py-4"><?= $statusBadge ?></td>
-    <td class="px-6 py-4 text-right">
+    <td class="px-6 py-4 hidden sm:table-cell text-sm font-bold text-gray-900 dark:text-white">$<?= $price ?></td>
+    <td class="px-6 py-4 hidden sm:table-cell"><?= $statusBadge ?></td>
+    <td class="px-6 py-4 text-right hidden sm:table-cell">
         <?php if ($canManage): ?>
             <?php
             $editClass = 'edit-division-btn';

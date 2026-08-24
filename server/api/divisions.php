@@ -15,11 +15,12 @@ try {
     $controller = new DivisionsController();
 
     if ($method === 'GET') {
-        if (isset($_GET['q']) && !AuthService::userId()) {
+        $isAdminQuery = isset($_GET['filter']) || isset($_GET['sort']) || isset($_GET['page']);
+        if ($isAdminQuery && !AuthService::userId()) {
             json_response(['success' => false, 'messages' => ['Authentication required']], 401);
         }
 
-        if (isset($_GET['q'])) {
+        if ($isAdminQuery) {
             $controller->index();
             exit;
         }

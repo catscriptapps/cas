@@ -21,6 +21,8 @@ Capsule::schema()->disableForeignKeyConstraints();
 $tablesToDrop = [
     'password_resets',
     'recent_activities',
+    'contacts',
+    'contacts_roles',
     'registrations',
     'divisions',
     'leagues',
@@ -72,6 +74,15 @@ $messages = array_merge($messages, resetSourcesTable());
 
 require_once __DIR__ . '/../../scripts/reset/registrations.php';
 $messages = array_merge($messages, resetRegistrationsTable());
+
+// Contact Directory (league officials, timekeepers, emergency/township
+// contacts) -- contacts_roles must exist before contacts since contacts.
+// role_id references it.
+require_once __DIR__ . '/../../scripts/reset/contacts-roles.php';
+$messages = array_merge($messages, resetContactRolesTable());
+
+require_once __DIR__ . '/../../scripts/reset/contacts.php';
+$messages = array_merge($messages, resetContactsTable());
 
 // Support & Transient Auth Tables
 require_once __DIR__ . '/../../scripts/reset/recent-activities.php';
