@@ -25,6 +25,7 @@ $tablesToDrop = [
     'contacts_roles',
     'stats',
     'player_stats',
+    'gamesheets',
     'schedules',
     'players',
     'teams',
@@ -117,6 +118,13 @@ $messages = array_merge($messages, resetStatsTable());
 
 require_once __DIR__ . '/../../scripts/reset/player-stats.php';
 $messages = array_merge($messages, resetPlayerStatsTable());
+
+// Gamesheets -- per-player, per-game stat sheet, keyed to individual games
+// (schedule_id) rather than seasons directly. Independent of Stats/Standings
+// (no aggregation either way); needs schedules/teams/players to already
+// exist for its FK references.
+require_once __DIR__ . '/../../scripts/reset/gamesheets.php';
+$messages = array_merge($messages, resetGamesheetsTable());
 
 // Contact Directory (league officials, timekeepers, emergency/township
 // contacts) -- contacts_roles must exist before contacts since contacts.

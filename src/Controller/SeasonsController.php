@@ -92,7 +92,11 @@ class SeasonsController
         $GLOBALS['seasonRows'] = $html;
         $GLOBALS['teamReps'] = $reps;
         $GLOBALS['teamGroups'] = $groups;
-        $GLOBALS['title'] = $pageContext === 'stats' ? 'Stats+Standings' : 'Schedules';
+        $GLOBALS['title'] = match ($pageContext) {
+            'stats' => 'Stats+Standings',
+            'gamesheets' => 'Gamesheets',
+            default => 'Schedules',
+        };
         $GLOBALS['totalSeasonsCount'] = $totalFiltered;
     }
 

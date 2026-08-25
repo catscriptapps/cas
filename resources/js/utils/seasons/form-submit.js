@@ -12,10 +12,13 @@ function getPayload(form) {
         ? window.location.pathname.slice(baseUrl.length)
         : window.location.pathname;
 
+    const firstSegment = internalPath.split('/').filter(Boolean)[0];
+    const pageContext = ['stats', 'gamesheets'].includes(firstSegment) ? firstSegment : 'schedules';
+
     return {
         division_id: data.division_id,
         season_year: data.season_year,
-        page_context: internalPath.split('/').filter(Boolean)[0] === 'stats' ? 'stats' : 'schedules',
+        page_context: pageContext,
     };
 }
 

@@ -8,8 +8,9 @@ use Src\Service\AuthService;
 
 $pageContext = $pageContext ?? 'schedules';
 $contextConfig = [
-    'schedules' => ['class' => 'view-schedule-trigger', 'label' => 'View'],
-    'stats'     => ['class' => 'view-stats-trigger',    'label' => 'View'],
+    'schedules'  => ['class' => 'view-schedule-trigger',  'label' => 'View'],
+    'stats'      => ['class' => 'view-stats-trigger',     'label' => 'View'],
+    'gamesheets' => ['class' => 'view-gamesheet-trigger',  'label' => 'View'],
 ];
 $currentConfig = $contextConfig[$pageContext] ?? $contextConfig['schedules'];
 

@@ -56,6 +56,7 @@ class NavigationConfig
             'Contacts' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>',
             'Schedules' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008z"></path></svg>',
             'Stats+Standings' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v-6.75m6.75 6.75V6.75m-3.75 10.5V13.5M3.75 21h16.5a1.5 1.5 0 001.5-1.5V4.5A1.5 1.5 0 0020.25 3H3.75A1.5 1.5 0 002.25 4.5v15A1.5 1.5 0 003.75 21z"></path></svg>',
+            'Gamesheets' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"></path></svg>',
         ];
     }
 
@@ -95,6 +96,11 @@ class NavigationConfig
                 'url' => $base . '/stats',
                 'title' => 'Stats+Standings',
                 'summary' => 'Team standings and player season stats by division.'
+            ],
+            'Gamesheets' => [
+                'url' => $base . '/gamesheets',
+                'title' => 'Gamesheets',
+                'summary' => 'Per-game player stat sheets by division and season.'
             ],
             'Registrations' => [
                 'url' => $base . '/registrations',
@@ -151,6 +157,11 @@ class NavigationConfig
                 'url' => $base . '/stats',
                 'title' => 'Stats+Standings',
                 'summary' => 'Team standings and player season stats by division.'
+            ],
+            'Gamesheets' => [
+                'url' => $base . '/gamesheets',
+                'title' => 'Gamesheets',
+                'summary' => 'Per-game player stat sheets by division and season.'
             ],
             'Contact' => [
                 'url' => $base . '/contact',
