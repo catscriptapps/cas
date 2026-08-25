@@ -36,6 +36,18 @@ class NavigationConfig
             if ($normalizedPath === $normalizedLinkUrl) {
                 return ['title' => $config['title'] ?? '', 'summary' => $config['summary'] ?? ''];
             }
+
+            // Dropdown entries (see 'League Details') carry their real pages
+            // one level down in 'children' -- a hard load or a popstate/
+            // programmatic loadPartial() (no clicked <a data-title> to read
+            // from) needs those to resolve a title/summary too, not just the
+            // top-level parent link.
+            foreach ($config['children'] ?? [] as $childConfig) {
+                $normalizedChildUrl = rtrim($childConfig['url'] ?? '', '/') ?: '/';
+                if ($normalizedPath === $normalizedChildUrl) {
+                    return ['title' => $childConfig['title'] ?? '', 'summary' => $childConfig['summary'] ?? ''];
+                }
+            }
         }
 
         return null;
@@ -58,6 +70,7 @@ class NavigationConfig
             'Stats+Standings' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v-6.75m6.75 6.75V6.75m-3.75 10.5V13.5M3.75 21h16.5a1.5 1.5 0 001.5-1.5V4.5A1.5 1.5 0 0020.25 3H3.75A1.5 1.5 0 002.25 4.5v15A1.5 1.5 0 003.75 21z"></path></svg>',
             'Gamesheets' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"></path></svg>',
             'Incident Reports' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
+            'League Details' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>',
         ];
     }
 
@@ -168,6 +181,48 @@ class NavigationConfig
                 'url' => $base . '/gamesheets',
                 'title' => 'Gamesheets',
                 'summary' => 'Per-game player stat sheets by division and season.'
+            ],
+            'League Details' => [
+                'url' => $base . '/locations',
+                'title' => 'League Details',
+                'summary' => 'Locations, rulebooks, required equipment, and frequently asked questions.',
+                'children' => [
+                    'Locations' => [
+                        'url' => $base . '/locations',
+                        'title' => 'Locations',
+                        'summary' => 'Rinks and venues for every ball hockey and ice hockey division.'
+                    ],
+                    'Suspension Matrix' => [
+                        'url' => $base . '/suspension-matrix',
+                        'title' => 'Suspension Matrix',
+                        'summary' => 'Discipline and suspension reference for on-ice and on-floor incidents.'
+                    ],
+                    'Ball Hockey Rulebook' => [
+                        // /public/documents (not /public/pdfs -- that folder is
+                        // purged on every DB reset as transient generated-PDF
+                        // output; these are permanent static assets).
+                        'url' => $base . '/documents/ball_hockey_rulebook.pdf',
+                        'title' => 'Ball Hockey Rulebook',
+                        'summary' => '',
+                        'target' => '_blank',
+                    ],
+                    'Ice Hockey Rulebook' => [
+                        'url' => $base . '/documents/ice_hockey_rulebook.pdf',
+                        'title' => 'Ice Hockey Rulebook',
+                        'summary' => '',
+                        'target' => '_blank',
+                    ],
+                    'Required Equipment' => [
+                        'url' => $base . '/equipment-required',
+                        'title' => 'Required Equipment',
+                        'summary' => 'Mandatory and recommended gear for kids and adult ball hockey and ice hockey.'
+                    ],
+                    'FAQ' => [
+                        'url' => $base . '/home#faqs',
+                        'title' => 'Home',
+                        'summary' => ''
+                    ],
+                ],
             ],
             'Contact' => [
                 'url' => $base . '/contact',

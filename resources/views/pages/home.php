@@ -42,7 +42,7 @@ declare(strict_types=1);
         $quickLinks = [
             ['icon' => 'fa-calendar-days', 'title' => 'Schedules', 'summary' => 'Game days, times, and rinks for every division.'],
             ['icon' => 'fa-chart-simple', 'title' => 'Stats+Standings', 'summary' => 'Live team standings and player leaderboards.'],
-            ['icon' => 'fa-people-group', 'title' => 'League Details', 'summary' => 'Locations, rules, and required equipment.'],
+            ['icon' => 'fa-people-group', 'title' => 'League Details', 'summary' => 'Locations, rules, and required equipment.', 'url' => $baseUrl . 'locations'],
             ['icon' => 'fa-envelope', 'title' => 'Contact Us', 'summary' => 'Questions about a league or getting involved.', 'url' => $baseUrl . 'contact'],
         ];
         ?>
@@ -118,7 +118,7 @@ declare(strict_types=1);
     </div>
 </section>
 
-<section class="relative py-20 px-6 sm:px-12 lg:px-24 xl:px-32">
+<section id="faqs" class="relative py-20 px-6 sm:px-12 lg:px-24 xl:px-32">
     <div class="max-w-2xl mx-auto relative z-10 text-center space-y-4 mb-12" data-aos="fade-up" data-aos-duration="700">
         <div class="inline-flex items-center justify-center gap-2">
             <span class="h-1.5 w-1.5 rounded-full bg-primary-500 dark:bg-primary-400 animate-pulse"></span>
@@ -133,15 +133,48 @@ declare(strict_types=1);
 
     <div class="max-w-3xl mx-auto space-y-3 relative z-10" x-data="{ open: 0 }">
         <?php
+        // 'a' is trusted, developer-authored HTML (not user input) -- some
+        // answers need a list or a link, so it's rendered raw below rather
+        // than htmlspecialchars()'d.
         $faqs = [
-            ['q' => 'When does the season start?', 'a' => "Season start dates vary by league and division -- reach out through the Contact page and we'll point you to the right schedule."],
-            ['q' => 'What equipment do I need?', 'a' => 'Requirements depend on the league (ball vs. ice divisions). Full equipment lists will be posted under League Details as each season is finalized.'],
-            ['q' => 'How much does it cost to play?', 'a' => 'Registration fees vary by division and are published when registration opens for that season.'],
-            ['q' => 'Where are the games played?', 'a' => "Locations depend on the league and division -- game-day rinks and venues are listed on each season's schedule."],
+            ['q' => 'When does the season start?', 'a' => 'Season start dates vary by league and division -- check the <a href="' . $baseUrl . 'schedules" data-partial class="text-primary-600 font-bold hover:underline">Schedules</a> page for exact dates for your division.'],
+            ['q' => 'What equipment do I need?', 'a' => '<ul class="list-disc pl-5 space-y-1.5">
+                <li>Indoor Ball Hockey requires a helmet, gloves, running shoes, and a stick (jock/jill and shin guards are highly recommended)</li>
+                <li>Outdoor Ball Hockey requires gloves, running shoes, and a stick (helmet, jock/jill, and shin guards are highly recommended)</li>
+                <li>Ice Hockey requires a helmet, gloves, jock/jill, chest protector, shin guards, hockey pants, and a stick (a facial visor or cage is highly recommended)</li>
+            </ul>
+            <p class="mt-3">Full breakdowns are on the <a href="' . $baseUrl . 'equipment-required" data-partial class="text-primary-600 font-bold hover:underline">Required Equipment</a> page.</p>'],
+            ['q' => 'What is the cost?', 'a' => '<ul class="list-disc pl-5 space-y-1.5">
+                <li>Adult Ball Hockey leagues: $210 + HST per person for the season (or a team-fee option)</li>
+                <li>Outdoor team fee: $2,400 for Women\'s and Coed 4-on-4 (11-player minimum roster); $2,200 for Men\'s 3-on-3 (10-player minimum roster)</li>
+                <li>Indoor team fee: $2,800 for Women\'s, Men\'s, and Coed (14-player minimum roster)</li>
+                <li>Ice Hockey Spring/Summer: $465 per player</li>
+                <li>Ice Hockey Winter: $465 per player</li>
+            </ul>'],
+            ['q' => 'Where are the games played?', 'a' => 'Game-day rinks and venues depend on the league and division -- see the <a href="' . $baseUrl . 'locations" data-partial class="text-primary-600 font-bold hover:underline">Locations</a> page, or check your specific season\'s schedule.'],
+            ['q' => 'What are the ages within the leagues?', 'a' => '<ul class="list-disc pl-5 space-y-1.5">
+                <li>Adults are 18+ (all ages are welcome, and most teams have a variety of ages per team)</li>
+                <li>All 35+ leagues require the player to be turning 35 prior to the end of the current year (some exceptions may apply)</li>
+            </ul>'],
+            ['q' => 'What is the skill level required?', 'a' => '<ul class="list-disc pl-5 space-y-1.5">
+                <li>All skill levels are welcome</li>
+                <li>In most cases there will be divisions (A/B/C/D) depending on the number of teams</li>
+            </ul>'],
+            ['q' => 'Can I register as an individual or team?', 'a' => 'We welcome individuals, groups of players, and full teams.'],
+            ['q' => 'What if I have only a partial team?', 'a' => 'We can help build out your roster -- we often have players on a waitlist looking for a team.'],
+            ['q' => 'What is the refund policy?', 'a' => '<ul class="list-disc pl-5 space-y-1.5">
+                <li>A $50 administrative fee applies; refunds are issued via PayPal, prorated for games already scheduled</li>
+                <li>Refunds are only provided up to 25% of season completion, and only for unforeseen circumstances -- this includes significant injury, medical reasons (e.g. pregnancy), or a move from the area</li>
+                <li>Refunds will not be provided after 25% of the season has been completed</li>
+            </ul>'],
+            ['q' => 'What is the PUC league?', 'a' => 'This league is for Persons with Unique Characteristics. Please reach out through the <a href="' . $baseUrl . 'contact" data-partial class="text-primary-600 font-bold hover:underline">Contact</a> page if you have a player who is Autistic/ASD or has other specific needs.'],
+            ['q' => 'Can I join the invitational shack league?', 'a' => 'This is an invitational Coed league -- we run several open Coed leagues.'],
+            ['q' => 'How do I become a sponsor?', 'a' => 'Please inquire -- we have numerous options for sponsors at varying levels. Send an email to <a href="mailto:info@canadianallstarsports.com" class="text-primary-600 font-bold hover:underline">info@canadianallstarsports.com</a> or <a href="mailto:info@cas-sports.com" class="text-primary-600 font-bold hover:underline">info@cas-sports.com</a>.'],
+            ['q' => 'What is the weather cancellation policy?', 'a' => 'Please follow us on social media for live weather or cancellation updates -- <a href="https://www.facebook.com/Thornton-Ball-Hockey-League-277517455033/" target="_blank" rel="noopener" class="text-primary-600 font-bold hover:underline">Facebook</a> / <a href="https://www.instagram.com/essahockey/" target="_blank" rel="noopener" class="text-primary-600 font-bold hover:underline">Instagram</a>.'],
         ];
         ?>
         <?php foreach ($faqs as $i => $faq): ?>
-            <div class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden" data-aos="fade-up" data-aos-duration="600" data-aos-delay="<?= $i * 80 ?>">
+            <div class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden" data-aos="fade-up" data-aos-duration="600" data-aos-delay="<?= min($i, 6) * 80 ?>">
                 <button type="button" @click="open = (open === <?= $i ?> ? -1 : <?= $i ?>)"
                     class="w-full flex items-center justify-between gap-4 px-5 py-4 text-left">
                     <span class="text-sm font-bold text-secondary-900 dark:text-white"><?= htmlspecialchars($faq['q']) ?></span>
@@ -150,7 +183,7 @@ declare(strict_types=1);
                     </svg>
                 </button>
                 <div x-show="open === <?= $i ?>" x-collapse x-cloak class="px-5 pb-4">
-                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium leading-relaxed"><?= htmlspecialchars($faq['a']) ?></p>
+                    <div class="text-sm text-gray-500 dark:text-gray-400 font-medium leading-relaxed"><?= $faq['a'] ?></div>
                 </div>
             </div>
         <?php endforeach; ?>

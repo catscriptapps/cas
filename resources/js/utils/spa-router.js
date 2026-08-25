@@ -91,7 +91,20 @@ export async function loadPartial(url, pushState = true, clickedLink = null) {
     if (pushState) history.pushState({ url }, '', url);
 
     hideSpinner();
-    window.scrollTo(0, 0);
+
+    // A URL fragment (e.g. /home#faqs, used by the League Details dropdown's
+    // FAQ link) needs an explicit scroll here -- fetch() never sees fragments
+    // (browsers don't send them to the server) and a normal same-page anchor
+    // click doesn't apply either, since the target section didn't exist in
+    // the DOM until the innerHTML swap above just created it.
+    const hash = new URL(url, window.location.origin).hash;
+    const target = hash ? document.getElementById(hash.slice(1)) : null;
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo(0, 0);
+    }
+
     document.body.dispatchEvent(new CustomEvent('partial-load', { detail: { url } }));
 
   } catch (err) {

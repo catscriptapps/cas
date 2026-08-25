@@ -53,8 +53,8 @@
     "file": "js/regions-component-BQf5KGOV.min.js",
     "name": "regions-component"
   },
-  "_seasons-init-HzuPPsr4.min.js": {
-    "file": "js/seasons-init-HzuPPsr4.min.js",
+  "_seasons-init-BA-3XcZH.min.js": {
+    "file": "js/seasons-init-BA-3XcZH.min.js",
     "name": "seasons-init",
     "imports": [
       "_modal-factory-D72OMj0_.min.js",
@@ -63,12 +63,12 @@
       "_table-pagination-count-JrykreAu.min.js",
       "_divisions-api-MolTNHJp.min.js",
       "_delete-factory-DhbIOdTj.min.js",
-      "_spa-router-FBLxBa_N.min.js",
+      "_spa-router-7W36nTwA.min.js",
       "_data-table-9SFXZdzb.min.js"
     ]
   },
-  "_spa-router-FBLxBa_N.min.js": {
-    "file": "js/spa-router-FBLxBa_N.min.js",
+  "_spa-router-7W36nTwA.min.js": {
+    "file": "js/spa-router-7W36nTwA.min.js",
     "name": "spa-router"
   },
   "_spinner-utils-BGUFcaGl.min.js": {
@@ -93,7 +93,7 @@
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_spa-router-FBLxBa_N.min.js",
+      "_spa-router-7W36nTwA.min.js",
       "_modal-factory-D72OMj0_.min.js",
       "_form-validator-CeXCkSqx.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
@@ -143,8 +143,8 @@
     "src": "resources/js/pages/gamesheets-page.js",
     "isEntry": true,
     "imports": [
-      "_seasons-init-HzuPPsr4.min.js",
-      "_spa-router-FBLxBa_N.min.js",
+      "_seasons-init-BA-3XcZH.min.js",
+      "_spa-router-7W36nTwA.min.js",
       "_games-filter-CINcg_4Q.min.js",
       "_form-validator-CeXCkSqx.min.js",
       "_modal-factory-D72OMj0_.min.js",
@@ -191,7 +191,7 @@
     "imports": [
       "_profile-modal-DXeqH46Z.min.js",
       "_form-validator-CeXCkSqx.min.js",
-      "_spa-router-FBLxBa_N.min.js",
+      "_spa-router-7W36nTwA.min.js",
       "_delete-factory-DhbIOdTj.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
       "_animations-BtDgdX2G.min.js",
@@ -241,11 +241,11 @@
     "src": "resources/js/pages/schedules-page.js",
     "isEntry": true,
     "imports": [
-      "_seasons-init-HzuPPsr4.min.js",
+      "_seasons-init-BA-3XcZH.min.js",
       "_modal-factory-D72OMj0_.min.js",
       "_form-validator-CeXCkSqx.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
-      "_spa-router-FBLxBa_N.min.js",
+      "_spa-router-7W36nTwA.min.js",
       "_delete-factory-DhbIOdTj.min.js",
       "_games-filter-CINcg_4Q.min.js",
       "_table-pagination-count-JrykreAu.min.js",
@@ -259,8 +259,8 @@
     "src": "resources/js/pages/stats-page.js",
     "isEntry": true,
     "imports": [
-      "_seasons-init-HzuPPsr4.min.js",
-      "_spa-router-FBLxBa_N.min.js",
+      "_seasons-init-BA-3XcZH.min.js",
+      "_spa-router-7W36nTwA.min.js",
       "_form-validator-CeXCkSqx.min.js",
       "_modal-factory-D72OMj0_.min.js",
       "_spinner-utils-BGUFcaGl.min.js",

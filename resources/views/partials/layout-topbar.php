@@ -64,8 +64,15 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
 
                         <div class="absolute top-full right-0 min-w-[240px] bg-slate-950 dark:bg-black border-2 border-slate-800 dark:border-slate-900 rounded-xl shadow-2xl py-3 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
                             <?php foreach ($config['children'] as $childName => $childConfig): ?>
-                                <?php $isChildActive = ($currentUrlTrimmed === rtrim($childConfig['url'], '/')); ?>
-                                <a href="<?= $childConfig['url'] ?>" data-partial data-title="<?= htmlspecialchars($childConfig['title']) ?>" data-summary="<?= htmlspecialchars($childConfig['summary']) ?>"
+                                <?php
+                                $isChildActive = ($currentUrlTrimmed === rtrim($childConfig['url'], '/'));
+                                // Static file links (PDFs) open in a new tab and skip the SPA
+                                // fetch entirely -- bindPartialLinks() already ignores clicks on
+                                // any [target="_blank"] link, so this alone is enough; no need to
+                                // also drop data-partial.
+                                $childTargetAttr = isset($childConfig['target']) ? ' target="' . htmlspecialchars($childConfig['target']) . '"' : '';
+                                ?>
+                                <a href="<?= $childConfig['url'] ?>"<?= $childTargetAttr ?> data-partial data-title="<?= htmlspecialchars($childConfig['title']) ?>" data-summary="<?= htmlspecialchars($childConfig['summary']) ?>"
                                     class="block px-5 py-3 text-sm font-bold tracking-wide transition-colors <?= $isChildActive ? 'text-amber-400 bg-slate-900' : 'text-slate-200 hover:bg-slate-900 hover:text-amber-300' ?>">
                                     <?= $childName ?>
                                 </a>
@@ -201,8 +208,11 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                         x-transition:enter-end="opacity-100 translate-y-0"
                         class="pl-4 border-l-4 border-slate-300 dark:border-slate-700 space-y-2 ml-4">
                         <?php foreach ($config['children'] as $childName => $childConfig): ?>
-                            <?php $isChildActive = ($currentUrlTrimmed === rtrim($childConfig['url'], '/')); ?>
-                            <a href="<?= $childConfig['url'] ?>" data-partial data-title="<?= htmlspecialchars($childConfig['title']) ?>" data-summary="<?= htmlspecialchars($childConfig['summary']) ?>" @click="mobileMenuOpen = false"
+                            <?php
+                            $isChildActive = ($currentUrlTrimmed === rtrim($childConfig['url'], '/'));
+                            $childTargetAttr = isset($childConfig['target']) ? ' target="' . htmlspecialchars($childConfig['target']) . '"' : '';
+                            ?>
+                            <a href="<?= $childConfig['url'] ?>"<?= $childTargetAttr ?> data-partial data-title="<?= htmlspecialchars($childConfig['title']) ?>" data-summary="<?= htmlspecialchars($childConfig['summary']) ?>" @click="mobileMenuOpen = false"
                                 class="block px-4 py-3 rounded-lg text-sm <?= $isChildActive ? 'text-primary-600 dark:text-amber-400 font-black bg-primary-50/50 dark:bg-amber-400/10' : 'text-slate-600 dark:text-slate-300 font-bold hover:text-primary-600 dark:hover:text-amber-400' ?> transition-colors">
                                 <?= $childName ?>
                             </a>
