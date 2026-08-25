@@ -23,8 +23,8 @@ export function initSeasonsModule(pageContext = 'schedules') {
         countId: 'seasons-count',
         endpoint: `${window.APP_CONFIG?.baseUrl}api/seasons`,
         resourceLabel: 'season',
-        colspan: 3,
-        defaultSort: 'season',
+        colspan: 5,
+        defaultSort: 'year',
         defaultDir: 'desc',
         extraParams: { context: pageContext },
     });

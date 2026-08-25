@@ -33,30 +33,59 @@ class SeasonsController
         $perPage = 100;
         $offset = ($page - 1) * $perPage;
 
-        $builder = Season::with('division');
+        $builder = Season::with('division.league');
 
-        if (!empty($filters['season'])) {
-            $needle = $filters['season'];
-            $builder->where(function ($q) use ($needle) {
-                $q->whereHas('division', fn($sq) => $sq->where('division', 'LIKE', "%{$needle}%"))
-                    ->orWhere('season_year', 'LIKE', "%{$needle}%");
-            });
+        if (!empty($filters['division'])) {
+            $needle = $filters['division'];
+            $builder->whereHas('division', fn($sq) => $sq->where('division', 'LIKE', "%{$needle}%"));
+        }
+        if (!empty($filters['league'])) {
+            $needle = $filters['league'];
+            $builder->whereHas('division.league', fn($sq) => $sq->where('league', 'LIKE', "%{$needle}%"));
+        }
+        if (!empty($filters['year'])) {
+            $builder->where('season_year', 'LIKE', '%' . $filters['year'] . '%');
         }
         if (!empty($filters['status'])) {
+            // Arguments were backwards here (str_contains($haystack,
+            // $needle) reversed) -- since "inactive" is a superstring of
+            // "active", typing "active" matched the inactive branch instead,
+            // and typing "inactive" only "worked" because there happened to
+            // be no active rows left to wrongly include.
             $needle = strtolower($filters['status']);
-            if (str_contains('active', $needle) && !str_contains('inactive', $needle)) {
-                $builder->where('status_id', Season::STATUS_ACTIVE);
-            } elseif (str_contains('inactive', $needle)) {
+            if (str_contains($needle, 'inactive')) {
                 $builder->where('status_id', Season::STATUS_INACTIVE);
+            } elseif (str_contains($needle, 'active')) {
+                $builder->where('status_id', Season::STATUS_ACTIVE);
             }
         }
 
         $totalFiltered = (clone $builder)->count();
 
-        if ($sort === 'season') {
-            $builder->orderBy('season_year', $dir);
-        } else {
-            $builder->orderBy('season_year', 'desc')->orderBy('season_id', 'desc');
+        // `select('seasons.*')` on the join branches matters -- without it,
+        // divisions'/leagues' own status_id/date_created/timestamp columns
+        // (same names as seasons' own) would silently overwrite the season's
+        // real values when Eloquent hydrates the joined result set.
+        switch ($sort) {
+            case 'division':
+                $builder->join('divisions', 'seasons.division_id', '=', 'divisions.division_id')
+                    ->orderBy('divisions.division', $dir)
+                    ->select('seasons.*');
+                break;
+            case 'league':
+                $builder->join('divisions', 'seasons.division_id', '=', 'divisions.division_id')
+                    ->join('leagues', 'divisions.league_id', '=', 'leagues.league_id')
+                    ->orderBy('leagues.league', $dir)
+                    ->select('seasons.*');
+                break;
+            case 'year':
+                $builder->orderBy('season_year', $dir);
+                break;
+            case 'status':
+                $builder->orderBy('status_id', $dir);
+                break;
+            default:
+                $builder->orderBy('season_year', 'desc')->orderBy('season_id', 'desc');
         }
 
         $seasons = $builder->offset($offset)->limit($perPage)->get();
@@ -104,6 +133,7 @@ class SeasonsController
     {
         $rowItem = $season->toArray();
         $rowItem['division'] = $season->division->division ?? 'Unknown Division';
+        $rowItem['league'] = $season->division->league->league ?? 'Unknown League';
 
         $teams = TeamsController::getBySeason((int)$season->season_id);
         $rowItem['team_count'] = $teams->count();

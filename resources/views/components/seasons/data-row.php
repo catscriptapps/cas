@@ -24,6 +24,7 @@ $dataAttrs = [
     'encoded-id' => $rowItem['encoded_id'] ?? '',
     'division-id' => $rowItem['division_id'] ?? 0,
     'division-name' => $rowItem['division'] ?? '',
+    'league-name' => $rowItem['league'] ?? '',
     'season-year' => $rowItem['season_year'] ?? '',
     'status-id' => $rowItem['status_id'] ?? 1,
     'teams' => json_encode($rowItem['teams'] ?? []),
@@ -52,8 +53,13 @@ foreach ($dataAttrs as $key => $val) {
                         <?= htmlspecialchars($rowItem['division'] ?? 'Unknown') ?>
                     </span>
                 </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400">
-                    Season Year: <?= htmlspecialchars($rowItem['season_year'] ?? 'N/A') ?>
+                <?php
+                // Only shown below `sm` -- at sm+ the League and Season Year
+                // columns below cover this same info, and repeating it here
+                // too would just duplicate it.
+                ?>
+                <div class="text-xs text-gray-500 dark:text-gray-400 sm:hidden">
+                    <?= htmlspecialchars($rowItem['league'] ?? 'Unknown League') ?> &bull; <?= htmlspecialchars($rowItem['season_year'] ?? 'N/A') ?>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 mt-3 lg:hidden">
@@ -84,7 +90,15 @@ foreach ($dataAttrs as $key => $val) {
         </div>
     </td>
 
-    <td class="px-6 py-4 hidden sm:table-cell">
+    <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-700 dark:text-gray-300 truncate">
+        <?= htmlspecialchars($rowItem['league'] ?? 'Unknown League') ?>
+    </td>
+
+    <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+        <?= htmlspecialchars($rowItem['season_year'] ?? 'N/A') ?>
+    </td>
+
+    <td class="px-6 py-4 hidden sm:table-cell whitespace-nowrap">
         <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold border
             <?= $isActive
                 ? 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'

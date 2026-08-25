@@ -38,12 +38,22 @@ $canManage = AuthService::isLoggedIn();
             <table class="w-full divide-y divide-gray-200 dark:divide-gray-800 table-fixed">
                 <thead class="sticky top-[84px] sm:top-[96px] z-[30] shadow-sm rounded-t-2xl overflow-clip">
                     <tr class="bg-gray-50 dark:bg-gray-800/50">
-                        <th class="px-6 py-4 text-left w-full sm:w-[55%]">
-                            <?php $sortColumn = 'season';
-                            $sortLabel = 'Division / Season';
+                        <th class="px-6 py-4 text-left w-full sm:w-[30.5%]">
+                            <?php $sortColumn = 'division';
+                            $sortLabel = 'Division';
                             include __DIR__ . '/../components/ui/sortable-th.php'; ?>
                         </th>
-                        <th class="px-6 py-4 text-left hidden sm:table-cell w-[20%]">
+                        <th class="px-6 py-4 text-left hidden md:table-cell w-[22.5%]">
+                            <?php $sortColumn = 'league';
+                            $sortLabel = 'League';
+                            include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                        </th>
+                        <th class="px-6 py-4 text-left hidden sm:table-cell w-[12%] whitespace-nowrap">
+                            <?php $sortColumn = 'year';
+                            $sortLabel = 'Season Year';
+                            include __DIR__ . '/../components/ui/sortable-th.php'; ?>
+                        </th>
+                        <th class="px-6 py-4 text-left hidden sm:table-cell w-[10%] whitespace-nowrap">
                             <?php $sortColumn = 'status';
                             $sortLabel = 'Status';
                             include __DIR__ . '/../components/ui/sortable-th.php'; ?>
@@ -52,13 +62,23 @@ $canManage = AuthService::isLoggedIn();
                     </tr>
                     <tr class="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
                         <th class="px-6 py-2.5">
-                            <?php $filterColumn = 'season';
-                            $filterPlaceholder = 'Filter division or year…';
+                            <?php $filterColumn = 'division';
+                            $filterPlaceholder = 'Filter division…';
+                            include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
+                        </th>
+                        <th class="px-6 py-2.5 hidden md:table-cell">
+                            <?php $filterColumn = 'league';
+                            $filterPlaceholder = 'Filter league…';
+                            include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
+                        </th>
+                        <th class="px-6 py-2.5 hidden sm:table-cell">
+                            <?php $filterColumn = 'year';
+                            $filterPlaceholder = 'Filter year…';
                             include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
                         </th>
                         <th class="px-6 py-2.5 hidden sm:table-cell">
                             <?php $filterColumn = 'status';
-                            $filterPlaceholder = 'active / inactive…';
+                            $filterPlaceholder = 'Status…';
                             include __DIR__ . '/../components/ui/table-filter-input.php'; ?>
                         </th>
                         <th class="px-6 py-2.5 hidden sm:table-cell"></th>
@@ -67,7 +87,7 @@ $canManage = AuthService::isLoggedIn();
                 <tbody id="seasons-tbody" data-total="<?= (int)($GLOBALS['totalSeasonsCount'] ?? 0) ?>" class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
                     <?php if (empty($seasonRows)): ?>
                         <tr class="empty-state-row">
-                            <td colspan="3" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                                 <div class="flex flex-col items-center">
                                     <p class="font-bold text-lg font-sans">No seasons scheduled</p>
                                     <p class="text-sm font-sans">Select a division and year above to create a new season.</p>
