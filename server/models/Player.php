@@ -7,6 +7,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * A roster slot -- (season_id, team_id, user_id, player_number, is_goalie).
@@ -54,5 +55,10 @@ class Player extends Model
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'team_id', 'team_id');
+    }
+
+    public function stats(): HasMany
+    {
+        return $this->hasMany(PlayerStat::class, 'player_id', 'player_id');
     }
 }

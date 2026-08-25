@@ -2,7 +2,14 @@
 // /resources/views/components/seasons/view-teams-modal.php
 ?>
 
-<div id="view-teams-modal" class="fixed inset-0 z-50 hidden">
+<?php
+// z-[10000] (not z-50) on both layers here -- the fixed topbar is
+// z-[9999] (see layout-topbar.php), so a modal at z-50 rendered BEHIND it,
+// visually slicing off the modal's top edge wherever it overlapped the
+// topbar. Matches the z-index already used by the other full-screen modals
+// (users/view-user-modal.php, registrations/view-registration-modal.php).
+?>
+<div id="view-teams-modal" class="fixed inset-0 z-[10000] hidden">
     <div id="close-teams-modal-overlay" class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
 
     <?php
@@ -13,7 +20,7 @@
     // no way to scroll up to it. `my-8` keeps it visually centered-ish when
     // it *does* fit, same pattern as factories/modal-factory.js.
     ?>
-    <div class="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto font-sans">
+    <div class="fixed inset-0 z-[10000] flex items-start justify-center p-4 overflow-y-auto font-sans">
         <div class="bg-white dark:bg-gray-900 w-full max-w-lg my-8 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden transform transition-all">
 
             <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50">

@@ -23,8 +23,9 @@ class SeasonsController
 {
     use RecentActivityLogger;
 
-    public function index(): void
+    public function index(string $pageContext = 'schedules'): void
     {
+        $pageContext = $_GET['context'] ?? $pageContext;
         $filters = is_array($_GET['filter'] ?? null) ? $_GET['filter'] : [];
         $sort = $_GET['sort'] ?? null;
         $dir = strtolower((string)($_GET['dir'] ?? 'asc')) === 'desc' ? 'desc' : 'asc';
@@ -64,7 +65,7 @@ class SeasonsController
             header('Content-Type: application/json');
             echo json_encode([
                 'success' => true,
-                'data' => array_map(fn($s) => ['rowHtml' => self::renderRow($s)], $seasons->all()),
+                'data' => array_map(fn($s) => ['rowHtml' => self::renderRow($s, $pageContext)], $seasons->all()),
                 'meta' => [
                     'total' => $totalFiltered,
                     'loaded' => $seasons->count(),
@@ -76,7 +77,7 @@ class SeasonsController
 
         $html = '';
         foreach ($seasons as $season) {
-            $html .= self::renderRow($season);
+            $html .= self::renderRow($season, $pageContext);
         }
 
         $reps = Registration::selectRaw('MIN(entry_id) as entry_id, full_name')
@@ -91,11 +92,11 @@ class SeasonsController
         $GLOBALS['seasonRows'] = $html;
         $GLOBALS['teamReps'] = $reps;
         $GLOBALS['teamGroups'] = $groups;
-        $GLOBALS['title'] = 'Schedules';
+        $GLOBALS['title'] = $pageContext === 'stats' ? 'Stats+Standings' : 'Schedules';
         $GLOBALS['totalSeasonsCount'] = $totalFiltered;
     }
 
-    public static function renderRow(Season $season): string
+    public static function renderRow(Season $season, string $pageContext = 'schedules'): string
     {
         $rowItem = $season->toArray();
         $rowItem['division'] = $season->division->division ?? 'Unknown Division';
@@ -113,6 +114,7 @@ class SeasonsController
         $path = __DIR__ . '/../../resources/views/components/seasons/data-row.php';
 
         ob_start();
+        extract(['rowItem' => $rowItem, 'pageContext' => $pageContext]);
         try {
             include $path;
         } catch (\Throwable $e) {
@@ -131,6 +133,7 @@ class SeasonsController
 
             $divisionId = (int)($data['division_id'] ?? 0);
             $seasonYear = (int)($data['season_year'] ?? 0);
+            $pageContext = $data['page_context'] ?? 'schedules';
 
             if ($divisionId <= 0 || $seasonYear < 2000) {
                 throw new \Exception('Invalid division or year provided.');
@@ -156,7 +159,7 @@ class SeasonsController
 
             return [
                 'success' => true,
-                'rowHtml' => self::renderRow($season),
+                'rowHtml' => self::renderRow($season, $pageContext),
                 'messages' => ['Season entry created successfully.'],
             ];
         } catch (\Throwable $e) {

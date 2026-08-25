@@ -57,6 +57,11 @@ class Team extends Model
         return $this->hasMany(Player::class, 'team_id', 'team_id');
     }
 
+    public function stats(): HasMany
+    {
+        return $this->hasMany(Stat::class, 'team_id', 'team_id');
+    }
+
     /**
      * team_rep_id points at a Registration (the registrant who signed up as
      * this team's contact person), not a User. Legacy cas-sports never

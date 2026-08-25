@@ -23,6 +23,8 @@ $tablesToDrop = [
     'recent_activities',
     'contacts',
     'contacts_roles',
+    'stats',
+    'player_stats',
     'schedules',
     'players',
     'teams',
@@ -105,6 +107,16 @@ $messages = array_merge($messages, resetPlayersTable());
 
 require_once __DIR__ . '/../../scripts/reset/schedules.php';
 $messages = array_merge($messages, resetSchedulesTable());
+
+// Stats / Standings -- independent of Schedules/Gamesheets (there's no
+// score data anywhere in this app; win/loss/tie and goal totals are
+// maintained entirely by hand). Both just need teams/players to already
+// exist for their team_id/player_id references.
+require_once __DIR__ . '/../../scripts/reset/stats.php';
+$messages = array_merge($messages, resetStatsTable());
+
+require_once __DIR__ . '/../../scripts/reset/player-stats.php';
+$messages = array_merge($messages, resetPlayerStatsTable());
 
 // Contact Directory (league officials, timekeepers, emergency/township
 // contacts) -- contacts_roles must exist before contacts since contacts.

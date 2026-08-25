@@ -7,9 +7,15 @@ import { updateCount } from '../../components/table-pagination-count.js';
 function getPayload(form) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    const baseUrl = window.APP_CONFIG?.baseUrl || '/';
+    const internalPath = window.location.pathname.startsWith(baseUrl)
+        ? window.location.pathname.slice(baseUrl.length)
+        : window.location.pathname;
+
     return {
         division_id: data.division_id,
         season_year: data.season_year,
+        page_context: internalPath.split('/').filter(Boolean)[0] === 'stats' ? 'stats' : 'schedules',
     };
 }
 

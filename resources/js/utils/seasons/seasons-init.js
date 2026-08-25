@@ -7,9 +7,12 @@ import { initViewDetails } from './view-details.js';
 import { initDataTable } from '../../components/data-table.js';
 
 /**
- * Shared bootstrap for the Schedules landing page (a Seasons list).
+ * Shared bootstrap for the Seasons list, reused by both the Schedules and
+ * Stats+Standings landing pages -- `pageContext` is threaded through to the
+ * data-table fetch so filtering/sorting/pagination re-renders rows with the
+ * right "View" trigger (see SeasonsController::index()'s $_GET['context']).
  */
-export function initSeasonsModule() {
+export function initSeasonsModule(pageContext = 'schedules') {
     initSeasonsModal();
     initDeleteSeason();
     initViewTeams();
@@ -23,5 +26,6 @@ export function initSeasonsModule() {
         colspan: 3,
         defaultSort: 'season',
         defaultDir: 'desc',
+        extraParams: { context: pageContext },
     });
 }

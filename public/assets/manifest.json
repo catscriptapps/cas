@@ -49,6 +49,20 @@
     "file": "js/regions-component-BQf5KGOV.min.js",
     "name": "regions-component"
   },
+  "_seasons-init-Qa0PH2BJ.min.js": {
+    "file": "js/seasons-init-Qa0PH2BJ.min.js",
+    "name": "seasons-init",
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js",
+      "_table-pagination-count-JrykreAu.min.js",
+      "_divisions-api-MolTNHJp.min.js",
+      "_delete-factory-DhbIOdTj.min.js",
+      "_spa-router-FBLxBa_N.min.js",
+      "_data-table-9SFXZdzb.min.js"
+    ]
+  },
   "_spa-router-FBLxBa_N.min.js": {
     "file": "js/spa-router-FBLxBa_N.min.js",
     "name": "spa-router"
@@ -191,13 +205,31 @@
     "src": "resources/js/pages/schedules-page.js",
     "isEntry": true,
     "imports": [
+      "_seasons-init-Qa0PH2BJ.min.js",
       "_modal-factory-D72OMj0_.min.js",
       "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js",
+      "_spa-router-FBLxBa_N.min.js",
+      "_delete-factory-DhbIOdTj.min.js",
+      "_table-pagination-count-JrykreAu.min.js",
+      "_divisions-api-MolTNHJp.min.js",
+      "_data-table-9SFXZdzb.min.js"
+    ]
+  },
+  "resources/js/pages/stats-page.js": {
+    "file": "js/stats-page.min.js",
+    "name": "stats-page",
+    "src": "resources/js/pages/stats-page.js",
+    "isEntry": true,
+    "imports": [
+      "_seasons-init-Qa0PH2BJ.min.js",
+      "_spa-router-FBLxBa_N.min.js",
+      "_form-validator-CeXCkSqx.min.js",
+      "_modal-factory-D72OMj0_.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
       "_table-pagination-count-JrykreAu.min.js",
       "_divisions-api-MolTNHJp.min.js",
       "_delete-factory-DhbIOdTj.min.js",
-      "_spa-router-FBLxBa_N.min.js",
       "_data-table-9SFXZdzb.min.js"
     ]
   },

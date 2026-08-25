@@ -18,7 +18,7 @@ try {
         // Public GET -- Schedules is a guest-visible feature (see
         // NavigationConfig::getProtectedPaths()), so the season list's
         // filter/sort/page data-table calls must work for guests too.
-        $controller->index();
+        $controller->index($_GET['context'] ?? 'schedules');
         exit;
     }
 
