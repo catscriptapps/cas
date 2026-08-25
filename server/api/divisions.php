@@ -25,6 +25,10 @@ try {
             exit;
         }
 
+        if (isset($_GET['status']) && $_GET['status'] === 'all') {
+            json_response(['success' => true, 'data' => DivisionsController::listAll()]);
+        }
+
         $leagueId = isset($_GET['league_id']) ? (int)$_GET['league_id'] : null;
         json_response(['success' => true, 'data' => DivisionsController::list($leagueId)]);
     }

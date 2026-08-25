@@ -21,7 +21,15 @@ $totalSlides = count($slideshowImages);
 // and the canonical '/home' (however it's reached in prod vs local) all agree.
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
 $currentBasePath = trim($_ENV['APP_BASE_PATH'] ?? '', '/');
-$initialIsHome = (normalizePath($currentPath, $currentBasePath) === '/home' || $currentPath === '/index.php');
+$normalizedCurrentPath = normalizePath($currentPath, $currentBasePath);
+$initialIsHome = ($normalizedCurrentPath === '/home' || $currentPath === '/index.php');
+
+// The guest hero has nothing meaningful to show on Schedules (the list
+// page's title/summary is thin, and the per-season detail page has no
+// NavigationConfig entry to pull one from at all -- see
+// resolveDynamicPageMeta()'s comment), so it's just empty vertical space.
+// Covers both /schedules and /schedules/{id}.
+$initialIsSchedulesPage = str_starts_with($normalizedCurrentPath, '/schedules');
 
 // --- Universal Title & Summary Injection for Hard Refreshes ---
 // Role-based fallback defaults, used only if the current path isn't found
@@ -64,13 +72,15 @@ if ($isLoggedIn) {
 ?>
 
 <div class="w-full relative bg-gray-900 dark:bg-black transition-all duration-500 font-sans"
+    x-show="!isSchedulesPage"
     :class="(isHome && !isLoggedIn) ? 'min-h-[min(420px,55vh)]' : 'min-h-[min(220px,30vh)] sm:min-h-[min(240px,30vh)]'"
-    x-data="{ 
+    x-data="{
         activeSlide: 1,
         slidesCount: <?= $totalSlides ?>,
         mobileMenuOpen: false,
         isHome: <?= $initialIsHome ? 'true' : 'false' ?>,
         isLoggedIn: <?= $isLoggedIn ? 'true' : 'false' ?>,
+        isSchedulesPage: <?= $initialIsSchedulesPage ? 'true' : 'false' ?>,
         pageTitle: '<?= addslashes($initialPageTitle) ?>',
         pageSummary: '<?= addslashes($initialPageSummary) ?>',
         init() {
@@ -82,6 +92,7 @@ if ($isLoggedIn) {
     @spa-navigation.window="
         isLoggedIn = <?= $isLoggedIn ? 'true' : 'false' ?>; // Re-evaluate on navigation
         isHome = $event.detail.isHome;
+        isSchedulesPage = ($event.detail.path || '').startsWith('/schedules');
         pageTitle = $event.detail.title || '';
         pageSummary = $event.detail.summary || '';
     ">

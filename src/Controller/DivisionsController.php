@@ -43,6 +43,26 @@ class DivisionsController
     }
 
     /**
+     * Every division regardless of status, with its league/sport names
+     * embedded -- used by the Schedules "Add Season" form's grouped
+     * division dropdown (see resources/js/forms/season-form.js).
+     */
+    public static function listAll(): array
+    {
+        return Division::with('league.sport')
+            ->orderBy('division')
+            ->get()
+            ->map(fn($d) => [
+                'division_id' => $d->division_id,
+                'division' => $d->division,
+                'league_name' => $d->league->league ?? 'N/A',
+                'sport_name' => $d->league->sport->sport_name ?? 'N/A',
+            ])
+            ->values()
+            ->toArray();
+    }
+
+    /**
      * Admin list. Supports the same per-column text filters + sortable
      * columns + infinite scroll as UsersController::index() (see
      * resources/js/components/data-table.js): `filter[division]` (division

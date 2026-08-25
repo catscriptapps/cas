@@ -64,7 +64,7 @@ export async function loadPartial(url, pushState = true, clickedLink = null) {
 
     // Dispatch global event caught by Alpine context within layout-header.php
     window.dispatchEvent(new CustomEvent('spa-navigation', {
-      detail: { isHome, title: pageTitle, summary: pageSummary }
+      detail: { isHome, path: relativePath, title: pageTitle, summary: pageSummary }
     }));
 
     // 2. Style Cleanup

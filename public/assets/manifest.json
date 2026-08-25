@@ -18,8 +18,8 @@
     "file": "js/delete-factory-DhbIOdTj.min.js",
     "name": "delete-factory"
   },
-  "_divisions-api-Dh-Mql9o.min.js": {
-    "file": "js/divisions-api-Dh-Mql9o.min.js",
+  "_divisions-api-MolTNHJp.min.js": {
+    "file": "js/divisions-api-MolTNHJp.min.js",
     "name": "divisions-api"
   },
   "_form-validator-CeXCkSqx.min.js": {
@@ -49,8 +49,8 @@
     "file": "js/regions-component-BQf5KGOV.min.js",
     "name": "regions-component"
   },
-  "_spa-router-Cd9AAa9t.min.js": {
-    "file": "js/spa-router-Cd9AAa9t.min.js",
+  "_spa-router-FBLxBa_N.min.js": {
+    "file": "js/spa-router-FBLxBa_N.min.js",
     "name": "spa-router"
   },
   "_spinner-utils-BGUFcaGl.min.js": {
@@ -66,8 +66,7 @@
     "src": "resources/css/main.css",
     "isEntry": true,
     "names": [
-      "main.css",
-      "app.css"
+      "main.css"
     ]
   },
   "resources/js/app.js": {
@@ -76,7 +75,7 @@
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_spa-router-Cd9AAa9t.min.js",
+      "_spa-router-FBLxBa_N.min.js",
       "_modal-factory-D72OMj0_.min.js",
       "_form-validator-CeXCkSqx.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
@@ -130,7 +129,7 @@
       "_modal-factory-D72OMj0_.min.js",
       "_form-validator-CeXCkSqx.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
-      "_divisions-api-Dh-Mql9o.min.js",
+      "_divisions-api-MolTNHJp.min.js",
       "_delete-factory-DhbIOdTj.min.js"
     ]
   },
@@ -142,7 +141,7 @@
     "imports": [
       "_profile-modal-DXeqH46Z.min.js",
       "_form-validator-CeXCkSqx.min.js",
-      "_spa-router-Cd9AAa9t.min.js",
+      "_spa-router-FBLxBa_N.min.js",
       "_delete-factory-DhbIOdTj.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
       "_animations-BtDgdX2G.min.js",
@@ -157,7 +156,7 @@
     "src": "resources/js/pages/register-page.js",
     "isEntry": true,
     "imports": [
-      "_divisions-api-Dh-Mql9o.min.js",
+      "_divisions-api-MolTNHJp.min.js",
       "_regions-component-BQf5KGOV.min.js",
       "_form-validator-CeXCkSqx.min.js"
     ]
@@ -184,6 +183,22 @@
     "imports": [
       "_form-validator-CeXCkSqx.min.js",
       "_spinner-utils-BGUFcaGl.min.js"
+    ]
+  },
+  "resources/js/pages/schedules-page.js": {
+    "file": "js/schedules-page.min.js",
+    "name": "schedules-page",
+    "src": "resources/js/pages/schedules-page.js",
+    "isEntry": true,
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js",
+      "_table-pagination-count-JrykreAu.min.js",
+      "_divisions-api-MolTNHJp.min.js",
+      "_delete-factory-DhbIOdTj.min.js",
+      "_spa-router-FBLxBa_N.min.js",
+      "_data-table-9SFXZdzb.min.js"
     ]
   },
   "resources/js/pages/users-page.js": {

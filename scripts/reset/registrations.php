@@ -56,6 +56,14 @@ function resetRegistrationsTable(): array
         });
         $messages[] = "created '{$tableName}' table structure.";
 
+        // Real legacy schedule registrants FIRST (explicit entry_id
+        // preserved, referenced directly by scripts/reset/players.php and
+        // scripts/reset/teams.php) -- then the synthetic demo pool, which
+        // lets auto-increment continue safely above the real IDs with no
+        // manual offset math. See importLegacyScheduleRegistrants() below.
+        $realCount = importLegacyScheduleRegistrants();
+        $messages[] = "imported {$realCount} real registrants from legacy cas-sports (team reps and players for the 3 active Schedules seasons).";
+
         $count = seedDemoRegistrations();
         $messages[] = "seeded {$count} demo registrations across all active divisions.";
     } catch (\Throwable $e) {
@@ -63,6 +71,22 @@ function resetRegistrationsTable(): array
     }
 
     return $messages;
+}
+
+/**
+ * Imports the real people referenced by legacy cas-sports' Teams/Players
+ * (team_rep_id / user_id) for the 3 seasons the Schedules feature seeds --
+ * see scripts/reset/data/registrations-import.php, a generated fixture, not
+ * hand-written. entry_id is preserved exactly so Player.user_id and
+ * Team.team_rep_id can reference these rows directly with no remapping.
+ */
+function importLegacyScheduleRegistrants(): int
+{
+    $rows = require __DIR__ . '/data/registrations-import.php';
+    foreach (array_chunk($rows, 200) as $chunk) {
+        Capsule::table('registrations')->insert($chunk);
+    }
+    return count($rows);
 }
 
 /**

@@ -23,6 +23,12 @@ $tablesToDrop = [
     'recent_activities',
     'contacts',
     'contacts_roles',
+    'schedules',
+    'players',
+    'teams',
+    'seasons',
+    'teams_groups',
+    'locations',
     'registrations',
     'divisions',
     'leagues',
@@ -74,6 +80,31 @@ $messages = array_merge($messages, resetSourcesTable());
 
 require_once __DIR__ . '/../../scripts/reset/registrations.php';
 $messages = array_merge($messages, resetRegistrationsTable());
+
+// Schedules / Teams / Players -- rebuilt from legacy cas-sports' 3 active
+// seasons (596 real games, 65 real teams, 960 real roster slots across
+// legacy's whole history; this imports the 3 currently-active seasons'
+// worth exactly). teams_groups/locations/seasons are independent lookups;
+// teams depends on seasons + the real registrants importRegistrationsTable()
+// just seeded; players depends on teams; schedules depends on seasons,
+// teams, and locations.
+require_once __DIR__ . '/../../scripts/reset/teams-groups.php';
+$messages = array_merge($messages, resetTeamsGroupsTable());
+
+require_once __DIR__ . '/../../scripts/reset/locations.php';
+$messages = array_merge($messages, resetLocationsTable());
+
+require_once __DIR__ . '/../../scripts/reset/seasons.php';
+$messages = array_merge($messages, resetSeasonsTable());
+
+require_once __DIR__ . '/../../scripts/reset/teams.php';
+$messages = array_merge($messages, resetTeamsTable());
+
+require_once __DIR__ . '/../../scripts/reset/players.php';
+$messages = array_merge($messages, resetPlayersTable());
+
+require_once __DIR__ . '/../../scripts/reset/schedules.php';
+$messages = array_merge($messages, resetSchedulesTable());
 
 // Contact Directory (league officials, timekeepers, emergency/township
 // contacts) -- contacts_roles must exist before contacts since contacts.

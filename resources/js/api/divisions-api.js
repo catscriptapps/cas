@@ -68,6 +68,22 @@ export async function fetchDivisions(leagueId = null) {
     }
 }
 
+/**
+ * Every division regardless of status, with sport_name/league_name embedded
+ * -- used by the Schedules "Add Season" form's grouped division dropdown.
+ */
+export async function fetchAllDivisionsGrouped() {
+    const baseUrl = window.APP_CONFIG?.baseUrl || '/';
+    try {
+        const res = await fetch(`${baseUrl}api/divisions?status=all`);
+        const json = await res.json();
+        return json.success ? json.data : [];
+    } catch (error) {
+        console.error('Fetch All Divisions Error:', error);
+        return [];
+    }
+}
+
 export async function fetchSources() {
     const baseUrl = window.APP_CONFIG?.baseUrl || '/';
     try {
