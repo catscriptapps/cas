@@ -129,10 +129,14 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                     </a>
                 </div>
             <?php else: ?>
-                <div class="relative group">
+                <div class="flex items-center gap-2">
                     <a href="<?= $baseUrl ?>register" data-partial title="Register"
                         class="flex items-center rounded-full px-5 py-2 bg-primary-400 hover:bg-secondary-400 border-2 border-primary-400 hover:border-secondary-400 text-white shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
                         <span class="uppercase tracking-widest text-xs font-black">Register</span>
+                    </a>
+                    <a href="<?= $baseUrl ?>login" data-login-button title="Sign In"
+                        class="flex items-center rounded-full px-5 py-2 border-2 border-slate-700 hover:border-primary-400 text-slate-200 hover:text-white transition-all duration-200 transform hover:-translate-y-0.5">
+                        <span class="uppercase tracking-widest text-xs font-black">Sign In</span>
                     </a>
                 </div>
             <?php endif; ?>

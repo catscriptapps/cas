@@ -40,8 +40,8 @@ declare(strict_types=1);
     <div class="max-w-5xl mx-auto mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
         <?php
         $quickLinks = [
-            ['icon' => 'fa-calendar-days', 'title' => 'Schedules', 'summary' => 'Game days, times, and rinks for every division.'],
-            ['icon' => 'fa-chart-simple', 'title' => 'Stats+Standings', 'summary' => 'Live team standings and player leaderboards.'],
+            ['icon' => 'fa-calendar-days', 'title' => 'Schedules', 'summary' => 'Game days, times, and rinks for every division.', 'url' => $baseUrl . 'schedules'],
+            ['icon' => 'fa-chart-simple', 'title' => 'Stats+Standings', 'summary' => 'Live team standings and player leaderboards.', 'url' => $baseUrl . 'stats'],
             ['icon' => 'fa-people-group', 'title' => 'League Details', 'summary' => 'Locations, rules, and required equipment.', 'url' => $baseUrl . 'locations'],
             ['icon' => 'fa-envelope', 'title' => 'Contact Us', 'summary' => 'Questions about a league or getting involved.', 'url' => $baseUrl . 'contact'],
         ];
