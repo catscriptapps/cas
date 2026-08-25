@@ -155,6 +155,20 @@
       "_data-table-9SFXZdzb.min.js"
     ]
   },
+  "resources/js/pages/incident-reports-page.js": {
+    "file": "js/incident-reports-page.min.js",
+    "name": "incident-reports-page",
+    "src": "resources/js/pages/incident-reports-page.js",
+    "isEntry": true,
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_form-validator-CeXCkSqx.min.js",
+      "_spinner-utils-BGUFcaGl.min.js",
+      "_table-pagination-count-JrykreAu.min.js",
+      "_delete-factory-DhbIOdTj.min.js",
+      "_data-table-9SFXZdzb.min.js"
+    ]
+  },
   "resources/js/pages/league-management-page.js": {
     "file": "js/league-management-page.min.js",
     "name": "league-management-page",

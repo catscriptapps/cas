@@ -57,6 +57,7 @@ class NavigationConfig
             'Schedules' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008z"></path></svg>',
             'Stats+Standings' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v-6.75m6.75 6.75V6.75m-3.75 10.5V13.5M3.75 21h16.5a1.5 1.5 0 001.5-1.5V4.5A1.5 1.5 0 0020.25 3H3.75A1.5 1.5 0 002.25 4.5v15A1.5 1.5 0 003.75 21z"></path></svg>',
             'Gamesheets' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"></path></svg>',
+            'Incident Reports' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
         ];
     }
 
@@ -101,6 +102,11 @@ class NavigationConfig
                 'url' => $base . '/gamesheets',
                 'title' => 'Gamesheets',
                 'summary' => 'Per-game player stat sheets by division and season.'
+            ],
+            'Incident Reports' => [
+                'url' => $base . '/incident-reports',
+                'title' => 'Incident Reports',
+                'summary' => 'Official documentation of on-floor incidents, disciplinary actions, and medical assistance.'
             ],
             'Registrations' => [
                 'url' => $base . '/registrations',
@@ -188,6 +194,7 @@ class NavigationConfig
             $base . '/registrations',
             $base . '/league-management',
             $base . '/contacts',
+            $base . '/incident-reports',
         ];
     }
 

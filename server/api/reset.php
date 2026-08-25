@@ -26,6 +26,7 @@ $tablesToDrop = [
     'stats',
     'player_stats',
     'gamesheets',
+    'incident_reports',
     'schedules',
     'players',
     'teams',
@@ -134,6 +135,10 @@ $messages = array_merge($messages, resetContactRolesTable());
 
 require_once __DIR__ . '/../../scripts/reset/contacts.php';
 $messages = array_merge($messages, resetContactsTable());
+
+// Incident Reports -- standalone admin log, no FKs to any other table.
+require_once __DIR__ . '/../../scripts/reset/incident-reports.php';
+$messages = array_merge($messages, resetIncidentReportsTable());
 
 // Support & Transient Auth Tables
 require_once __DIR__ . '/../../scripts/reset/recent-activities.php';

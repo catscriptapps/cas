@@ -68,8 +68,20 @@ class ContactsController
 
         $totalFiltered = (clone $builder)->count();
 
-        $sortColumns = ['contact' => 'full_name'];
-        if (isset($sortColumns[$sort])) {
+        $sortColumns = [
+            'contact' => 'full_name',
+            'leagues' => 'leagues',
+            'phone' => 'phone',
+            'emergency' => 'is_emergency',
+        ];
+
+        if ($sort === 'role') {
+            // The only sort key that needs a join -- role name lives on the
+            // related contacts_roles table, not a column on contacts itself.
+            $builder->leftJoin('contacts_roles', 'contacts.role_id', '=', 'contacts_roles.id')
+                ->orderBy('contacts_roles.role_name', $dir)
+                ->select('contacts.*');
+        } elseif (isset($sortColumns[$sort])) {
             $builder->orderBy($sortColumns[$sort], $dir);
         } else {
             $builder->orderBy('full_name', 'asc');
