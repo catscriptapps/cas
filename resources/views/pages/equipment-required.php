@@ -54,14 +54,11 @@ $sections = [
     include __DIR__ . '/../components/ui/breadcrumbs.php';
     ?>
 
-    <div class="mb-12">
-        <h1 class="text-3xl lg:text-4xl font-black text-secondary-900 dark:text-white mb-3 tracking-tight">
-            Required <span class="text-primary-600">Equipment.</span>
-        </h1>
-        <p class="text-base text-gray-500 dark:text-gray-400 max-w-xl font-medium">
-            Mandatory and recommended gear by league -- always double-check your specific division's rules before game day.
-        </p>
-    </div>
+    <?php
+    // No title/summary block here -- the shared hero above the topbar
+    // already shows "Required Equipment" + its NavigationConfig summary for
+    // every viewer, admin included (see layout-header.php).
+    ?>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <?php foreach ($sections as $section): ?>

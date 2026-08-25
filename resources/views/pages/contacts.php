@@ -18,22 +18,20 @@ $canManage = AuthService::isLoggedIn();
     include __DIR__ . '/../components/ui/breadcrumbs.php';
     ?>
 
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="flex-1">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white font-sans">Contact Directory</h1>
-            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                League officials, timekeepers, and emergency contacts.
-            </p>
-        </div>
-
-        <?php if ($canManage): ?>
+    <?php
+    // No title/summary block here -- the shared hero above the topbar
+    // already shows "Contact Directory" + its NavigationConfig summary
+    // (see layout-header.php).
+    ?>
+    <?php if ($canManage): ?>
+        <div class="flex justify-end">
             <button type="button" id="add-contact-btn"
                 class="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-2.5 text-sm font-bold text-white shadow-md hover:bg-primary-600 transition-all active:scale-95">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                 Add Contact
             </button>
-        <?php endif; ?>
-    </div>
+        </div>
+    <?php endif; ?>
 
     <div class="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 rounded-2xl">
         <div class="w-full">

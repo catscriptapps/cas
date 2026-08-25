@@ -18,14 +18,13 @@ $isLoggedIn = AuthService::isLoggedIn();
     include __DIR__ . '/../components/ui/breadcrumbs.php';
     ?>
 
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="flex-1">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white font-sans">Registrations</h1>
-            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Everyone who's registered for a division, their payment status, and contact details.
-            </p>
-        </div>
-    </div>
+    <?php
+    // No title/summary block here -- the shared hero above the topbar
+    // already shows "Registrations" + its NavigationConfig summary (see
+    // layout-header.php). This page has no page-level action button (unlike
+    // Gamesheets/Stats/Schedules/Contacts/Incident Reports), so there's
+    // nothing left to render in its place.
+    ?>
 
     <div class="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 rounded-2xl">
         <div class="w-full">

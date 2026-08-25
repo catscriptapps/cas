@@ -30,9 +30,11 @@ declare(strict_types=1);
             Coming Soon
         </span>
 
-        <h1 class="text-2xl sm:text-3xl font-black text-secondary-900 dark:text-white mb-3 tracking-tight">
-            Suspension <span class="text-primary-600">Matrix.</span>
-        </h1>
+        <?php
+        // No title here -- the shared hero above the topbar already shows
+        // "Suspension Matrix" for every viewer, admin included (see
+        // layout-header.php).
+        ?>
         <p class="text-sm text-gray-500 dark:text-gray-400 font-medium max-w-md mx-auto leading-relaxed">
             Our discipline and suspension reference guide is being finalized for this season and will be posted here shortly.
             For a specific ruling, reach out through the Contact page.

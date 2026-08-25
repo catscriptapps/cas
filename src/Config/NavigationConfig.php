@@ -26,11 +26,33 @@ class NavigationConfig
      */
     public static function resolveMetaForPath(string $path): ?array
     {
-        $baseUrl = rtrim($_ENV['APP_BASE_PATH'] ?? '', '/');
         $normalizedPath = rtrim($path, '/') ?: '/';
+        $isLoggedIn = AuthService::isLoggedIn();
 
-        $navLinks = AuthService::isLoggedIn() ? self::getNavLinks(true) : self::publicLinks();
+        $primary = $isLoggedIn ? self::getNavLinks(true) : self::publicLinks();
+        $found = self::findMetaIn($primary, $normalizedPath);
+        if ($found) {
+            return $found;
+        }
 
+        // A logged-in viewer can still land on a guest-only informational
+        // page (e.g. Locations, Required Equipment -- only in publicLinks(),
+        // never added to the staff nav) since nothing stops an admin from
+        // visiting a guest URL directly. The page's content doesn't change
+        // based on who's viewing it, so its title/summary shouldn't come up
+        // empty just because the lookup only checked the staff-nav set.
+        if ($isLoggedIn) {
+            return self::findMetaIn(self::publicLinks(), $normalizedPath);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array{title: string, summary: string}|null
+     */
+    private static function findMetaIn(array $navLinks, string $normalizedPath): ?array
+    {
         foreach ($navLinks as $config) {
             $normalizedLinkUrl = rtrim($config['url'] ?? '', '/') ?: '/';
             if ($normalizedPath === $normalizedLinkUrl) {

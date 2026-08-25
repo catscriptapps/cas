@@ -51,14 +51,11 @@ $groups = [
     include __DIR__ . '/../components/ui/breadcrumbs.php';
     ?>
 
-    <div class="mb-12">
-        <h1 class="text-3xl lg:text-4xl font-black text-secondary-900 dark:text-white mb-3 tracking-tight">
-            League <span class="text-primary-600">Locations.</span>
-        </h1>
-        <p class="text-base text-gray-500 dark:text-gray-400 max-w-xl font-medium">
-            Rinks and venues for every ball hockey and ice hockey division we run.
-        </p>
-    </div>
+    <?php
+    // No title/summary block here -- the shared hero above the topbar
+    // already shows "Locations" + its NavigationConfig summary for every
+    // viewer, admin included (see layout-header.php).
+    ?>
 
     <div class="space-y-14">
         <?php foreach ($groups as $groupTitle => $venues): ?>

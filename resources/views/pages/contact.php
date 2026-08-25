@@ -11,14 +11,11 @@ declare(strict_types=1);
     include __DIR__ . '/../components/ui/breadcrumbs.php';
     ?>
 
-    <div class="mb-12">
-        <h1 class="text-3xl lg:text-4xl font-black text-secondary-900 dark:text-white mb-3 tracking-tight">
-            Get in <span class="text-primary-600">Touch.</span>
-        </h1>
-        <p class="text-base text-gray-500 dark:text-gray-400 max-w-xl font-medium">
-            Questions about a league, a schedule, or getting your team involved? Send us a message and we'll get back to you.
-        </p>
-    </div>
+    <?php
+    // No title/summary block here -- the shared hero above the topbar
+    // already shows "Contact Us" + its NavigationConfig summary for every
+    // viewer, admin included (see layout-header.php).
+    ?>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 

@@ -21,12 +21,11 @@ $canManage = AuthService::isLoggedIn();
     include __DIR__ . '/../components/ui/breadcrumbs.php';
     ?>
 
-    <div>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white font-sans">League Management</h1>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Manage the sports, leagues, and divisions registrants can sign up for.
-        </p>
-    </div>
+    <?php
+    // No title/summary block here -- the shared hero above the topbar
+    // already shows "League Management" + its NavigationConfig summary
+    // (see layout-header.php).
+    ?>
 
     <!-- Tabs -->
     <div id="league-mgmt-tabs" class="flex gap-1 border-b border-gray-200 dark:border-gray-800">

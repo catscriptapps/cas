@@ -24,12 +24,24 @@ $currentBasePath = trim($_ENV['APP_BASE_PATH'] ?? '', '/');
 $normalizedCurrentPath = normalizePath($currentPath, $currentBasePath);
 $initialIsHome = ($normalizedCurrentPath === '/home' || $currentPath === '/index.php');
 
-// The guest hero has nothing meaningful to show on Schedules (the list
-// page's title/summary is thin, and the per-season detail page has no
-// NavigationConfig entry to pull one from at all -- see
-// resolveDynamicPageMeta()'s comment), so it's just empty vertical space.
-// Covers both /schedules and /schedules/{id}.
-$initialIsSchedulesPage = str_starts_with($normalizedCurrentPath, '/schedules');
+// The hero has nothing meaningful to show on a season/game DETAIL page (no
+// NavigationConfig entry exists for those per-instance URLs -- see
+// resolveDynamicPageMeta()'s comment), so it's just empty vertical space
+// there; the list pages above them (e.g. /schedules) DO have a real
+// title+summary and keep the hero. About is excluded for the opposite
+// reason -- it already has its own rich, purpose-built intro section
+// immediately below (stats card, story copy, CTA), so stacking the generic
+// title hero on top of that would just be two intros back to back.
+$initialIsDetailPage = (bool)preg_match('#^/(schedules|stats|gamesheets)/.+#', $normalizedCurrentPath);
+$initialIsAboutPage = ($normalizedCurrentPath === '/about');
+
+// Dashboard, Users, and Profile keep their own established top-of-page
+// layout rather than the shared hero -- unlike the flat list pages this now
+// also covers for signed-in staff (Schedules, Stats+Standings, Gamesheets,
+// Incident Reports, Contacts, Registrations, League Management), these
+// three weren't asked to change, and Dashboard in particular already fills
+// this space with its own greeting/summary cards.
+$initialIsNoHeroPage = in_array($normalizedCurrentPath, ['/dashboard', '/users', '/profile'], true);
 
 // --- Universal Title & Summary Injection for Hard Refreshes ---
 // Role-based fallback defaults, used only if the current path isn't found
@@ -61,26 +73,36 @@ if (!empty($GLOBALS['pageSummary'])) {
     $initialPageTitle = $title ?? $initialPageTitle;
     $initialPageSummary = $GLOBALS['pageSummary'];
 }
-// The hero/slideshow is guest-only real estate -- once signed in, every
-// reachable page (Dashboard, Slideshow, Profile, Users) uses that vertical
-// space for its own content instead. Gating this server-side (rather than
-// leaving it to the Alpine isLoggedIn flag below) means a logged-in render
-// never ships the slideshow markup/images at all.
-if ($isLoggedIn) {
-    return;
-}
+// Unlike the schedules-detail/about/no-hero-page exclusions above (all
+// handled client-side via x-show, since SPA navigation only ever swaps
+// #main-content -- this element sits outside it and is never re-rendered
+// after the initial full page load), there's no server-side early return
+// left here. If the hero's markup didn't ship on whichever page happened to
+// be hard-loaded first in the session (very often /dashboard, the default
+// post-login landing page), it could never appear on any later page reached
+// purely via SPA nav -- so it always renders, and every exclusion is
+// reactive instead.
 ?>
 
-<div class="w-full relative bg-gray-900 dark:bg-black transition-all duration-500 font-sans"
-    x-show="!isSchedulesPage"
-    :class="(isHome && !isLoggedIn) ? 'min-h-[min(420px,55vh)]' : 'min-h-[min(220px,30vh)] sm:min-h-[min(240px,30vh)]'"
+<?php
+// `flex flex-col` here (not just on the inner wrapper below) matters: the
+// inner wrapper's own `flex-1` only has any effect inside a flex parent, so
+// without this the inner wrapper never actually stretches to fill this
+// div's min-height -- it just sits at its natural (shorter) content height,
+// leaving `items-center` nothing to vertically center within.
+?>
+<div class="w-full relative bg-gray-900 dark:bg-black transition-all duration-500 font-sans -mt-1.5 flex flex-col"
+    x-show="!isDetailPage && !isAboutPage && !isNoHeroPage"
+    :class="(isHome && !isLoggedIn) ? 'min-h-[min(420px,55vh)]' : 'min-h-[min(220px,28vh)] sm:min-h-[min(240px,28vh)]'"
     x-data="{
         activeSlide: 1,
         slidesCount: <?= $totalSlides ?>,
         mobileMenuOpen: false,
         isHome: <?= $initialIsHome ? 'true' : 'false' ?>,
         isLoggedIn: <?= $isLoggedIn ? 'true' : 'false' ?>,
-        isSchedulesPage: <?= $initialIsSchedulesPage ? 'true' : 'false' ?>,
+        isDetailPage: <?= $initialIsDetailPage ? 'true' : 'false' ?>,
+        isAboutPage: <?= $initialIsAboutPage ? 'true' : 'false' ?>,
+        isNoHeroPage: <?= $initialIsNoHeroPage ? 'true' : 'false' ?>,
         pageTitle: '<?= addslashes($initialPageTitle) ?>',
         pageSummary: '<?= addslashes($initialPageSummary) ?>',
         init() {
@@ -92,7 +114,9 @@ if ($isLoggedIn) {
     @spa-navigation.window="
         isLoggedIn = <?= $isLoggedIn ? 'true' : 'false' ?>; // Re-evaluate on navigation
         isHome = $event.detail.isHome;
-        isSchedulesPage = ($event.detail.path || '').startsWith('/schedules');
+        isDetailPage = /^\/(schedules|stats|gamesheets)\/.+/.test($event.detail.path || '');
+        isAboutPage = ($event.detail.path || '') === '/about';
+        isNoHeroPage = ['/dashboard', '/users', '/profile'].includes($event.detail.path || '');
         pageTitle = $event.detail.title || '';
         pageSummary = $event.detail.summary || '';
     ">
@@ -155,10 +179,13 @@ if ($isLoggedIn) {
             </div>
         </section>
 
-        <section x-show="!isHome || isLoggedIn" x-cloak class="flex-1 flex items-center px-4 sm:px-6 lg:px-8 py-3 sm:py-5">
-            <div class="max-w-7xl mx-auto w-full">
-                <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight uppercase mb-1 drop-shadow-[0_3px_8px_rgba(0,0,0,0.6)]" x-text="pageTitle"></h1>
-                <p class="text-xs text-slate-200/90 max-w-2xl font-normal drop-shadow-[0_2px_5px_rgba(0,0,0,0.55)] leading-normal" x-text="pageSummary"></p>
+        <section x-show="!isHome || isLoggedIn" x-cloak class="flex-1 flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <div class="max-w-2xl mx-auto">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] bg-primary-500/20 text-primary-300 border border-primary-500/30 backdrop-blur-sm mb-3">
+                    <i class="fa-solid fa-hockey-puck text-[9px] text-primary-400"></i> Canadian All Star Sports
+                </span>
+                <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight uppercase leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] mb-2" x-text="pageTitle"></h1>
+                <p x-show="pageSummary" x-cloak class="text-sm sm:text-base text-slate-100/90 font-medium leading-relaxed drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" x-text="pageSummary"></p>
             </div>
         </section>
 
