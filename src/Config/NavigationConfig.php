@@ -93,6 +93,7 @@ class NavigationConfig
             'Gamesheets' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"></path></svg>',
             'Incident Reports' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
             'League Details' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>',
+            'Sponsorship' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5a2.5 2.5 0 010-5H12v5H7zm5-5h4.5a2.5 2.5 0 010 5H12m0-5v5m0 0v6.5m0 0h3.5a2 2 0 002-2v-.5m-5.5 2.5H8.5a2 2 0 01-2-2v-.5"></path></svg>',
         ];
     }
 
@@ -245,6 +246,11 @@ class NavigationConfig
                         'summary' => ''
                     ],
                 ],
+            ],
+            'Sponsorship' => [
+                'url' => $base . '/sponsorship',
+                'title' => 'Sponsorship',
+                'summary' => 'Become a sponsor and get your business in front of every player, family, and fan in the league.'
             ],
             'Contact' => [
                 'url' => $base . '/contact',

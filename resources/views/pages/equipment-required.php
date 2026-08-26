@@ -6,7 +6,10 @@ declare(strict_types=1);
 /**
  * Guest-facing "Required Equipment" page under the League Details dropdown.
  * Ported from legacy essahockey_live's equipment_view.php -- purely static
- * content, no DB table.
+ * content, no DB table. Legacy's own left-side picture (images/pix/4.jpg)
+ * doesn't exist in either legacy checkout (a dead reference even there);
+ * the user supplied the real photo directly at public/images/misc/
+ * required-equipment.jpg.
  */
 
 $sections = [
@@ -60,37 +63,48 @@ $sections = [
     // every viewer, admin included (see layout-header.php).
     ?>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <?php foreach ($sections as $section): ?>
-            <div class="p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
-                <h2 class="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tight mb-6">
-                    <?= htmlspecialchars($section['title']) ?>
-                </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <?php
+        // Matches legacy's own layout -- an informative picture on the left,
+        // the equipment lists stacked on the right.
+        ?>
+        <div class="lg:col-span-4 lg:sticky lg:top-8">
+            <img src="<?= $assetBase ?>images/misc/required-equipment.jpg" alt="Required hockey equipment"
+                class="w-full rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm object-cover">
+        </div>
 
-                <p class="text-[10px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-widest mb-3">Mandatory</p>
-                <ul class="space-y-2.5 mb-8">
-                    <?php foreach ($section['mandatory'] as $item): ?>
-                        <li class="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300 font-medium">
-                            <svg class="w-4 h-4 shrink-0 mt-0.5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span><?= htmlspecialchars($item) ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+        <div class="lg:col-span-8 space-y-6">
+            <?php foreach ($sections as $section): ?>
+                <div class="p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
+                    <h2 class="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tight mb-6">
+                        <?= htmlspecialchars($section['title']) ?>
+                    </h2>
 
-                <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Recommended</p>
-                <ul class="space-y-2.5">
-                    <?php foreach ($section['recommended'] as $item): ?>
-                        <li class="flex items-start gap-2.5 text-sm text-gray-500 dark:text-gray-400 font-medium">
-                            <svg class="w-4 h-4 shrink-0 mt-0.5 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            <span><?= htmlspecialchars($item) ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endforeach; ?>
+                    <p class="text-[10px] font-black text-primary-600 dark:text-primary-400 uppercase tracking-widest mb-3">Mandatory</p>
+                    <ul class="space-y-2.5 mb-8">
+                        <?php foreach ($section['mandatory'] as $item): ?>
+                            <li class="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300 font-medium">
+                                <svg class="w-4 h-4 shrink-0 mt-0.5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span><?= htmlspecialchars($item) ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Recommended</p>
+                    <ul class="space-y-2.5">
+                        <?php foreach ($section['recommended'] as $item): ?>
+                            <li class="flex items-start gap-2.5 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                                <svg class="w-4 h-4 shrink-0 mt-0.5 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                <span><?= htmlspecialchars($item) ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>
