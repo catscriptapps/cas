@@ -8,14 +8,14 @@ declare(strict_types=1);
 
 <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12 lg:py-16 font-sans" id="register-wizard" data-current-step="1">
 
-    <div class="mb-10 text-center">
-        <h1 class="text-3xl lg:text-4xl font-black text-secondary-900 dark:text-white mb-3 tracking-tight uppercase">
-            Register <span class="text-primary-600">Now.</span>
-        </h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400 max-w-xl mx-auto font-medium">
-            Pick your sport, league, and division, tell us about yourself, and complete payment -- all in one place.
-        </p>
-    </div>
+    <?php
+    // No title/summary block here -- the shared hero above the topbar
+    // already shows "Register Now." + its summary for every viewer (see
+    // layout-header.php and NavigationConfig::resolveMetaForPath()'s
+    // page-only fallback list, since /register has no nav-link entry of its
+    // own to source that from). Freeing this vertical space means the Step 1
+    // sport buttons are visible without scrolling on first load.
+    ?>
 
     <!-- Step indicator -->
     <div class="flex items-center justify-center gap-2 mb-10" id="register-step-indicator">

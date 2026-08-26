@@ -42,10 +42,26 @@ class NavigationConfig
         // based on who's viewing it, so its title/summary shouldn't come up
         // empty just because the lookup only checked the staff-nav set.
         if ($isLoggedIn) {
-            return self::findMetaIn(self::publicLinks(), $normalizedPath);
+            $found = self::findMetaIn(self::publicLinks(), $normalizedPath);
+            if ($found) {
+                return $found;
+            }
         }
 
-        return null;
+        // Pages reached only via a CTA button, never a nav link (e.g.
+        // Register -- it has its own dedicated topbar button, so it can't
+        // also live in publicLinks()/authLinks() without duplicating itself
+        // as a plain text link in the nav). The shared hero still needs a
+        // real title+summary for these, so they get a small side list of
+        // their own instead.
+        $pageOnly = [
+            '/register' => [
+                'title' => 'Register Now.',
+                'summary' => 'Pick your sport, league, and division, tell us about yourself, and complete payment -- all in one place.',
+            ],
+        ];
+
+        return $pageOnly[$normalizedPath] ?? null;
     }
 
     /**
