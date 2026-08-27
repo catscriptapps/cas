@@ -43,9 +43,11 @@ if ($isAdminReset === true) {
 // Redirect logged-in users away from home. This only swaps which page file
 // gets rendered for the request -- the browser's address bar still shows
 // the original "/" (or the live deployment's base-path segment), since
-// there's no actual HTTP redirect here.
+// there's no actual HTTP redirect here. Admins are exempt: they need to be
+// able to view (and edit, via the "Our Mission" WYSIWYG block) the live
+// public home page while signed in, not get bounced to the dashboard.
 $rootPageScript = null;
-if ($path === '/home' && $isLoggedIn) {
+if ($path === '/home' && $isLoggedIn && !AuthService::isAdmin()) {
     $path = '/dashboard';
 }
 

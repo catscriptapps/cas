@@ -3,7 +3,12 @@
 
 declare(strict_types=1);
 
+use Src\Service\AuthService;
+
 /** @var string $baseUrl  */
+
+$isAdmin = AuthService::isAdmin();
+$missionHtml = (new \Src\Controller\HomePageTextController())->getOurMissionHtml();
 ?>
 
 <section class="relative overflow-hidden py-20 px-6 sm:px-12 lg:px-24 xl:px-32">
@@ -24,6 +29,36 @@ declare(strict_types=1);
             Canadian All Star Sports runs the leagues, seasons, and game days that keep local players, referees, and rinks
             connected -- schedules, live stats and standings, and everything in between, all in one place.
         </p>
+
+        <?php
+        // Admin-editable freeform block, ported from legacy essahockey_live's
+        // "Our Mission" content (see HomePageTextController's docblock).
+        // $missionHtml is already HTMLPurifier-cleaned on save, so it's safe
+        // to echo raw here.
+        ?>
+        <div class="relative max-w-2xl mx-auto group/mission">
+            <div id="mission-content"
+                class="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed text-left sm:text-center
+                       [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ul]:text-left
+                       [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 [&_ol]:text-left
+                       [&_a]:text-primary-600 [&_a]:underline [&_a]:font-bold [&_strong]:font-bold
+                       [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-xl [&_img]:my-4 [&_img]:mx-auto [&_img]:shadow-sm
+                       [&_h1]:text-2xl [&_h1]:font-black [&_h1]:text-secondary-900 [&_h1]:dark:text-white [&_h1]:mb-3 [&_h1]:mt-1
+                       [&_h2]:text-xl [&_h2]:font-black [&_h2]:text-secondary-900 [&_h2]:dark:text-white [&_h2]:mb-3 [&_h2]:mt-1
+                       [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-secondary-900 [&_h3]:dark:text-white [&_h3]:mb-2">
+                <?= $missionHtml ?>
+            </div>
+
+            <?php if ($isAdmin): ?>
+                <button type="button" id="edit-mission-btn" title="Edit this section"
+                    class="mt-3 inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors opacity-60 group-hover/mission:opacity-100">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit This Section
+                </button>
+            <?php endif; ?>
+        </div>
 
         <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
             <a href="<?= $baseUrl ?>register?sport_id=1" data-partial

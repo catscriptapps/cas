@@ -21,6 +21,7 @@ Capsule::schema()->disableForeignKeyConstraints();
 $tablesToDrop = [
     'password_resets',
     'recent_activities',
+    'home_page_text',
     'contacts',
     'contacts_roles',
     'stats',
@@ -64,6 +65,9 @@ $messages = array_merge($messages, resetCountriesTable());
 
 require_once __DIR__ . '/../../scripts/reset/regions.php';
 $messages = array_merge($messages, resetRegionsTable());
+
+require_once __DIR__ . '/../../scripts/reset/home-page-text.php';
+$messages = array_merge($messages, resetHomePageTextTable());
 
 require_once __DIR__ . '/../../scripts/reset/users.php';
 $messages = array_merge($messages, resetUsersTable());
