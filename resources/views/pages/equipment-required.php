@@ -53,7 +53,7 @@ $sections = [
 <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12 lg:py-16 animate-in fade-in slide-in-from-bottom-4 duration-700 font-sans">
 
     <?php
-    $breadcrumbs = ['League Details' => '/locations', 'Required Equipment' => '/equipment-required'];
+    $breadcrumbs = ['League Details' => '/league-details', 'Required Equipment' => '/equipment-required'];
     include __DIR__ . '/../components/ui/breadcrumbs.php';
     ?>
 

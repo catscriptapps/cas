@@ -205,7 +205,15 @@ function resolvePageRoute(string $path): array
  */
 function resolveDynamicPageMeta(string $resource, string $id): ?array
 {
-    // No detail-route resource currently defines dynamic meta -- add a
+    if ($resource === 'league-details' && in_array($id, ['ball-hockey', 'ice-hockey'], true)) {
+        $sportTitle = $id === 'ball-hockey' ? 'Ball Hockey' : 'Ice Hockey';
+        return [
+            'title' => $sportTitle,
+            'summary' => "Leagues, divisions, and current pricing for {$sportTitle}.",
+        ];
+    }
+
+    // No other detail-route resource currently defines dynamic meta -- add a
     // branch here when a page under resources/views/pages/{resource}/detail.php
     // needs one (see resolvePageRoute() above for how this hook is called).
     return null;

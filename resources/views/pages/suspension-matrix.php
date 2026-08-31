@@ -15,7 +15,7 @@ declare(strict_types=1);
 <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12 lg:py-16 animate-in fade-in slide-in-from-bottom-4 duration-700 font-sans">
 
     <?php
-    $breadcrumbs = ['League Details' => '/locations', 'Suspension Matrix' => '/suspension-matrix'];
+    $breadcrumbs = ['League Details' => '/league-details', 'Suspension Matrix' => '/suspension-matrix'];
     include __DIR__ . '/../components/ui/breadcrumbs.php';
     ?>
 

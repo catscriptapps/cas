@@ -222,9 +222,9 @@ class NavigationConfig
                 'summary' => 'Per-game player stat sheets by division and season.'
             ],
             'League Details' => [
-                'url' => $base . '/locations',
+                'url' => $base . '/league-details',
                 'title' => 'League Details',
-                'summary' => 'Locations, rulebooks, required equipment, and frequently asked questions.',
+                'summary' => 'Choose Ball Hockey or Ice Hockey to see leagues, divisions, and pricing.',
                 'children' => [
                     'Locations' => [
                         'url' => $base . '/locations',

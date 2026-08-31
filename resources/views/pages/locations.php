@@ -9,8 +9,13 @@ declare(strict_types=1);
  * (address + directions per rink, grouped by sport), no DB table. Not to be
  * confused with the unrelated `locations` table/model already in this app,
  * which is just a short-code lookup for the Schedules form's rink dropdown.
- * No real venue photos exist in either legacy checkout, so each entry uses
- * a generic pin/rink placeholder graphic instead.
+ *
+ * Photos are legacy's real venue pics from essahockey_live/images/locations/,
+ * copied into public/images/locations/. Legacy itself reused Thornton's
+ * outdoor arena photo for the indoor rink too (no distinct indoor photo was
+ * ever taken) -- thornton_rink.gif exists in that same legacy folder but was
+ * dead code there (never actually wired into a rendered page). Using it here
+ * instead of the reuse gives every venue its own distinct photo.
  */
 
 $groups = [
@@ -18,27 +23,32 @@ $groups = [
         [
             'name' => 'Thornton Outdoor Rink',
             'address' => '242 Barrie St, Thornton, ON',
+            'image' => 'thornton_arena.png',
         ],
         [
             'name' => 'Angus Outdoor Rink',
             'address' => 'Off the 5th Line, Angus, ON',
             'directions' => '152 Greenwood Drive, Angus (5th Line to Gold Park Gate to Greenwood)',
+            'image' => 'angus_rink.png',
         ],
         [
             'name' => 'Alliston Memorial Arena',
             'address' => '49 Nelson St, Alliston, ON',
             'directions' => "From Thornton/Cookstown -- Highway 89 to Church St to Nelson. From Angus/Baxter -- County Rd 10 to Highway 89 to Church St to Nelson.",
+            'image' => 'alliston_arena.png',
         ],
     ],
     'Ice Hockey Locations' => [
         [
             'name' => 'Thornton Indoor Rink',
             'address' => '242 Barrie St, Thornton, ON',
+            'image' => 'thornton_rink.gif',
         ],
         [
             'name' => 'Innisfil Recreation Centre (YMCA)',
             'address' => '7315 Yonge St, Innisfil, ON L9S 2M6',
             'directions' => 'Home of Summer Ice Hockey.',
+            'image' => 'summer_ice.png',
         ],
     ],
 ];
@@ -47,7 +57,7 @@ $groups = [
 <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12 lg:py-16 animate-in fade-in slide-in-from-bottom-4 duration-700 font-sans">
 
     <?php
-    $breadcrumbs = ['League Details' => '/locations', 'Locations' => '/locations'];
+    $breadcrumbs = ['League Details' => '/league-details', 'Locations' => '/locations'];
     include __DIR__ . '/../components/ui/breadcrumbs.php';
     ?>
 
@@ -66,14 +76,10 @@ $groups = [
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <?php foreach ($venues as $venue): ?>
-                        <div class="p-6 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm flex gap-4">
-                            <div class="h-14 w-14 shrink-0 rounded-2xl bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 flex items-center justify-center">
-                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.75">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
+                        <div class="rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+                            <img src="<?= $baseUrl ?>images/locations/<?= htmlspecialchars($venue['image']) ?>" alt="<?= htmlspecialchars($venue['name']) ?>"
+                                class="w-full h-40 object-cover" loading="lazy">
+                            <div class="p-6">
                                 <h3 class="text-sm font-black text-gray-900 dark:text-white"><?= htmlspecialchars($venue['name']) ?></h3>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1"><?= htmlspecialchars($venue['address']) ?></p>
                                 <?php if (!empty($venue['directions'])): ?>

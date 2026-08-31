@@ -25,12 +25,14 @@ class League extends Model
     protected $fillable = [
         'sport_id',
         'league',
+        'is_ball',
         'status_id',
     ];
 
     protected $casts = [
         'league_id'  => 'integer',
         'sport_id'   => 'integer',
+        'is_ball'    => 'boolean',
         'status_id'  => 'integer',
         'date_created' => 'date',
         'timestamp'  => 'datetime',
