@@ -20,6 +20,7 @@ Capsule::schema()->disableForeignKeyConstraints();
  */
 $tablesToDrop = [
     'password_resets',
+    'registrant_accounts',
     'recent_activities',
     'home_page_text',
     'contacts',
@@ -150,6 +151,9 @@ $messages = array_merge($messages, resetRecentActivitiesTable());
 
 require_once __DIR__ . '/../../scripts/reset/password-resets.php';
 $messages = array_merge($messages, resetPasswordResetsTable());
+
+require_once __DIR__ . '/../../scripts/reset/registrant-accounts.php';
+$messages = array_merge($messages, resetRegistrantAccountsTable());
 
 /**
  * 4. Everything past Authentication & Core / Static Lookups -- the

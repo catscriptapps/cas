@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace Src\Controller;
 
 use App\Models\Division;
+use App\Models\RegistrantAccount;
 use App\Models\Registration;
 use App\Traits\RecentActivityLogger;
 use App\Utils\IdEncoder;
@@ -75,15 +76,53 @@ class RegisterController
                 $registration->entry_id
             );
 
+            $accountMessage = $this->maybeCreateAccount($email, $data);
+
             return [
                 'success' => true,
                 'encoded_id' => IdEncoder::encode($registration->entry_id),
                 'amount_due' => (float)$division->price,
                 'division_label' => $division->division,
-                'messages' => ['Registration received. Continue to payment to confirm your spot.'],
+                'messages' => array_filter([
+                    'Registration received. Continue to payment to confirm your spot.',
+                    $accountMessage,
+                ]),
             ];
         } catch (\Throwable $e) {
             return ['success' => false, 'messages' => [$e->getMessage()]];
         }
+    }
+
+    /**
+     * The "create a password" step-4 fields are entirely optional -- a blank
+     * password just means the registrant skipped self-service login setup
+     * and stays reachable only through the admin Registrations screen, same
+     * as before this feature existed. Silently no-ops on a bad/mismatched
+     * password rather than failing the whole registration, since the
+     * registration itself already succeeded by the time this runs.
+     */
+    private function maybeCreateAccount(string $email, array $data): ?string
+    {
+        $password = (string)($data['password'] ?? '');
+        $confirmation = (string)($data['password_confirmation'] ?? '');
+
+        if ($password === '') {
+            return null;
+        }
+        if ($password !== $confirmation) {
+            return 'Note: your password and confirmation did not match, so an account was not created. You can set one up later from the Sign In page.';
+        }
+        if (strlen($password) < 8) {
+            return 'Note: your password was too short (8 characters minimum), so an account was not created. You can set one up later from the Sign In page.';
+        }
+
+        $account = RegistrantAccount::firstOrNew(['email' => $email]);
+        $account->password = password_hash($password, PASSWORD_DEFAULT);
+        if (!$account->exists) {
+            $account->created_at = date('Y-m-d H:i:s');
+        }
+        $account->save();
+
+        return 'Your account is ready -- sign in anytime to check your registration status.';
     }
 }

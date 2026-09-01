@@ -35,17 +35,28 @@ $isAdminReset = filter_var($_ENV['ADMIN_RESET'] ?? false, FILTER_VALIDATE_BOOLEA
 if ($isAdminReset === true) {
     $isLoggedIn = false;
     $currentUser = null;
+    $isRegistrant = false;
 } else {
     $isLoggedIn = AuthService::isLoggedIn();
     $currentUser = $isLoggedIn ? AuthService::currentUser() : null;
+    // A completely separate session/identity from $isLoggedIn (staff) --
+    // see AuthService::isRegistrant(). A registrant can never satisfy the
+    // staff guard below, and vice versa.
+    $isRegistrant = AuthService::isRegistrant();
 }
 
-// Redirect logged-in users away from home. This only swaps which page file
+// Redirect logged-in STAFF away from home. This only swaps which page file
 // gets rendered for the request -- the browser's address bar still shows
 // the original "/" (or the live deployment's base-path segment), since
 // there's no actual HTTP redirect here. Admins are exempt: they need to be
 // able to view (and edit, via the "Our Mission" WYSIWYG block) the live
 // public home page while signed in, not get bounced to the dashboard.
+//
+// Registrants are NOT swapped here -- clicking Home/the logo while signed
+// in should show the real public home page, same as a guest sees. Landing
+// on /my-account happens exactly once, right after login (AuthService::
+// login()'s redirect_url); a topbar "Dashboard" icon (see layout-topbar.php)
+// is how they get back to it afterward.
 $rootPageScript = null;
 if ($path === '/home' && $isLoggedIn && !AuthService::isAdmin()) {
     $path = '/dashboard';
@@ -119,6 +130,30 @@ if ($isProtectedPath) {
             exit;
         }
     }
+}
+
+// ------------------------------------------------------------
+// Registrant route handling -- entirely separate guard/session from the
+// staff one above (see AuthService::isRegistrant()).
+// ------------------------------------------------------------
+$registrantProtectedPaths = NavigationConfig::getRegistrantProtectedPaths();
+$isRegistrantProtectedPath = in_array($fullPath, $registrantProtectedPaths, true) || array_reduce(
+    $registrantProtectedPaths,
+    fn($matched, $protected) => $matched || ($protected !== '' && str_starts_with($fullPath, $protected . '/')),
+    false
+);
+
+if ($isRegistrantProtectedPath && !$isRegistrant) {
+    [$pageFile, $title] = [__DIR__ . '/../resources/views/pages/auth-required.php', 'Not Authenticated'];
+    $pageMeta = ['icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M4.93 4.93a10 10 0 0114.14 0 10 10 0 010 14.14 10 10 0 01-14.14 0 10 10 0 010-14.14z" /></svg>'];
+
+    if ($isPartial) {
+        header('X-Page-Title: ' . $title);
+        include $pageFile;
+        exit;
+    }
+    include __DIR__ . '/../resources/views/layouts/app.php';
+    exit;
 }
 
 // ------------------------------------------------------------

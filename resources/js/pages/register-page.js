@@ -169,6 +169,17 @@ function wireDetailsForm() {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!validator.validateForEmptyFields(e)) return;
+
+        const password = document.getElementById('reg-password')?.value || '';
+        const confirmation = document.getElementById('reg-password-confirm')?.value || '';
+        const mismatchHint = document.getElementById('reg-password-mismatch');
+        if (password !== confirmation) {
+            mismatchHint?.classList.remove('hidden');
+            document.getElementById('reg-password-confirm')?.focus();
+            return;
+        }
+        mismatchHint?.classList.add('hidden');
+
         goToStep(5);
     });
 
@@ -216,6 +227,8 @@ async function submitRegistration() {
         hear_about_us: details.hear_about_us || null,
         team_name: details.team_name?.trim() || null,
         special_requests: details.special_requests?.trim() || null,
+        password: details.password || '',
+        password_confirmation: details.password_confirmation || '',
     };
 
     submitBtn.disabled = true;
@@ -240,6 +253,15 @@ async function submitRegistration() {
         state.divisionLabel = result.division_label;
         state.fullName = `${payload.first_name} ${payload.last_name}`;
 
+        // A second message means the optional account-setup step had
+        // something worth surfacing (account created, or a skipped-silently
+        // password mismatch/length issue) -- the first message (the
+        // registration-received confirmation itself) is redundant with the
+        // payment step UI that's about to render, so only the second is shown.
+        if (result.messages?.[1]) {
+            showToast(result.messages[1], 'success');
+        }
+
         renderPaymentStep();
         goToStep(6);
     } catch (err) {
@@ -248,6 +270,18 @@ async function submitRegistration() {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Continue to Payment';
     }
+}
+
+/**
+ * The registration row was already created (unpaid) back in
+ * submitRegistration() -- PayPal is purely how that row later gets marked
+ * paid. Skipping it here just means the confirmation step shows without
+ * that ever happening yet, same end state as an admin manually marking a
+ * cash/e-transfer registration paid later from the Registrations tab.
+ */
+function skipPayment() {
+    document.getElementById('register-confirm-name').textContent = state.fullName;
+    goToStep(7);
 }
 
 function renderPaymentStep() {
@@ -336,4 +370,5 @@ export function init() {
     loadSourceOptions();
     wireDetailsForm();
     wireWaiverStep();
+    document.getElementById('register-pay-later-btn')?.addEventListener('click', skipPayment);
 }

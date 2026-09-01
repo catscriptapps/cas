@@ -5,6 +5,7 @@ use Src\Config\NavigationConfig;
 use Src\Service\AuthService;
 
 /** @var bool $isLoggedIn */
+/** @var bool $isRegistrant */
 /** @var string $baseUrl */
 /** @var string $assetBase */
 /** @var string $appName */
@@ -26,20 +27,22 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
     x-data="{ mobileMenuOpen: false }"
     x-effect="document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''">
 
-    <!-- Logo, far left -->
-    <div class="flex items-center shrink-0">
-        <a href="<?= $baseUrl ?>" data-partial data-title="Home" class="flex items-center gap-3 min-w-0 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg">
-            <img src="<?= $assetBase ?>images/logo/logo.png" alt="<?= htmlspecialchars($appName) ?>" class="h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0">
-            <span class="hidden sm:inline-block font-black text-white tracking-tight text-base lg:text-lg whitespace-nowrap truncate">
-                <?= htmlspecialchars($appName) ?>
-            </span>
-        </a>
-    </div>
+    <!-- Logo + desktop nav, grouped together on the left (matching legacy --
+         nav sits close to the logo, not pinned to the far right) -->
+    <div class="flex items-center gap-6 xl:gap-10 min-w-0">
+        <div class="flex items-center shrink-0">
+            <a href="<?= $baseUrl ?>" data-partial data-title="Home" class="flex items-center gap-3 min-w-0 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg">
+                <?php
+                // Legacy's own header has no "Canadian All Star Sports" text next
+                // to the logo -- the crest graphic itself already spells out the
+                // name -- so this doesn't repeat it either. alt text keeps the
+                // name available to screen readers regardless.
+                ?>
+                <img src="<?= $assetBase ?>images/logo/logo.png" alt="<?= htmlspecialchars($appName) ?>" class="h-20 w-20 sm:h-24 sm:w-24 object-contain shrink-0">
+            </a>
+        </div>
 
-    <!-- Nav (desktop) + icon cluster + auth + mobile toggle, far right -->
-    <div class="flex items-center gap-3 sm:gap-5 font-bold">
-
-        <nav class="hidden 2xl:flex items-center gap-5 xl:gap-6 text-sm font-bold text-slate-200">
+        <nav class="hidden lg:flex items-center gap-4 xl:gap-6 text-sm font-bold text-slate-200">
             <?php foreach ($navLinks as $name => $config): ?>
                 <?php
                 // Detect if this element represents the Home link
@@ -62,7 +65,7 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                             </svg>
                         </a>
 
-                        <div class="absolute top-full right-0 min-w-[240px] bg-slate-950 dark:bg-black border-2 border-slate-800 dark:border-slate-900 rounded-xl shadow-2xl py-3 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
+                        <div class="absolute top-full left-0 min-w-[240px] bg-slate-950 dark:bg-black border-2 border-slate-800 dark:border-slate-900 rounded-xl shadow-2xl py-3 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
                             <?php foreach ($config['children'] as $childName => $childConfig): ?>
                                 <?php
                                 $isChildActive = ($currentUrlTrimmed === rtrim($childConfig['url'], '/'));
@@ -90,8 +93,10 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                 <?php endif; ?>
             <?php endforeach; ?>
         </nav>
+    </div>
 
-        <span class="hidden 2xl:inline text-slate-800 font-bold">|</span>
+    <!-- Icon cluster + auth + mobile toggle, far right -->
+    <div class="flex items-center gap-3 sm:gap-5 font-bold shrink-0">
 
         <div class="flex items-center gap-2 text-slate-300">
             <?php if ($isLoggedIn && AuthService::isCat()) : ?>
@@ -128,22 +133,39 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                         <span class="text-xs uppercase tracking-wider font-black opacity-90 group-hover:opacity-100">Sign Out</span>
                     </a>
                 </div>
+            <?php elseif ($isRegistrant): ?>
+                <div class="flex items-center gap-2">
+                    <a href="<?= $baseUrl ?>my-account" data-partial data-title="Dashboard" data-summary="Your registration status, team, schedule, and stats, all in one place." title="Dashboard" aria-label="Dashboard"
+                        class="flex items-center justify-center h-10 w-10 rounded-full border-2 border-slate-700 hover:border-primary-400 text-slate-200 hover:text-primary-400 transition-all duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z" />
+                        </svg>
+                    </a>
+                    <a href="<?= $baseUrl ?>logout" data-logout-button title="Sign out" aria-label="Sign out"
+                        class="flex items-center justify-center h-10 w-10 rounded-full border-2 border-slate-700 hover:border-red-900/60 text-slate-200 hover:text-red-400 transition-all duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 9V5.25A2.25 2.25 0 0015 3H6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 006 21h9a2.25 2.25 0 002.25-2.25V15M21 12H9m12 0l-3-3m3 3l-3 3" />
+                        </svg>
+                    </a>
+                </div>
             <?php else: ?>
                 <div class="flex items-center gap-2">
                     <a href="<?= $baseUrl ?>register" data-partial title="Register"
                         class="flex items-center rounded-full px-5 py-2 bg-primary-400 hover:bg-secondary-400 border-2 border-primary-400 hover:border-secondary-400 text-white shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
                         <span class="uppercase tracking-widest text-xs font-black">Register</span>
                     </a>
-                    <a href="<?= $baseUrl ?>login" data-login-button title="Sign In"
-                        class="flex items-center rounded-full px-5 py-2 border-2 border-slate-700 hover:border-primary-400 text-slate-200 hover:text-white transition-all duration-200 transform hover:-translate-y-0.5">
-                        <span class="uppercase tracking-widest text-xs font-black">Sign In</span>
+                    <a href="<?= $baseUrl ?>login" data-login-button title="Sign In" aria-label="Sign In"
+                        class="flex items-center justify-center h-10 w-10 rounded-full border-2 border-slate-700 hover:border-primary-400 text-slate-200 hover:text-white transition-all duration-200 transform hover:-translate-y-0.5">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                        </svg>
                     </a>
                 </div>
             <?php endif; ?>
         </div>
 
         <!-- Mobile nav toggle -->
-        <div class="flex items-center 2xl:hidden">
+        <div class="flex items-center lg:hidden">
             <button type="button"
                 @click="mobileMenuOpen = !mobileMenuOpen"
                 aria-label="Toggle Navigation Menu"
@@ -170,7 +192,7 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         @click="mobileMenuOpen = false"
-        class="absolute top-full left-0 w-full h-[calc(100vh-76px)] sm:h-[calc(100vh-88px)] 2xl:hidden bg-black/60 z-[9990]">
+        class="absolute top-full left-0 w-full h-[calc(100vh-76px)] sm:h-[calc(100vh-88px)] lg:hidden bg-black/60 z-[9990]">
     </div>
 
     <!-- Mobile / large-screen nav drawer -- a proper right-anchored sidebar
@@ -184,7 +206,7 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-x-0"
         x-transition:leave-end="opacity-0 translate-x-6"
-        class="absolute top-full right-0 2xl:hidden border-l-2 border-slate-800 bg-white dark:bg-black px-4 py-5 space-y-3 shadow-2xl w-full max-w-xs sm:max-w-sm h-[calc(100vh-76px)] sm:h-[calc(100vh-88px)] overflow-y-auto z-[9995]"
+        class="absolute top-full right-0 lg:hidden border-l-2 border-slate-800 bg-white dark:bg-black px-4 py-5 space-y-3 shadow-2xl w-full max-w-xs sm:max-w-sm h-[calc(100vh-76px)] sm:h-[calc(100vh-88px)] overflow-y-auto z-[9995]"
         x-data="{ activeMobileSection: null }">
 
         <?php foreach ($navLinks as $name => $config): ?>
@@ -196,15 +218,27 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
             <?php if (isset($config['children'])): ?>
                 <?php $slug = md5($name); ?>
                 <div class="space-y-1.5">
-                    <button @click="activeMobileSection = (activeMobileSection === '<?= $slug ?>' ? null : '<?= $slug ?>')"
-                        class="w-full flex justify-between items-center px-4 py-3 rounded-xl text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 font-bold text-base transition-colors text-left border border-transparent hover:border-slate-200 dark:hover:border-slate-800">
-                        <span><?= $name ?></span>
-                        <svg class="w-5 h-5 transform transition-transform duration-200 text-slate-500 dark:text-slate-400 stroke-[3]"
-                            :class="activeMobileSection === '<?= $slug ?>' ? 'rotate-180 text-primary-600 dark:text-amber-400' : ''"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
+                    <div class="flex items-center rounded-xl border border-transparent hover:border-slate-200 dark:hover:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+                        <!-- Tapping the name navigates straight to the landing page (e.g.
+                             /league-details) -- on a screen stuck behind this hamburger
+                             (no hover dropdown available), that page was otherwise
+                             completely unreachable, since the old combined button only
+                             ever toggled the submenu open/closed and never itself linked
+                             anywhere. -->
+                        <a href="<?= $targetUrl ?>" data-partial data-title="<?= htmlspecialchars($config['title']) ?>" data-summary="<?= htmlspecialchars($config['summary']) ?>" @click="mobileMenuOpen = false"
+                            class="flex-1 min-w-0 px-4 py-3 text-slate-800 dark:text-slate-100 font-bold text-base">
+                            <?= $name ?>
+                        </a>
+                        <button type="button" @click="activeMobileSection = (activeMobileSection === '<?= $slug ?>' ? null : '<?= $slug ?>')"
+                            aria-label="Toggle <?= htmlspecialchars($name) ?> submenu"
+                            class="shrink-0 p-3 pl-2 text-slate-500 dark:text-slate-400">
+                            <svg class="w-5 h-5 transform transition-transform duration-200 stroke-[3]"
+                                :class="activeMobileSection === '<?= $slug ?>' ? 'rotate-180 text-primary-600 dark:text-amber-400' : ''"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
 
                     <div x-show="activeMobileSection === '<?= $slug ?>'" x-cloak
                         x-transition:enter="transition ease-out duration-100"
@@ -252,6 +286,23 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                     <p class="text-sm font-black text-slate-900 dark:text-slate-100"><?= htmlspecialchars($drawerFullName) ?></p>
                     <p class="text-xs font-bold text-slate-400">Authorized Profile</p>
                 </div>
+            </div>
+        <?php elseif ($isRegistrant): ?>
+            <div class="pt-5 border-t-2 border-slate-100 dark:border-slate-900 space-y-3">
+                <a href="<?= $baseUrl ?>my-account" data-partial data-title="Dashboard" data-summary="Your registration status, team, schedule, and stats, all in one place." @click="mobileMenuOpen = false"
+                    class="flex items-center gap-4 px-4 py-2">
+                    <div class="h-10 w-10 rounded-full bg-primary-500/10 border-2 border-primary-500 text-primary-600 dark:text-amber-400 flex items-center justify-center font-black text-sm uppercase shrink-0">
+                        <?= htmlspecialchars($initial ?? 'R') ?>
+                    </div>
+                    <div>
+                        <p class="text-sm font-black text-slate-900 dark:text-slate-100"><?= htmlspecialchars($displayName) ?></p>
+                        <p class="text-xs font-bold text-primary-600 dark:text-amber-400">Dashboard</p>
+                    </div>
+                </a>
+                <a href="<?= $baseUrl ?>logout" data-logout-button @click="mobileMenuOpen = false"
+                    class="block px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 font-bold text-base transition-colors">
+                    Sign Out
+                </a>
             </div>
         <?php endif; ?>
     </div>

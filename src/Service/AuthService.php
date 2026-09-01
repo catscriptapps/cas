@@ -5,8 +5,11 @@ declare(strict_types=1);
 
 namespace Src\Service;
 
+use App\Models\Registration;
+use App\Models\RegistrantAccount;
 use App\Models\User;
 use App\Models\UserType;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class AuthService
@@ -124,7 +127,56 @@ class AuthService
             ];
         }
 
+        // --- Priority 2: Attempt login as a Registrant ---
+        $registrantAccount = RegistrantAccount::where('email', $email)->first();
+        if ($registrantAccount && password_verify($password, $registrantAccount->password)) {
+            $_SESSION['account_type'] = 'registrant';
+            $_SESSION['registrant_email'] = $registrantAccount->email;
+
+            return [
+                'success' => true,
+                'messages' => ['Login successful!'],
+                'redirect_url' => '/my-account',
+            ];
+        }
+
         return ['success' => false, 'messages' => ['Invalid email or password.']];
+    }
+
+    /**
+     * Whether the current session belongs to a registrant (a public
+     * registration-form submitter who's set up a password), as opposed to a
+     * backend staff `User` -- kept entirely separate from isLoggedIn()/
+     * isAdmin() so a registrant session can never accidentally satisfy an
+     * admin route guard (isLoggedIn() only ever checks $_SESSION['user_id'],
+     * which a registrant login never sets).
+     */
+    public static function isRegistrant(): bool
+    {
+        self::ensureSession();
+        return ($_SESSION['account_type'] ?? null) === 'registrant' && !empty($_SESSION['registrant_email']);
+    }
+
+    public static function currentRegistrantEmail(): ?string
+    {
+        self::ensureSession();
+        return self::isRegistrant() ? $_SESSION['registrant_email'] : null;
+    }
+
+    /**
+     * Every registration row under the signed-in registrant's email --
+     * usually one, but a parent who registered more than one child (or the
+     * same person across multiple seasons) can legitimately have several,
+     * all reachable from the one login.
+     */
+    public static function currentRegistrations(): Collection
+    {
+        $email = self::currentRegistrantEmail();
+        if (!$email) {
+            return new Collection();
+        }
+
+        return Registration::where('email', $email)->orderByDesc('date_created')->get();
     }
 
     /**
@@ -170,7 +222,7 @@ class AuthService
     /**
      * Identifies the currently signed-in account, if any.
      *
-     * @return array{type: string, id: int}|null
+     * @return array{type: string, id: int|string}|null
      */
     public static function currentAccountContext(): ?array
     {
@@ -178,6 +230,10 @@ class AuthService
 
         if (isset($_SESSION['user_id']) && (int)$_SESSION['user_id'] > 0) {
             return ['type' => 'user', 'id' => (int)$_SESSION['user_id']];
+        }
+
+        if (self::isRegistrant()) {
+            return ['type' => 'registrant', 'id' => (string)$_SESSION['registrant_email']];
         }
 
         return null;

@@ -139,14 +139,15 @@ $buildVersion = @filemtime(__DIR__ . '/../../public/assets/js/page-manifest.json
     // Offset must clear the fixed topbar's actual rendered height, not just
     // its declared min-height (see layout-topbar.php's min-h-[76px]
     // sm:min-h-[88px]) -- the topbar's own padding/content push it taller
-    // than that at every breakpoint (measured ~82px / ~98px), so a `pt-`
-    // exactly matching the min-height left an ~6-10px sliver of every
-    // page's top content sitting behind the topbar. Most pages never showed
-    // it because they add their own py-10 buffer below this offset, but any
-    // page without one (e.g. Schedules detail) had its breadcrumb visibly
-    // clipped. These values clear the true height with a small margin.
+    // than that at every breakpoint (measured ~98px / ~114px after the
+    // larger logo), so a `pt-` exactly matching the min-height left a
+    // sliver of every page's top content sitting behind the topbar. Most
+    // pages never showed it because they add their own py-10 buffer below
+    // this offset, but any page without one (e.g. Schedules detail) had its
+    // breadcrumb visibly clipped. These values clear the true height with a
+    // small margin.
     ?>
-    <div id="app-shell-content" class="flex-1 pt-[88px] sm:pt-[104px]">
+    <div id="app-shell-content" class="flex-1 pt-[104px] sm:pt-[120px]">
         <?php include __DIR__ . '/../partials/layout-header.php'; ?>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -115,6 +115,20 @@ declare(strict_types=1);
                     <textarea id="reg-notes" name="special_requests" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white text-sm font-semibold focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all resize-none"></textarea>
                 </div>
 
+                <div class="sm:col-span-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Create a Password (optional)</p>
+                    <p class="text-xs text-gray-400 font-medium mb-4">Set one up so you can sign in later to check your registration status, team, schedule, and stats. Leave blank to skip.</p>
+                </div>
+                <div>
+                    <label for="reg-password" class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 block">Password</label>
+                    <input type="password" id="reg-password" name="password" minlength="8" placeholder="8+ characters" autocomplete="new-password" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white text-sm font-semibold focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="reg-password-confirm" class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 block">Confirm Password</label>
+                    <input type="password" id="reg-password-confirm" name="password_confirmation" minlength="8" autocomplete="new-password" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white text-sm font-semibold focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all">
+                    <p id="reg-password-mismatch" class="hidden text-[11px] font-bold text-red-500 mt-1.5">Passwords do not match.</p>
+                </div>
+
                 <div class="sm:col-span-2 flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
                     <button type="button" data-back-step="3" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-primary-600 transition-colors">&larr; Back</button>
                     <button type="submit" class="inline-flex items-center gap-2 py-3 px-8 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-primary-500/20 transition-all active:scale-[0.98]">
@@ -162,6 +176,9 @@ declare(strict_types=1);
             <p id="paypal-unconfigured-notice" class="hidden mt-4 text-xs text-gray-400 font-medium">
                 Online payment isn't configured yet -- an admin can mark this registration paid manually from the Registrations tab.
             </p>
+            <button type="button" id="register-pay-later-btn" class="mt-5 text-xs font-bold text-gray-400 hover:text-primary-600 underline underline-offset-2 transition-colors">
+                Can't pay online right now? Register anyway and pay later.
+            </button>
         </div>
     </section>
 

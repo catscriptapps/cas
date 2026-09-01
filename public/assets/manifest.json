@@ -41,20 +41,28 @@
     "file": "js/phone-formatter-Cuqgilmj.min.js",
     "name": "phone-formatter"
   },
-  "_profile-modal-D7ofKs-w.min.js": {
-    "file": "js/profile-modal-D7ofKs-w.min.js",
+  "_profile-modal-Cdm9Ply8.min.js": {
+    "file": "js/profile-modal-Cdm9Ply8.min.js",
     "name": "profile-modal",
     "imports": [
       "_modal-factory-D72OMj0_.min.js",
-      "_regions-component-BQf5KGOV.min.js",
+      "_regions-api-hCCJs-Bd.min.js",
+      "_regions-component-Dq5caQJQ.min.js",
       "_form-validator-CSeXGyW6.min.js",
       "_spinner-utils-BGUFcaGl.min.js",
       "_table-pagination-count-JrykreAu.min.js"
     ]
   },
-  "_regions-component-BQf5KGOV.min.js": {
-    "file": "js/regions-component-BQf5KGOV.min.js",
-    "name": "regions-component"
+  "_regions-api-hCCJs-Bd.min.js": {
+    "file": "js/regions-api-hCCJs-Bd.min.js",
+    "name": "regions-api"
+  },
+  "_regions-component-Dq5caQJQ.min.js": {
+    "file": "js/regions-component-Dq5caQJQ.min.js",
+    "name": "regions-component",
+    "imports": [
+      "_regions-api-hCCJs-Bd.min.js"
+    ]
   },
   "_seasons-init-meAbeFH-.min.js": {
     "file": "js/seasons-init-meAbeFH-.min.js",
@@ -217,13 +225,24 @@
       "_toast--nIYmWRe.min.js"
     ]
   },
+  "resources/js/pages/my-account-page.js": {
+    "file": "js/my-account-page.min.js",
+    "name": "my-account-page",
+    "src": "resources/js/pages/my-account-page.js",
+    "isEntry": true,
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_toast--nIYmWRe.min.js",
+      "_regions-api-hCCJs-Bd.min.js"
+    ]
+  },
   "resources/js/pages/profile-page.js": {
     "file": "js/profile-page.min.js",
     "name": "profile-page",
     "src": "resources/js/pages/profile-page.js",
     "isEntry": true,
     "imports": [
-      "_profile-modal-D7ofKs-w.min.js",
+      "_profile-modal-Cdm9Ply8.min.js",
       "_toast--nIYmWRe.min.js",
       "_spa-router-D_SGAIVx.min.js",
       "_delete-factory-DhbIOdTj.min.js",
@@ -231,7 +250,8 @@
       "_spinner-utils-BGUFcaGl.min.js",
       "_animations-BtDgdX2G.min.js",
       "_modal-factory-D72OMj0_.min.js",
-      "_regions-component-BQf5KGOV.min.js",
+      "_regions-api-hCCJs-Bd.min.js",
+      "_regions-component-Dq5caQJQ.min.js",
       "_table-pagination-count-JrykreAu.min.js",
       "_spinner-B_-RBeOm.min.js"
     ]
@@ -243,7 +263,8 @@
     "isEntry": true,
     "imports": [
       "_divisions-api-MolTNHJp.min.js",
-      "_regions-component-BQf5KGOV.min.js",
+      "_regions-api-hCCJs-Bd.min.js",
+      "_regions-component-Dq5caQJQ.min.js",
       "_form-validator-CSeXGyW6.min.js",
       "_toast--nIYmWRe.min.js"
     ]
@@ -319,13 +340,14 @@
     "src": "resources/js/pages/users-page.js",
     "isEntry": true,
     "imports": [
-      "_profile-modal-D7ofKs-w.min.js",
+      "_profile-modal-Cdm9Ply8.min.js",
       "_delete-factory-DhbIOdTj.min.js",
       "_toast--nIYmWRe.min.js",
       "_table-pagination-count-JrykreAu.min.js",
       "_data-table-9SFXZdzb.min.js",
       "_modal-factory-D72OMj0_.min.js",
-      "_regions-component-BQf5KGOV.min.js",
+      "_regions-api-hCCJs-Bd.min.js",
+      "_regions-component-Dq5caQJQ.min.js",
       "_form-validator-CSeXGyW6.min.js",
       "_spinner-utils-BGUFcaGl.min.js"
     ]

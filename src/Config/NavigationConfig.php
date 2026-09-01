@@ -59,6 +59,25 @@ class NavigationConfig
                 'title' => 'Register Now.',
                 'summary' => 'Pick your sport, league, and division, tell us about yourself, and complete payment -- all in one place.',
             ],
+            // About/Gamesheets used to live in publicLinks() too, but the
+            // guest nav must match legacy's exact item list (Home, Schedules,
+            // Stats+Standings, League Details, Sponsorship, Contact) -- these
+            // two are still real, reachable pages (About via the footer,
+            // Gamesheets via Schedules/Stats, same as legacy), they just
+            // don't get their own top-level nav link. They still need a
+            // title/summary for the shared hero, hence kept here instead.
+            '/about' => [
+                'title' => 'About Us',
+                'summary' => 'Our story and what Canadian All Star Sports is building for local leagues.',
+            ],
+            '/gamesheets' => [
+                'title' => 'Gamesheets',
+                'summary' => 'Per-game player stat sheets by division and season.',
+            ],
+            '/my-account' => [
+                'title' => 'Dashboard',
+                'summary' => 'Your registration status, team, schedule, and stats, all in one place.',
+            ],
         ];
 
         return $pageOnly[$normalizedPath] ?? null;
@@ -201,11 +220,6 @@ class NavigationConfig
                 'title' => 'Home',
                 'summary' => ''
             ],
-            'About' => [
-                'url' => $base . '/about',
-                'title' => 'About Us',
-                'summary' => 'Our story and what Canadian All Star Sports is building for local leagues.'
-            ],
             'Schedules' => [
                 'url' => $base . '/schedules',
                 'title' => 'Schedules',
@@ -215,11 +229,6 @@ class NavigationConfig
                 'url' => $base . '/stats',
                 'title' => 'Stats+Standings',
                 'summary' => 'Team standings and player season stats by division.'
-            ],
-            'Gamesheets' => [
-                'url' => $base . '/gamesheets',
-                'title' => 'Gamesheets',
-                'summary' => 'Per-game player stat sheets by division and season.'
             ],
             'League Details' => [
                 'url' => $base . '/league-details',
@@ -298,6 +307,21 @@ class NavigationConfig
     }
 
     /**
+     * Paths gated to a signed-in registrant rather than staff -- a
+     * completely separate guard from getProtectedPaths()/isLoggedIn() (see
+     * AuthService::isRegistrant()), since a registrant session must never
+     * satisfy the staff route guard or vice versa.
+     */
+    public static function getRegistrantProtectedPaths(): array
+    {
+        $base = $_ENV['APP_BASE_PATH'] ?? '';
+
+        return [
+            $base . '/my-account',
+        ];
+    }
+
+    /**
      * Gets display information for the currently authenticated entity (User).
      * @return array{displayName: string, initial: string}
      */
@@ -316,6 +340,15 @@ class NavigationConfig
                     : ($parts[0] ?? 'User');
                 $initial = !empty($user->full_name) ? strtoupper(substr($user->full_name, 0, 1)) : 'U';
             }
+        } elseif (AuthService::isRegistrant()) {
+            $registration = AuthService::currentRegistrations()->first();
+            $fullName = $registration->full_name ?? AuthService::currentRegistrantEmail() ?? 'Registrant';
+
+            $parts = explode(' ', $fullName);
+            $displayName = (count($parts) > 1)
+                ? strtoupper(substr($parts[0], 0, 1)) . '. ' . end($parts)
+                : ($parts[0] ?? 'Registrant');
+            $initial = strtoupper(substr($fullName, 0, 1));
         }
         return compact('displayName', 'initial');
     }

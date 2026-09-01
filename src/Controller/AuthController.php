@@ -8,6 +8,8 @@ use Src\Service\AuthService;
 use App\Traits\RecentActivityLogger;
 use App\Models\User;
 use App\Models\PasswordReset;
+use App\Models\Registration;
+use App\Models\RegistrantAccount;
 
 /**
  * Class AuthController
@@ -62,11 +64,35 @@ class AuthController
 
     /**
      * Resolve the account owning this email, so forgot-password/reset-password
-     * look up the same account login would.
+     * look up the same account login would -- staff first, then an existing
+     * registrant credential, matching AuthService::login()'s own priority
+     * order.
+     *
+     * If neither exists but a `registrations` row does, this is a
+     * registrant who's never set up a password -- returns an unsaved
+     * RegistrantAccount stand-in so the exact same forgot-password flow
+     * also serves as first-time setup. resetPassword() just calls ->save()
+     * on whatever this returns, and Eloquent inserts a new row for an
+     * unsaved model the same way it updates an existing one, with no
+     * special-casing needed there.
      */
     private static function findAccountByEmail(string $email): ?object
     {
-        return User::where('email', $email)->first();
+        $user = User::where('email', $email)->first();
+        if ($user) {
+            return $user;
+        }
+
+        $registrantAccount = RegistrantAccount::where('email', $email)->first();
+        if ($registrantAccount) {
+            return $registrantAccount;
+        }
+
+        if (Registration::where('email', $email)->exists()) {
+            return new RegistrantAccount(['email' => $email]);
+        }
+
+        return null;
     }
 
     /**
@@ -335,6 +361,9 @@ class AuthController
             }
 
             $account->password = password_hash($password, PASSWORD_DEFAULT);
+            if ($account instanceof RegistrantAccount && !$account->created_at) {
+                $account->created_at = date('Y-m-d H:i:s');
+            }
             $account->save();
 
             // 5. Cleanup: Remove the reset token so it can't be used again
