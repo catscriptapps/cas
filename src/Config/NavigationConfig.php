@@ -133,11 +133,67 @@ class NavigationConfig
     }
 
     /**
-     * Returns the navigation links for the current user.
+     * Returns the topbar nav for the current viewer. The menu items are
+     * always the same regardless of who's signed in -- guest, admin, or
+     * registrant -- because authLinks() used to fully REPLACE the guest nav
+     * for a signed-in staff account, which meant an admin could never reach
+     * a guest-facing page (e.g. Sponsorship) from the nav at all. Now
+     * exactly two role-specific extras get spliced into the same base list:
+     * "Dashboard" right after Home (its target depends on which kind of
+     * account is signed in), and "Profile" at the end for admins only.
+     * Every other backend tool (Registrations, League Management, Contacts,
+     * Users, Incident Reports, Gamesheets) lives one level down, reachable
+     * from the Dashboard page's own quick-links instead of the top nav --
+     * see authLinks(), still used as-is for that page's link grid and for
+     * public/index.php's per-app permission check.
      */
     public static function getNavLinks(bool $isLoggedIn): array
     {
-        return $isLoggedIn ? self::authLinks() : self::publicLinks();
+        $nav = self::publicLinks();
+
+        // $isLoggedIn is staff-only semantics (matches AuthService::
+        // isLoggedIn()) -- a registrant session leaves it false, so it can't
+        // gate the early return here or a signed-in registrant would never
+        // reach the isRegistrant() branch below at all.
+        $isAdmin = $isLoggedIn && AuthService::isAdmin();
+        $isRegistrant = AuthService::isRegistrant();
+        if (!$isAdmin && !$isRegistrant) {
+            return $nav;
+        }
+
+        $base = $_ENV['APP_BASE_PATH'] ?? '';
+        $dashboardEntry = null;
+        if ($isAdmin) {
+            $dashboardEntry = [
+                'url' => $base . '/dashboard',
+                'title' => 'Operational Dashboard',
+                'summary' => 'Recent activity across the league, and quick links into every workspace module.',
+            ];
+        } elseif ($isRegistrant) {
+            $dashboardEntry = [
+                'url' => $base . '/my-account',
+                'title' => 'Dashboard',
+                'summary' => 'Your registration status, team, schedule, and stats, all in one place.',
+            ];
+        }
+
+        $result = [];
+        foreach ($nav as $name => $config) {
+            $result[$name] = $config;
+            if ($name === 'Home' && $dashboardEntry) {
+                $result['Dashboard'] = $dashboardEntry;
+            }
+        }
+
+        if ($isAdmin) {
+            $result['Profile'] = [
+                'url' => $base . '/profile',
+                'title' => 'Profile Settings',
+                'summary' => 'Manage your account access keys and personal details.',
+            ];
+        }
+
+        return $result;
     }
 
     /**

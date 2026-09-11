@@ -134,13 +134,13 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                     </a>
                 </div>
             <?php elseif ($isRegistrant): ?>
+                <?php
+                // No separate Dashboard icon here anymore -- "Dashboard" is
+                // now a plain nav item right after Home for every signed-in
+                // account (see NavigationConfig::getNavLinks()), so this
+                // cluster only needs Sign Out, matching the staff pattern above.
+                ?>
                 <div class="flex items-center gap-2">
-                    <a href="<?= $baseUrl ?>my-account" data-partial data-title="Dashboard" data-summary="Your registration status, team, schedule, and stats, all in one place." title="Dashboard" aria-label="Dashboard"
-                        class="flex items-center justify-center h-10 w-10 rounded-full border-2 border-slate-700 hover:border-primary-400 text-slate-200 hover:text-primary-400 transition-all duration-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z" />
-                        </svg>
-                    </a>
                     <a href="<?= $baseUrl ?>logout" data-logout-button title="Sign out" aria-label="Sign out"
                         class="flex items-center justify-center h-10 w-10 rounded-full border-2 border-slate-700 hover:border-red-900/60 text-slate-200 hover:text-red-400 transition-all duration-200">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -288,17 +288,22 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                 </div>
             </div>
         <?php elseif ($isRegistrant): ?>
+            <?php
+            // "Dashboard" is already a plain nav item right after Home
+            // above (see NavigationConfig::getNavLinks()) -- this block just
+            // shows who's signed in, matching the staff pattern above, plus
+            // Sign Out.
+            ?>
             <div class="pt-5 border-t-2 border-slate-100 dark:border-slate-900 space-y-3">
-                <a href="<?= $baseUrl ?>my-account" data-partial data-title="Dashboard" data-summary="Your registration status, team, schedule, and stats, all in one place." @click="mobileMenuOpen = false"
-                    class="flex items-center gap-4 px-4 py-2">
+                <div class="flex items-center gap-4 px-4 py-2">
                     <div class="h-10 w-10 rounded-full bg-primary-500/10 border-2 border-primary-500 text-primary-600 dark:text-amber-400 flex items-center justify-center font-black text-sm uppercase shrink-0">
                         <?= htmlspecialchars($initial ?? 'R') ?>
                     </div>
                     <div>
                         <p class="text-sm font-black text-slate-900 dark:text-slate-100"><?= htmlspecialchars($displayName) ?></p>
-                        <p class="text-xs font-bold text-primary-600 dark:text-amber-400">Dashboard</p>
+                        <p class="text-xs font-bold text-slate-400">Registrant Account</p>
                     </div>
-                </a>
+                </div>
                 <a href="<?= $baseUrl ?>logout" data-logout-button @click="mobileMenuOpen = false"
                     class="block px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 font-bold text-base transition-colors">
                     Sign Out

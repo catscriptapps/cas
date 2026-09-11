@@ -23,7 +23,12 @@ if (!$currentUser) {
 }
 
 // Fetch data
-$navLinks = NavigationConfig::getNavLinks((bool)$isLoggedIn);
+//
+// Deliberately authLinks(), not getNavLinks() -- the top nav now shows the
+// same items to everyone (see NavigationConfig::getNavLinks()'s docblock),
+// but this page's own quick-links grid into every backend module must stay
+// exactly as it was.
+$navLinks = NavigationConfig::authLinks();
 $icons = NavigationConfig::getIcons();
 
 $totalUsers = User::count();

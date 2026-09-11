@@ -102,6 +102,13 @@
     "file": "js/toast--nIYmWRe.min.js",
     "name": "toast"
   },
+  "_upload-modal-4-CDXO24.min.js": {
+    "file": "js/upload-modal-4-CDXO24.min.js",
+    "name": "upload-modal",
+    "imports": [
+      "_toast--nIYmWRe.min.js"
+    ]
+  },
   "resources/css/main.css": {
     "file": "css/app.min.css",
     "src": "resources/css/main.css",
@@ -243,6 +250,7 @@
     "isEntry": true,
     "imports": [
       "_profile-modal-Cdm9Ply8.min.js",
+      "_upload-modal-4-CDXO24.min.js",
       "_toast--nIYmWRe.min.js",
       "_spa-router-D_SGAIVx.min.js",
       "_delete-factory-DhbIOdTj.min.js",
@@ -313,6 +321,17 @@
       "_table-pagination-count-JrykreAu.min.js",
       "_divisions-api-MolTNHJp.min.js",
       "_data-table-9SFXZdzb.min.js"
+    ]
+  },
+  "resources/js/pages/sponsorship-page.js": {
+    "file": "js/sponsorship-page.min.js",
+    "name": "sponsorship-page",
+    "src": "resources/js/pages/sponsorship-page.js",
+    "isEntry": true,
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_toast--nIYmWRe.min.js",
+      "_upload-modal-4-CDXO24.min.js"
     ]
   },
   "resources/js/pages/stats-page.js": {

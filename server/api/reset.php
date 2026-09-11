@@ -23,6 +23,7 @@ $tablesToDrop = [
     'registrant_accounts',
     'recent_activities',
     'home_page_text',
+    'sponsors',
     'contacts',
     'contacts_roles',
     'stats',
@@ -69,6 +70,9 @@ $messages = array_merge($messages, resetRegionsTable());
 
 require_once __DIR__ . '/../../scripts/reset/home-page-text.php';
 $messages = array_merge($messages, resetHomePageTextTable());
+
+require_once __DIR__ . '/../../scripts/reset/sponsors.php';
+$messages = array_merge($messages, resetSponsorsTable());
 
 require_once __DIR__ . '/../../scripts/reset/users.php';
 $messages = array_merge($messages, resetUsersTable());
