@@ -254,6 +254,18 @@
       "_lightbox-C1gEp4Gg.min.js"
     ]
   },
+  "resources/js/pages/messages-page.js": {
+    "file": "js/messages-page.min.js",
+    "name": "messages-page",
+    "src": "resources/js/pages/messages-page.js",
+    "isEntry": true,
+    "imports": [
+      "_data-table-9SFXZdzb.min.js",
+      "_toast--nIYmWRe.min.js",
+      "_table-pagination-count-JrykreAu.min.js",
+      "_delete-factory-DhbIOdTj.min.js"
+    ]
+  },
   "resources/js/pages/my-account-page.js": {
     "file": "js/my-account-page.min.js",
     "name": "my-account-page",

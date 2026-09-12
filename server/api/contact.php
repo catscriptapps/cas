@@ -2,6 +2,7 @@
 // /server/api/contact.php
 declare(strict_types=1);
 
+use App\Models\ContactMessage;
 use Src\Service\MailService;
 
 // 1. Bootstrap once.
@@ -29,9 +30,21 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 try {
-    // There's no internal inbox/admin page for these yet -- the contact
-    // form simply emails the site's contact address. Local dev skips the
-    // actual send (no real SMTP configured) so the form still succeeds.
+    // Persisted to the admin inbox (see MessagesController/the topbar's
+    // Messages icon) regardless of environment -- the email send below is
+    // best-effort on top of that, not the only record of the submission
+    // like it used to be.
+    ContactMessage::create([
+        'full_name' => $fullName,
+        'email' => $email,
+        'subject' => $subject,
+        'message' => $message,
+        'is_read' => false,
+        'status_id' => ContactMessage::STATUS_INBOX,
+    ]);
+
+    // Local dev skips the actual email send (no real SMTP configured) so
+    // the form still succeeds.
     $isLocal = ($_ENV['APP_ENV'] ?? '') === 'local';
 
     if (!$isLocal) {

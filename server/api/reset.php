@@ -26,6 +26,7 @@ $tablesToDrop = [
     'sponsors',
     'slideshow',
     'venues',
+    'contact_messages',
     'contacts',
     'contacts_roles',
     'stats',
@@ -156,6 +157,11 @@ $messages = array_merge($messages, resetContactsTable());
 // Incident Reports -- standalone admin log, no FKs to any other table.
 require_once __DIR__ . '/../../scripts/reset/incident-reports.php';
 $messages = array_merge($messages, resetIncidentReportsTable());
+
+// Contact Messages -- inbox for the public Contact form, standalone admin
+// log with no FKs to any other table (same shape as Incident Reports).
+require_once __DIR__ . '/../../scripts/reset/contact-messages.php';
+$messages = array_merge($messages, resetContactMessagesTable());
 
 // Support & Transient Auth Tables
 require_once __DIR__ . '/../../scripts/reset/recent-activities.php';

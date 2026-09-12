@@ -3,8 +3,10 @@
 
 declare(strict_types=1);
 
+use App\Models\ContactMessage;
 use Src\Config\NavigationConfig;
 use Src\Controller\SlideshowController;
+use Src\Service\AuthService;
 
 /** @var bool $isLoggedIn */
 /** @var bool $isRegistrant */
@@ -17,6 +19,13 @@ use Src\Controller\SlideshowController;
 // throws, and falls back to the original curated defaults on any DB
 // hiccup, since this partial renders on every single page's hero.
 $slideshowImages = (new SlideshowController())->getFilenames();
+
+// Seeds the topbar's Messages icon badge (see layout-topbar.php) on first
+// load -- only queried for an admin, since the icon itself is admin-only.
+// Kept live after that via a 'messages-unread-changed' window event fired
+// by resources/js/utils/messages/unread-badge.js, since this whole header
+// never re-renders on its own across an SPA navigation.
+$initialUnreadMessagesCount = ($isLoggedIn && AuthService::isAdmin()) ? ContactMessage::unreadInboxCount() : 0;
 
 $totalSlides = count($slideshowImages);
 
@@ -115,6 +124,7 @@ if (!empty($GLOBALS['pageSummary'])) {
         isNoHeroPage: <?= $initialIsNoHeroPage ? 'true' : 'false' ?>,
         pageTitle: '<?= addslashes($initialPageTitle) ?>',
         pageSummary: '<?= addslashes($initialPageSummary) ?>',
+        unreadMessagesCount: <?= (int)$initialUnreadMessagesCount ?>,
         init() {
             setInterval(() => {
                 this.activeSlide = this.activeSlide === this.slidesCount ? 1 : this.activeSlide + 1;
@@ -129,7 +139,8 @@ if (!empty($GLOBALS['pageSummary'])) {
         isNoHeroPage = ['/dashboard', '/users', '/profile'].includes($event.detail.path || '');
         pageTitle = $event.detail.title || '';
         pageSummary = $event.detail.summary || '';
-    ">
+    "
+    @messages-unread-changed.window="unreadMessagesCount = $event.detail.count">
 
     <?php include __DIR__ . '/layout-topbar.php'; ?>
 

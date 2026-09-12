@@ -288,6 +288,27 @@ $currentUrlTrimmed = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PAT
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
                     </svg>
                 </a>
+
+                <?php if ($isAdminViewer): ?>
+                    <?php
+                    // Admin-only (matches AuthService::isAdmin(), stricter than the
+                    // general isLoggedIn staff guard above) -- the unread badge count
+                    // is seeded server-side into the shared Alpine scope
+                    // (unreadMessagesCount, see layout-header.php) and kept live
+                    // afterward via a 'messages-unread-changed' window event, since
+                    // this element never re-renders on its own across an SPA
+                    // navigation (see resources/js/utils/messages/unread-badge.js
+                    // and its call sites for every place that fires it).
+                    ?>
+                    <a href="<?= $baseUrl ?>messages" data-partial data-title="Messages" data-summary="Submissions from the public Contact Us form -- read, archive, and manage." title="Messages" aria-label="Messages"
+                        class="relative flex items-center justify-center h-10 w-10 rounded-xl bg-primary-500/15 hover:bg-primary-500/25 text-primary-400 hover:text-primary-300 border border-primary-500/30 transition-all duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                        <span x-show="unreadMessagesCount > 0" x-cloak x-text="unreadMessagesCount > 99 ? '99+' : unreadMessagesCount"
+                            class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-black leading-none border-2 border-slate-950 dark:border-black"></span>
+                    </a>
+                <?php endif; ?>
             <?php endif; ?>
 
             <button id="dark-toggle" title="Toggle Theme"
