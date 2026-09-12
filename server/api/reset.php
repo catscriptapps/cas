@@ -25,6 +25,7 @@ $tablesToDrop = [
     'home_page_text',
     'sponsors',
     'slideshow',
+    'venues',
     'contacts',
     'contacts_roles',
     'stats',
@@ -77,6 +78,9 @@ $messages = array_merge($messages, resetSponsorsTable());
 
 require_once __DIR__ . '/../../scripts/reset/slideshow.php';
 $messages = array_merge($messages, resetSlideshowTable());
+
+require_once __DIR__ . '/../../scripts/reset/venues.php';
+$messages = array_merge($messages, resetVenuesTable());
 
 require_once __DIR__ . '/../../scripts/reset/users.php';
 $messages = array_merge($messages, resetUsersTable());

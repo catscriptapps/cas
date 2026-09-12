@@ -3,54 +3,26 @@
 
 declare(strict_types=1);
 
+use App\Utils\IdEncoder;
+use Src\Controller\VenuesController;
+use Src\Service\AuthService;
+
 /**
  * Guest-facing "Locations" page under the League Details dropdown. Ported
- * from legacy essahockey_live's locations_view.php -- purely static content
- * (address + directions per rink, grouped by sport), no DB table. Not to be
- * confused with the unrelated `locations` table/model already in this app,
- * which is just a short-code lookup for the Schedules form's rink dropdown.
- *
- * Photos are legacy's real venue pics from essahockey_live/images/locations/,
- * copied into public/images/locations/. Legacy itself reused Thornton's
- * outdoor arena photo for the indoor rink too (no distinct indoor photo was
- * ever taken) -- thornton_rink.gif exists in that same legacy folder but was
- * dead code there (never actually wired into a rendered page). Using it here
- * instead of the reuse gives every venue its own distinct photo.
+ * from legacy essahockey_live's locations_view.php -- was fully static
+ * (no DB table, no admin CRUD anywhere in legacy); this app adds a `venues`
+ * table plus full admin add/edit/delete/reorder controls, kept separate per
+ * sport group (see VenuesController / Venue model). Not to be confused with
+ * the unrelated `locations` table/model already in this app, which is just
+ * a short-code lookup for the Schedules form's rink dropdown.
  */
 
-$groups = [
-    'Ball Hockey Locations' => [
-        [
-            'name' => 'Thornton Outdoor Rink',
-            'address' => '242 Barrie St, Thornton, ON',
-            'image' => 'thornton_arena.png',
-        ],
-        [
-            'name' => 'Angus Outdoor Rink',
-            'address' => 'Off the 5th Line, Angus, ON',
-            'directions' => '152 Greenwood Drive, Angus (5th Line to Gold Park Gate to Greenwood)',
-            'image' => 'angus_rink.png',
-        ],
-        [
-            'name' => 'Alliston Memorial Arena',
-            'address' => '49 Nelson St, Alliston, ON',
-            'directions' => "From Thornton/Cookstown -- Highway 89 to Church St to Nelson. From Angus/Baxter -- County Rd 10 to Highway 89 to Church St to Nelson.",
-            'image' => 'alliston_arena.png',
-        ],
-    ],
-    'Ice Hockey Locations' => [
-        [
-            'name' => 'Thornton Indoor Rink',
-            'address' => '242 Barrie St, Thornton, ON',
-            'image' => 'thornton_rink.gif',
-        ],
-        [
-            'name' => 'Innisfil Recreation Centre (YMCA)',
-            'address' => '7315 Yonge St, Innisfil, ON L9S 2M6',
-            'directions' => 'Home of Summer Ice Hockey.',
-            'image' => 'summer_ice.png',
-        ],
-    ],
+$isAdmin = AuthService::isAdmin();
+$grouped = (new VenuesController())->getAll();
+
+$sections = [
+    'ball' => ['label' => 'Ball Hockey Locations', 'venues' => $grouped['ball']],
+    'ice' => ['label' => 'Ice Hockey Locations', 'venues' => $grouped['ice']],
 ];
 ?>
 
@@ -67,28 +39,82 @@ $groups = [
     // viewer, admin included (see layout-header.php).
     ?>
 
-    <div class="space-y-14">
-        <?php foreach ($groups as $groupTitle => $venues): ?>
-            <div>
-                <h2 class="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight mb-6 pb-3 border-b border-gray-100 dark:border-gray-800">
-                    <?= htmlspecialchars($groupTitle) ?>
-                </h2>
+    <?php if ($isAdmin): ?>
+        <p class="text-xs text-gray-400 font-medium mb-8">
+            Click a venue's move icon, then another venue's move icon (within the same section), to swap their order.
+        </p>
+    <?php endif; ?>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <?php foreach ($venues as $venue): ?>
-                        <div class="rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-                            <img src="<?= $baseUrl ?>images/locations/<?= htmlspecialchars($venue['image']) ?>" alt="<?= htmlspecialchars($venue['name']) ?>"
-                                class="w-full h-40 object-cover" loading="lazy">
-                            <div class="p-6">
-                                <h3 class="text-sm font-black text-gray-900 dark:text-white"><?= htmlspecialchars($venue['name']) ?></h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1"><?= htmlspecialchars($venue['address']) ?></p>
+    <div class="space-y-14" id="venues-sections">
+        <?php foreach ($sections as $sport => $section): ?>
+            <div data-sport-section="<?= $sport ?>">
+                <div class="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-gray-100 dark:border-gray-800">
+                    <h2 class="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight">
+                        <?= htmlspecialchars($section['label']) ?>
+                    </h2>
+                    <?php if ($isAdmin): ?>
+                        <button type="button" data-add-venue="<?= $sport ?>"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-black text-[11px] uppercase tracking-widest shadow-md transition-all active:scale-[0.98] shrink-0">
+                            <i class="fa-solid fa-plus text-[10px]"></i>
+                            Add Venue
+                        </button>
+                    <?php endif; ?>
+                </div>
+
+                <div class="venues-grid grid grid-cols-1 sm:grid-cols-2 gap-6" data-sport-grid="<?= $sport ?>">
+                    <?php foreach ($section['venues'] as $venue): ?>
+                        <div class="venue-card group relative rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden"
+                            data-venue-id="<?= htmlspecialchars($venue['encoded_id']) ?>">
+                            <?php if ($isAdmin): ?>
+                                <div class="absolute top-3 right-3 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                    <button type="button" data-action="reorder-venue" title="Move" aria-label="Move venue"
+                                        class="h-8 w-8 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-800 text-white shadow-md">
+                                        <i class="fa-solid fa-arrows-up-down-left-right text-xs"></i>
+                                    </button>
+                                    <button type="button" data-action="edit-venue" title="Edit" aria-label="Edit venue"
+                                        class="h-8 w-8 flex items-center justify-center rounded-full bg-slate-600 hover:bg-slate-700 text-white shadow-md">
+                                        <i class="fa-solid fa-pen text-xs"></i>
+                                    </button>
+                                    <button type="button" data-action="delete-venue" title="Delete" aria-label="Delete venue"
+                                        class="h-8 w-8 flex items-center justify-center rounded-full bg-red-600 hover:bg-red-700 text-white shadow-md">
+                                        <i class="fa-solid fa-trash text-xs"></i>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($venue['image'])): ?>
+                                <button type="button" data-preview-venue data-venue-src="<?= $assetBase . htmlspecialchars($venue['image']) ?>"
+                                    class="block w-full h-40 cursor-zoom-in">
+                                    <img src="<?= $assetBase . htmlspecialchars($venue['image']) ?>" alt="<?= htmlspecialchars($venue['name']) ?>"
+                                        class="w-full h-40 object-cover pointer-events-none" loading="lazy">
+                                </button>
+                            <?php else: ?>
+                                <div class="w-full h-40 flex items-center justify-center bg-gray-50 dark:bg-gray-950 text-gray-300 dark:text-gray-700">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="p-6" data-venue-text>
+                                <h3 class="text-sm font-black text-gray-900 dark:text-white" data-field="name"><?= htmlspecialchars($venue['name']) ?></h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1" data-field="address"><?= htmlspecialchars((string)$venue['address']) ?></p>
                                 <?php if (!empty($venue['directions'])): ?>
-                                    <p class="text-[11px] text-gray-400 dark:text-gray-500 font-medium mt-2 leading-relaxed"><?= htmlspecialchars($venue['directions']) ?></p>
+                                    <p class="text-[11px] text-gray-400 dark:text-gray-500 font-medium mt-2 leading-relaxed" data-field="directions"><?= htmlspecialchars($venue['directions']) ?></p>
+                                <?php else: ?>
+                                    <p class="text-[11px] text-gray-400 dark:text-gray-500 font-medium mt-2 leading-relaxed" data-field="directions" hidden></p>
                                 <?php endif; ?>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
+
+                <?php if (empty($section['venues'])): ?>
+                    <p class="no-venues-message text-sm text-gray-400 font-medium italic text-center py-10 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl">
+                        No venues yet<?= $isAdmin ? ' -- click "Add Venue" to add the first one.' : '.' ?>
+                    </p>
+                <?php endif; ?>
             </div>
         <?php endforeach; ?>
     </div>

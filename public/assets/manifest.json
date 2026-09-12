@@ -37,6 +37,10 @@
     "file": "js/games-filter-CINcg_4Q.min.js",
     "name": "games-filter"
   },
+  "_lightbox-C1gEp4Gg.min.js": {
+    "file": "js/lightbox-C1gEp4Gg.min.js",
+    "name": "lightbox"
+  },
   "_modal-factory-D72OMj0_.min.js": {
     "file": "js/modal-factory-D72OMj0_.min.js",
     "name": "modal-factory"
@@ -236,6 +240,20 @@
       "_toast--nIYmWRe.min.js"
     ]
   },
+  "resources/js/pages/locations-page.js": {
+    "file": "js/locations-page.min.js",
+    "name": "locations-page",
+    "src": "resources/js/pages/locations-page.js",
+    "isEntry": true,
+    "imports": [
+      "_modal-factory-D72OMj0_.min.js",
+      "_toast--nIYmWRe.min.js",
+      "_confirm-BnHqL_fD.min.js",
+      "_upload-modal-4-CDXO24.min.js",
+      "_form-validator-CSeXGyW6.min.js",
+      "_lightbox-C1gEp4Gg.min.js"
+    ]
+  },
   "resources/js/pages/my-account-page.js": {
     "file": "js/my-account-page.min.js",
     "name": "my-account-page",
@@ -347,6 +365,7 @@
       "_modal-factory-D72OMj0_.min.js",
       "_toast--nIYmWRe.min.js",
       "_confirm-BnHqL_fD.min.js",
+      "_lightbox-C1gEp4Gg.min.js",
       "_upload-modal-4-CDXO24.min.js"
     ]
   },

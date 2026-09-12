@@ -96,7 +96,7 @@ if (!empty($GLOBALS['pageSummary'])) {
 ?>
 <div class="w-full relative bg-gray-900 dark:bg-black transition-all duration-500 font-sans -mt-1.5 flex flex-col"
     x-show="!isDetailPage && !isAboutPage && !isNoHeroPage"
-    :class="isHome ? 'min-h-[min(420px,55vh)]' : 'min-h-[min(220px,28vh)] sm:min-h-[min(240px,28vh)]'"
+    :class="isHome ? 'min-h-[min(720px,82vh)]' : 'min-h-[min(220px,28vh)] sm:min-h-[min(240px,28vh)]'"
     x-data="{
         activeSlide: 1,
         slidesCount: <?= $totalSlides ?>,

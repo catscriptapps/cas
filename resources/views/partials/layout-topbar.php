@@ -42,7 +42,7 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
             </a>
         </div>
 
-        <nav class="hidden lg:flex items-center gap-4 xl:gap-6 text-sm font-bold text-slate-200">
+        <nav class="hidden lg:flex items-center gap-4 xl:gap-6 text-[15px] font-black uppercase tracking-wide text-slate-200">
             <?php foreach ($navLinks as $name => $config): ?>
                 <?php
                 // Detect if this element represents the Home link
