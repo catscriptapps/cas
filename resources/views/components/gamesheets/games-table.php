@@ -37,9 +37,9 @@ foreach ($sections as $section):
             <table class="w-full text-left border-collapse games-filterable-table">
                 <?php
                 // Same measured offsets as components/schedules/games-table.php
-                // (identical page-header/topbar stack above this table).
+                // (identical sticky page-header above this table).
                 ?>
-                <thead class="sticky top-[262px] sm:top-[278px] md:top-[190px] z-[30] shadow-sm">
+                <thead class="sticky top-[180px] sm:top-[180px] md:top-[92px] z-[30] shadow-sm">
                     <tr class="bg-gray-50 dark:bg-gray-800/80">
                         <th class="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-gray-500 border-b border-gray-100 dark:border-gray-800 w-24">Date</th>
                         <th class="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-gray-500 border-b border-gray-100 dark:border-gray-800">

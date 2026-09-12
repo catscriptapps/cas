@@ -5,14 +5,15 @@ use Src\Service\AuthService;
 ?>
 
 <?php
-// Sticky under the fixed topbar (see layouts/app.php's #app-shell-content
-// offset for the topbar's true rendered height, 82px/98px -- this sticks
-// flush beneath it) so the breadcrumb/title/actions stay visible while
-// scrolling through a long game list, matching the sticky table headers
-// below it. Needs its own opaque background (matching <body>'s) since it
-// slides over page content once stuck.
+// Sticks flush to the very top of the viewport -- the topbar itself is no
+// longer fixed/sticky (see layout-topbar.php), so there's nothing else
+// persistent above this to clear anymore. Keeps the breadcrumb/title/
+// actions visible while scrolling through a long game list, matching the
+// sticky table header below it (see games-table.php, whose own top offset
+// is this element's rendered height). Needs its own opaque background
+// (matching <body>'s) since it slides over page content once stuck.
 ?>
-<div class="sticky top-[82px] sm:top-[98px] z-[35] bg-gray-50 dark:bg-slate-900 pt-4 pb-4 -mt-4">
+<div class="sticky top-0 z-[35] bg-gray-50 dark:bg-black pt-4 pb-4 -mt-4">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full">
         <div class="min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">

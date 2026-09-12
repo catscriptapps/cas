@@ -5,10 +5,10 @@ use Src\Service\AuthService;
 ?>
 
 <?php
-// Sticky under the fixed topbar -- same offset/opaque-background pattern as
-// components/schedules/header.php.
+// Sticks flush to the top of the viewport -- see components/schedules/
+// header.php's comment for the full reasoning (same pattern here).
 ?>
-<div class="sticky top-[82px] sm:top-[98px] z-[35] bg-gray-50 dark:bg-slate-900 pt-4 pb-4 -mt-4">
+<div class="sticky top-0 z-[35] bg-gray-50 dark:bg-black pt-4 pb-4 -mt-4">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full">
         <div class="min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">

@@ -29,7 +29,7 @@ $isLoggedIn = AuthService::isLoggedIn();
     <div class="bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 rounded-2xl">
         <div class="w-full">
             <table class="w-full divide-y divide-gray-200 dark:divide-gray-800 table-fixed">
-                <thead class="sticky top-[84px] sm:top-[96px] z-[30] shadow-sm rounded-t-2xl overflow-clip">
+                <thead class="sticky top-0 z-[30] shadow-sm rounded-t-2xl overflow-clip">
                     <tr class="bg-gray-50 dark:bg-gray-800/50">
                         <th class="px-6 py-4 text-left w-full md:w-[25%]">
                             <?php $sortColumn = 'user';
@@ -41,7 +41,7 @@ $isLoggedIn = AuthService::isLoggedIn();
                             $sortLabel = 'Division / Position';
                             include __DIR__ . '/../components/ui/sortable-th.php'; ?>
                         </th>
-                        <th class="px-6 py-4 text-left hidden lg:table-cell w-[26%]">
+                        <th class="px-6 py-4 text-left hidden lg:table-cell w-[24%]">
                             <?php $sortColumn = 'requests';
                             $sortLabel = 'Heard About Us / Special Requests';
                             include __DIR__ . '/../components/ui/sortable-th.php'; ?>
@@ -51,12 +51,12 @@ $isLoggedIn = AuthService::isLoggedIn();
                             $sortLabel = 'Registered';
                             include __DIR__ . '/../components/ui/sortable-th.php'; ?>
                         </th>
-                        <th class="px-6 py-4 text-left hidden lg:table-cell w-[11%]">
+                        <th class="px-6 py-4 text-left hidden lg:table-cell w-[10%]">
                             <?php $sortColumn = 'payment';
                             $sortLabel = 'Payment';
                             include __DIR__ . '/../components/ui/sortable-th.php'; ?>
                         </th>
-                        <th class="px-6 py-4 text-left hidden lg:table-cell w-[70px]">
+                        <th class="px-6 py-4 text-left hidden lg:table-cell w-[110px]">
                             <?php $sortColumn = 'status';
                             $sortLabel = 'Status';
                             include __DIR__ . '/../components/ui/sortable-th.php'; ?>

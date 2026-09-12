@@ -47,10 +47,12 @@ foreach ($sections as $section):
                 // title below `md` (768px, taller), and the topbar itself
                 // steps up at `sm` (640px) -- three tiers to track both
                 // changes without overlapping at any width. Measured, not
-                // guessed: topbar 82px/98px + page-header ~177px (stacked)
-                // /~87px (single row), plus a few px of buffer.
+                // guessed: the sticky page-header's (components/schedules/
+                // header.php, now sticking to top-0 itself -- the topbar
+                // is no longer fixed/sticky) own rendered height, ~180px
+                // stacked / ~92px single row, plus a few px of buffer.
                 ?>
-                <thead class="sticky top-[262px] sm:top-[278px] md:top-[190px] z-[30] shadow-sm">
+                <thead class="sticky top-[180px] sm:top-[180px] md:top-[92px] z-[30] shadow-sm">
                     <tr class="bg-gray-50 dark:bg-gray-800/80">
                         <th class="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-gray-500 border-b border-gray-100 dark:border-gray-800 w-24">Date</th>
                         <th class="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-gray-500 border-b border-gray-100 dark:border-gray-800">

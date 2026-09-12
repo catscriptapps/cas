@@ -20,29 +20,167 @@ extract(NavigationConfig::getUserDisplayInfo());
 // the logo and the nav itself -- the topbar is now the sole home for both) ---
 $navLinks = NavigationConfig::getNavLinks($isLoggedIn);
 
-$currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", '/');
+// Path-only, not a full absolute URL -- every $config['url'] this gets
+// compared against (below, and in the mobile drawer loop) is itself always
+// a bare path like "/schedules", never scheme+host+path. Comparing a full
+// "http://host/schedules" against that bare path could never match, which
+// silently broke "is this the current nav item" (and therefore the active
+// styling below) for every link, on every page, until this was path-only too.
+$currentUrlTrimmed = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/', '/');
 ?>
 
-<div class="fixed top-0 left-0 w-full bg-black text-slate-200 px-4 sm:px-6 lg:px-8 py-2 text-sm sm:text-base flex justify-between items-center border-b-2 border-gray-700 min-h-[76px] sm:min-h-[88px] transition-colors duration-200 shadow-xl select-none z-[9999]"
-    x-data="{ mobileMenuOpen: false }"
+<?php
+// NOT sticky/fixed -- deliberately plain, normal-flow positioning (kept
+// `relative` only so it still works as the containing block for the
+// mobile drawer/backdrop's `absolute` positioning below). It lives inside
+// layout-header.php's shared Alpine component (mobileMenuOpen/isHome/
+// isNoHeroPage/etc are all declared on that outer wrapper, not here) so its
+// background can react to whether a hero is actually behind it right now.
+//
+// The negative margin-bottom is what makes it OVERLAY the hero instead of
+// pushing it down: this element still reserves its own ~72px in normal
+// document flow (so a no-hero page's content starts right after it,
+// completely normally -- solid/no-hero pages get their own taller
+// logo-driven min-height instead, since the logo is no longer part of this
+// row at all, see below), but when a hero IS present, pulling the next
+// sibling up by that same amount makes the hero's own background start at
+// y=0 while this stays visually on top of its first ~72px. That value has
+// to match this element's real rendered height exactly, or a gap (too
+// little) or overlap (too much) appears -- see the -mt-1.5/pt-104px trail
+// of comments this replaced for how finicky that used to be to keep in
+// sync across two separate elements; here it's one element referencing its
+// own height, so there's only one number to keep correct. It no longer
+// needs an isHome-specific pair of values either (like the old
+// 126/142-vs-190/222px split did) -- now that the logo is sized/positioned
+// completely independently (see the logo comment below), this row's own
+// height is driven only by the nav text and icon cluster, which don't
+// change between home and inner pages.
+?>
+<?php
+// pt-[16px]/pb-[16px] below is deliberately fixed px, NOT Tailwind's
+// rem-based pt-4/etc scale. This topbar's rendered height has to stay
+// pinned to an exact px value (see the min-h/-mb comment above) -- if it
+// were rem-based, a bigger root font-size (some Smart TV browsers default
+// to ~24px instead of 16px for 10-foot viewing, and so does any OS/browser
+// "larger text" accessibility setting) would inflate the padding well past
+// what the hardcoded min-h/-mb sync values expect, without touching those
+// px sync values at all -- the topbar would render taller than its
+// reserved space, spilling its own extra height down over the hero's
+// title/badge (which sits at the top of the hero, i.e. exactly where that
+// spillover lands). Fixed px keeps the topbar's real height constant
+// regardless of root font-size, which is what actually fixes that.
+?>
+<div class="relative w-full text-slate-200 px-4 sm:px-6 lg:px-8 pt-[16px] pb-[16px] text-sm sm:text-base flex justify-between items-center transition-colors duration-300 select-none z-[9999]"
+    :class="{
+        'min-h-[72px] -mb-[72px]': !isNoHeroPage && !isAboutPage && !isDetailPage,
+        'min-h-[120px] sm:min-h-[136px]': isNoHeroPage || isAboutPage || isDetailPage,
+        'bg-black border-b-2 border-gray-700 shadow-xl': isNoHeroPage || isAboutPage || isDetailPage,
+        <?php
+        // No border at all here (not even a transparent one) -- a
+        // transparent border is still invisible, but its border-width still
+        // adds to this element's rendered height same as a visible one
+        // would, which was quietly 2px taller than the -mb-[72px] pulling
+        // the hero up to compensate for it, leaving the hero's own
+        // background starting 2px below the actual viewport top instead of
+        // flush with it (a thin sliver of the page's own white background
+        // showing through in the gap, since the topbar itself has nothing
+        // opaque painted there to hide it).
+        ?>
+        'bg-transparent': !(isNoHeroPage || isAboutPage || isDetailPage),
+    }"
     x-effect="document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''">
 
-    <!-- Logo + desktop nav, grouped together on the left (matching legacy --
-         nav sits close to the logo, not pinned to the far right) -->
-    <div class="flex items-center gap-6 xl:gap-10 min-w-0">
-        <div class="flex items-center shrink-0">
-            <a href="<?= $baseUrl ?>" data-partial data-title="Home" class="flex items-center gap-3 min-w-0 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg">
-                <?php
-                // Legacy's own header has no "Canadian All Star Sports" text next
-                // to the logo -- the crest graphic itself already spells out the
-                // name -- so this doesn't repeat it either. alt text keeps the
-                // name available to screen readers regardless.
-                ?>
-                <img src="<?= $assetBase ?>images/logo/logo.png" alt="<?= htmlspecialchars($appName) ?>" class="h-20 w-20 sm:h-24 sm:w-24 object-contain shrink-0">
-            </a>
-        </div>
+    <?php
+    // This spacer is a plain, near-invisible flex item that exists ONLY to
+    // reserve the logo's own WIDTH in the row's flex layout (so the
+    // centered-nav wrapper next to it still centers in the right place, and
+    // the icon cluster on the far right doesn't shift) -- it does NOT
+    // reserve the logo's HEIGHT, since it has none of its own. The actual
+    // logo (below, absolutely positioned) is now completely decoupled from
+    // this row's height: previously the logo was a normal flex child, so a
+    // bigger logo directly made the whole row (and therefore the hardcoded
+    // min-h/-mb sync above) taller, which pushed the nav row down away from
+    // the top of the viewport and forced a much bigger sync value that had
+    // to differ between home and inner pages. Taking it out of flow means
+    // this row can stay short and sit close to the top regardless of logo
+    // size, and the logo can render at whatever size looks right without
+    // dragging the row (and therefore the hero underneath it) along with
+    // it -- it simply overlaps down onto the hero image below, which reads
+    // fine since it's off to the left while the hero's own title/badge is
+    // centered.
+    ?>
+    <?php
+    // hidden below xl: the nav-wrapper it exists to make room for is itself
+    // `hidden xl:flex` (see below), so below xl there's no nav centering
+    // math for it to protect -- reserving its width there anyway only
+    // shoved the icon cluster (and the hamburger button inside it) off the
+    // right edge of narrow/mobile viewports, since it was competing with a
+    // logo-sized gap that has no visible nav next to it to justify.
+    ?>
+    <?php
+    // xl is always >= the sm breakpoint, so the logo here is always
+    // rendering at its sm+ size (176px/104px) by the time this spacer is
+    // even visible -- matching that (not the smaller sub-sm size) is what
+    // keeps the nav actually centered against the real logo width.
+    ?>
+    <div class="hidden xl:block shrink-0" :class="isHome ? 'xl:w-[176px]' : 'xl:w-[104px]'"></div>
 
-        <nav class="hidden lg:flex items-center gap-4 xl:gap-6 text-[15px] font-black uppercase tracking-wide text-slate-200">
+    <?php
+    // The actual logo -- absolutely positioned against this row's own
+    // `relative` container (not a flex item, see the spacer comment above),
+    // so its height plays no part in this row's own height. left-[Npx]
+    // matches the row's own px-4/sm:px-6/lg:px-8 padding in fixed-px form
+    // (for the same root-font-size-independence reason as pt/pb above), and
+    // top-[Npx] is the "push it down a little from the very top of the
+    // viewport" offset -- both are independent numbers now, free to tune
+    // without needing to keep some OTHER element's height in sync.
+    ?>
+    <div class="absolute left-[16px] sm:left-[24px] lg:left-[32px] top-[12px] z-10">
+        <a href="<?= $baseUrl ?>" data-partial data-title="Home" class="flex items-center gap-3 min-w-0 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg">
+            <?php
+            // Legacy's own header has no "Canadian All Star Sports" text next
+            // to the logo -- the crest graphic itself already spells out the
+            // name -- so this doesn't repeat it either. alt text keeps the
+            // name available to screen readers regardless.
+            ?>
+            <img src="<?= $assetBase ?>images/logo/logo.png" alt="<?= htmlspecialchars($appName) ?>" class="object-contain shrink-0"
+                :class="isHome ? 'h-[144px] w-[144px] sm:h-[176px] sm:w-[176px]' : 'h-[88px] w-[88px] sm:h-[104px] sm:w-[104px]'">
+        </a>
+    </div>
+
+    <!-- Nav items, centered in the remaining space between the logo and the
+         icon cluster (this flex-1 wrapper is what centers it -- the logo and
+         icon-cluster divs stay shrink-0 on either side). -->
+    <?php
+    // xl (1280px), not lg (1024px) -- this staff nav has a lot of items
+    // (Home, Schedules, Stats+Standings, League Details ▾, Sponsorship,
+    // Contact, plus the reset icon for the "cat" role), and between
+    // 1024-1279px there just isn't enough room for that plus the logo and
+    // icon cluster on one line even after shrinking the nav's own font/gaps
+    // and trimming the account pill down to just its avatar (see those
+    // other comments in this file) -- it would still spill out of this
+    // flex-1 slot and visually collide with the icon cluster next to it
+    // (exactly what a "1280x720" resolution -- landscape iPad/tablet width,
+    // and a common "big screen TV" one too -- hit). Below xl, the hamburger
+    // menu (in the icon cluster, see lg:hidden below -- unchanged wording
+    // there since it's a smaller, separate concern) is the reliable
+    // fallback instead of trying to cram the full row in.
+    ?>
+    <div class="hidden xl:flex flex-1 justify-center min-w-0">
+        <?php
+        // whitespace-nowrap is load-bearing, not cosmetic: without it, a
+        // multi-word item ("League Details") can wrap onto a second line
+        // the moment this row is even slightly tight for space (e.g. a
+        // 1280x720 "big screen TV" resolution, which has plenty of width on
+        // paper but not enough for logo + full nav + icon cluster on one
+        // line at the old font size). A wrapped item makes the topbar's own
+        // content taller than its hardcoded min-h/-mb sync value (see that
+        // comment above), which spills the extra height down over the hero
+        // title/badge sitting right below -- forcing this to a single line
+        // instead means the row just tightens its gaps / this wrapper
+        // scrolls-if-needed, but the topbar's height itself never changes.
+        ?>
+        <nav class="flex items-center gap-3 xl:gap-5 text-[16px] font-black uppercase tracking-wide text-slate-200 whitespace-nowrap">
             <?php foreach ($navLinks as $name => $config): ?>
                 <?php
                 // Detect if this element represents the Home link
@@ -53,10 +191,21 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                 <?php if (isset($config['children'])): ?>
                     <div class="relative group flex items-center h-full cursor-pointer py-2">
                         <?php
+                        // The reveal-underline effect matches legacy's own
+                        // navbar exactly (essahockey.com's `.navbar > ul >
+                        // li > a::before` rule): a 3px bar pinned to the
+                        // link's left edge that grows to full width on
+                        // hover/focus and stays fixed full-width when the
+                        // link is the current page -- since `left` never
+                        // moves, growing reads as sliding in left-to-right,
+                        // and shrinking back on hover-out reads as the
+                        // opposite (its only moving edge retreats
+                        // rightward-to-leftward toward the fixed left anchor).
                         $isActive = ($currentUrlTrimmed === rtrim($targetUrl, '/'));
+                        $underline = "relative before:content-[''] before:absolute before:left-0 before:-bottom-1.5 before:h-[3px] before:bg-white before:transition-[width] before:duration-300 before:ease-in-out";
                         $desktopClasses = $isActive
-                            ? "text-amber-400 group-hover:text-amber-300 transition-colors flex items-center gap-1.5 focus:outline-none focus:underline"
-                            : "text-slate-200 hover:text-amber-300 transition-colors flex items-center gap-1.5 focus:outline-none focus:underline";
+                            ? "text-amber-400 group-hover:text-amber-300 transition-colors flex items-center gap-1.5 focus:outline-none {$underline} before:w-full"
+                            : "text-slate-200 hover:text-amber-300 transition-colors flex items-center gap-1.5 focus:outline-none {$underline} before:w-0 group-hover:before:w-full focus:before:w-full";
                         ?>
                         <a href="<?= $targetUrl ?>" data-partial data-title="<?= htmlspecialchars($config['title']) ?>" data-summary="<?= htmlspecialchars($config['summary']) ?>" class="<?= $desktopClasses ?>">
                             <span><?= $name ?></span>
@@ -85,9 +234,10 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                 <?php else: ?>
                     <?php
                     $isActive = ($currentUrlTrimmed === rtrim($targetUrl, '/'));
+                    $underline = "relative before:content-[''] before:absolute before:left-0 before:-bottom-1.5 before:h-[3px] before:bg-white before:transition-[width] before:duration-300 before:ease-in-out";
                     $desktopClasses = $isActive
-                        ? "text-amber-400 hover:text-amber-300 transition-colors focus:outline-none focus:underline"
-                        : "text-slate-200 hover:text-amber-300 transition-colors focus:outline-none focus:underline";
+                        ? "text-amber-400 hover:text-amber-300 transition-colors focus:outline-none {$underline} before:w-full"
+                        : "text-slate-200 hover:text-amber-300 transition-colors focus:outline-none {$underline} before:w-0 hover:before:w-full focus:before:w-full";
                     ?>
                     <a href="<?= $targetUrl ?>" data-partial data-title="<?= htmlspecialchars($config['title']) ?>" data-summary="<?= htmlspecialchars($config['summary']) ?>" class="<?= $desktopClasses ?>"><?= $name ?></a>
                 <?php endif; ?>
@@ -95,8 +245,18 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
         </nav>
     </div>
 
-    <!-- Icon cluster + auth + mobile toggle, far right -->
-    <div class="flex items-center gap-3 sm:gap-5 font-bold shrink-0">
+    <!-- Icon cluster + auth + mobile toggle, far right. Stays shrink-0 so
+         the flex-1 nav wrapper above absorbs all the remaining space between
+         it and the logo, which is what actually centers the nav. -->
+    <?php
+    // ml-auto, not just justify-between on the row -- below xl the nav
+    // wrapper AND the logo-width spacer are both `hidden`, leaving this as
+    // the row's only flex item, and `justify-between` has nothing left to
+    // put space "between", so it collapsed to the left (flex-start) instead
+    // of staying pinned to the right. ml-auto pushes it right unconditionally,
+    // regardless of how many siblings happen to be visible at a given width.
+    ?>
+    <div class="flex items-center gap-3 sm:gap-5 font-bold shrink-0 ml-auto">
 
         <div class="flex items-center gap-2 text-slate-300">
             <?php if ($isLoggedIn && AuthService::isCat()) : ?>
@@ -151,8 +311,22 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                         <div class="h-6 w-6 rounded-full border border-secondary-400 bg-black flex items-center justify-center text-secondary-400 font-black text-xs shrink-0 group-hover:scale-110 transition-transform shadow-inner">
                             <?= htmlspecialchars($initial ?? 'U') ?>
                         </div>
-                        <span class="hidden sm:inline max-w-[160px] truncate text-slate-300 group-hover:text-red-300 transition-colors font-bold"><?= htmlspecialchars($displayName) ?></span>
-                        <span class="text-xs uppercase tracking-wider font-black opacity-90 group-hover:opacity-100">Sign Out</span>
+                        <?php
+                        // Both labels wait until min-[1400px] (well past `lg`/`xl`,
+                        // where the desktop nav itself first turns on) rather than
+                        // the usual sm/lg scale -- staff nav has a lot of items
+                        // (Home, Schedules, Stats+Standings, League Details ▾,
+                        // Sponsorship, Contact, plus the reset icon for the "cat"
+                        // role), and this pill was the widest thing in the icon
+                        // cluster competing with it for room. At exactly the width
+                        // a common "big screen" resolution like 1280x720 reports,
+                        // showing the full name + "Sign Out" text left too little
+                        // space for that full nav to fit on one line, so it spilled
+                        // outside its own flex-1 slot and visually collided with
+                        // this pill. Below 1400px this now just shows the avatar.
+                        ?>
+                        <span class="hidden min-[1400px]:inline max-w-[160px] truncate text-slate-300 group-hover:text-red-300 transition-colors font-bold"><?= htmlspecialchars($displayName) ?></span>
+                        <span class="hidden min-[1400px]:inline text-xs uppercase tracking-wider font-black opacity-90 group-hover:opacity-100">Sign Out</span>
                     </a>
                 </div>
             <?php elseif ($isRegistrant): ?>
@@ -186,8 +360,9 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
             <?php endif; ?>
         </div>
 
-        <!-- Mobile nav toggle -->
-        <div class="flex items-center lg:hidden">
+        <!-- Mobile nav toggle -- xl:hidden to match the xl:flex desktop nav
+             above; below xl this hamburger is the only way to reach the nav. -->
+        <div class="flex items-center xl:hidden">
             <button type="button"
                 @click="mobileMenuOpen = !mobileMenuOpen"
                 aria-label="Toggle Navigation Menu"
@@ -214,7 +389,8 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         @click="mobileMenuOpen = false"
-        class="absolute top-full left-0 w-full h-[calc(100vh-76px)] sm:h-[calc(100vh-88px)] lg:hidden bg-black/60 z-[9990]">
+        class="absolute top-full left-0 w-full xl:hidden bg-black/60 z-[9990]"
+        :class="isHome ? 'h-[calc(100vh-190px)] sm:h-[calc(100vh-222px)]' : 'h-[calc(100vh-126px)] sm:h-[calc(100vh-142px)]'">
     </div>
 
     <!-- Mobile / large-screen nav drawer -- a proper right-anchored sidebar
@@ -228,7 +404,8 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-x-0"
         x-transition:leave-end="opacity-0 translate-x-6"
-        class="absolute top-full right-0 lg:hidden border-l-2 border-slate-800 bg-white dark:bg-black px-4 py-5 space-y-3 shadow-2xl w-full max-w-xs sm:max-w-sm h-[calc(100vh-76px)] sm:h-[calc(100vh-88px)] overflow-y-auto z-[9995]"
+        class="absolute top-full right-0 xl:hidden border-l-2 border-slate-800 bg-white dark:bg-black px-4 py-5 space-y-3 shadow-2xl w-full max-w-xs sm:max-w-sm overflow-y-auto z-[9995]"
+        :class="isHome ? 'h-[calc(100vh-190px)] sm:h-[calc(100vh-222px)]' : 'h-[calc(100vh-126px)] sm:h-[calc(100vh-142px)]'"
         x-data="{ activeMobileSection: null }">
 
         <?php foreach ($navLinks as $name => $config): ?>

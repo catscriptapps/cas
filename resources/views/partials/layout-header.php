@@ -7,6 +7,7 @@ use Src\Config\NavigationConfig;
 use Src\Controller\SlideshowController;
 
 /** @var bool $isLoggedIn */
+/** @var bool $isRegistrant */
 /** @var string $assetBase */
 /** @var string $appName */
 /** @var string $baseUrl */
@@ -88,15 +89,21 @@ if (!empty($GLOBALS['pageSummary'])) {
 ?>
 
 <?php
-// `flex flex-col` here (not just on the inner wrapper below) matters: the
-// inner wrapper's own `flex-1` only has any effect inside a flex parent, so
-// without this the inner wrapper never actually stretches to fill this
-// div's min-height -- it just sits at its natural (shorter) content height,
-// leaving `items-center` nothing to vertically center within.
+// This wrapper now owns BOTH the topbar (see layout-topbar.php, included
+// below) and the hero -- they used to be two independent elements (the
+// topbar `fixed`, sitting above everything; the hero starting in normal
+// flow below a padding-top spacer sized to match). They're merged into one
+// Alpine component now because the topbar needs to react to the exact same
+// isHome/isNoHeroPage/isAboutPage/isDetailPage state as the hero: on a page
+// where the hero renders, the topbar sits ON TOP of it with a transparent
+// background (see layout-topbar.php's own comment for how the overlap
+// itself works); on a page without a hero, the topbar falls back to a
+// solid background, since there's no image behind it to make transparency
+// legible against. The topbar is deliberately NOT sticky/fixed -- it
+// scrolls away with the rest of the hero, same as any other in-flow
+// content -- so there's no separate "solid once scrolled" state to track.
 ?>
-<div class="w-full relative bg-gray-900 dark:bg-black transition-all duration-500 font-sans -mt-1.5 flex flex-col"
-    x-show="!isDetailPage && !isAboutPage && !isNoHeroPage"
-    :class="isHome ? 'min-h-[min(720px,82vh)]' : 'min-h-[min(220px,28vh)] sm:min-h-[min(240px,28vh)]'"
+<div class="w-full font-sans"
     x-data="{
         activeSlide: 1,
         slidesCount: <?= $totalSlides ?>,
@@ -124,73 +131,87 @@ if (!empty($GLOBALS['pageSummary'])) {
         pageSummary = $event.detail.summary || '';
     ">
 
-    <div class="absolute inset-0 z-0 overflow-hidden">
-        <?php foreach ($slideshowImages as $index => $imageName): ?>
-            <?php $slideNumber = $index + 1; ?>
-            <div
-                x-show="activeSlide === <?= $slideNumber ?>"
-                <?php if ($slideNumber > 1): ?>x-cloak<?php endif; ?>
-                x-transition:enter="transition ease-in-out duration-1000"
-                class="absolute inset-0 bg-cover bg-center animate-slideshow-zoom"
-                style="background-image: url('<?= $assetBase . $imageName ?>');">
-            </div>
-        <?php endforeach; ?>
+    <?php include __DIR__ . '/layout-topbar.php'; ?>
 
-        <!-- Light overall wash -- brand-tinted navy instead of flat black, keeps the slideshow feeling airy -->
-        <div class="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-primary-950/25 dark:from-primary-950/30 dark:via-primary-950/10 dark:to-primary-950/50"></div>
+    <?php
+    // `flex flex-col` here (not just on the inner wrapper below) matters: the
+    // inner wrapper's own `flex-1` only has any effect inside a flex parent, so
+    // without this the inner wrapper never actually stretches to fill this
+    // div's min-height -- it just sits at its natural (shorter) content height,
+    // leaving `items-center` nothing to vertically center within.
+    ?>
+    <div class="w-full relative bg-gray-900 dark:bg-black transition-all duration-500 flex flex-col"
+        x-show="!isDetailPage && !isAboutPage && !isNoHeroPage"
+        :class="isHome ? 'min-h-[min(720px,82vh)]' : 'min-h-[min(300px,34vh)] sm:min-h-[min(320px,34vh)]'">
 
-        <!-- Targeted band behind the nav row (and the compact page-title bar on inner pages) so text stays readable regardless of slide content -->
-        <div class="absolute inset-x-0 top-0 h-40 sm:h-48 bg-gradient-to-b from-primary-950/50 via-primary-950/20 to-transparent"></div>
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <?php foreach ($slideshowImages as $index => $imageName): ?>
+                <?php $slideNumber = $index + 1; ?>
+                <div
+                    x-show="activeSlide === <?= $slideNumber ?>"
+                    <?php if ($slideNumber > 1): ?>x-cloak<?php endif; ?>
+                    x-transition:enter="transition ease-in-out duration-1000"
+                    class="absolute inset-0 bg-cover bg-center animate-slideshow-zoom"
+                    style="background-image: url('<?= $assetBase . $imageName ?>');">
+                </div>
+            <?php endforeach; ?>
 
-        <!-- Soft vignette centered on the hero copy so it stays legible without darkening the whole image -->
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(2,15,44,0.35)_0%,transparent_62%)]"></div>
+            <!-- Light overall wash -- brand-tinted navy instead of flat black, keeps the slideshow feeling airy -->
+            <div class="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-primary-950/25 dark:from-primary-950/30 dark:via-primary-950/10 dark:to-primary-950/50"></div>
 
-        <!-- Warm accent glow -- a touch of brand color instead of a purely neutral overlay -->
-        <div class="absolute -bottom-16 right-0 w-96 h-96 bg-secondary-500/20 rounded-full blur-[110px] pointer-events-none"></div>
-    </div>
+            <!-- Targeted band behind the nav row (and the compact page-title bar on inner pages) so text stays readable regardless of slide content -->
+            <div class="absolute inset-x-0 top-0 h-40 sm:h-48 bg-gradient-to-b from-primary-950/50 via-primary-950/20 to-transparent"></div>
 
-    <div class="relative z-10 w-full flex flex-col flex-1">
+            <!-- Soft vignette centered on the hero copy so it stays legible without darkening the whole image -->
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(2,15,44,0.35)_0%,transparent_62%)]"></div>
 
-        <section x-show="isHome" x-collapse.duration.500ms class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 sm:pb-16">
-            <div class="max-w-4xl mx-auto text-center">
-                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-primary-500/20 text-primary-300 border border-primary-500/30 backdrop-blur-sm mb-4 drop-shadow-sm"
-                    data-aos="fade-down"
-                    data-aos-duration="600">
-                    <i class="fa-solid fa-hockey-puck text-[10px] text-primary-400"></i> Empowering Communities Through Hockey Since 2008
-                </span>
+            <!-- Warm accent glow -- a touch of brand color instead of a purely neutral overlay -->
+            <div class="absolute -bottom-16 right-0 w-96 h-96 bg-secondary-500/20 rounded-full blur-[110px] pointer-events-none"></div>
+        </div>
 
-                <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight uppercase drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] mb-3"
-                    data-aos="fade-up"
-                    data-aos-duration="800"
-                    data-aos-delay="100">
-                    Canadian All Star Sports
-                </h1>
+        <div class="relative z-10 w-full flex flex-col flex-1">
 
-                <p class="max-w-2xl mx-auto text-sm sm:text-base text-slate-100 drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] font-medium mb-6"
-                    data-aos="fade-up"
-                    data-aos-duration="800"
-                    data-aos-delay="200">
-                    Real-time schedules, stats, and standings for every league we run -- built for players, referees, and the communities behind them.
-                </p>
+            <section x-show="isHome" x-collapse.duration.500ms class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 sm:pb-16">
+                <div class="max-w-4xl mx-auto text-center">
+                    <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-primary-500/20 text-primary-300 border border-primary-500/30 backdrop-blur-sm mb-4 drop-shadow-sm"
+                        data-aos="fade-down"
+                        data-aos-duration="600">
+                        <i class="fa-solid fa-hockey-puck text-[10px] text-primary-400"></i> Empowering Communities Through Hockey Since 2008
+                    </span>
 
-                <a href="<?= $baseUrl ?>register" data-partial
-                    data-aos="fade-up" data-aos-duration="800" data-aos-delay="300"
-                    class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-secondary-400 hover:bg-primary-400 text-slate-900 hover:text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-secondary-500/30 transition-all duration-300 active:scale-[0.98]">
-                    Sign Me Up!
-                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                </a>
-            </div>
-        </section>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight uppercase drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] mb-3"
+                        data-aos="fade-up"
+                        data-aos-duration="800"
+                        data-aos-delay="100">
+                        Canadian All Star Sports
+                    </h1>
 
-        <section x-show="!isHome" x-cloak class="flex-1 flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-            <div class="max-w-2xl mx-auto">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] bg-primary-500/20 text-primary-300 border border-primary-500/30 backdrop-blur-sm mb-3">
-                    <i class="fa-solid fa-hockey-puck text-[9px] text-primary-400"></i> Canadian All Star Sports
-                </span>
-                <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight uppercase leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] mb-2" x-text="pageTitle"></h1>
-                <p x-show="pageSummary" x-cloak class="text-sm sm:text-base text-slate-100/90 font-medium leading-relaxed drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" x-text="pageSummary"></p>
-            </div>
-        </section>
+                    <p class="max-w-2xl mx-auto text-sm sm:text-base text-slate-100 drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] font-medium mb-6"
+                        data-aos="fade-up"
+                        data-aos-duration="800"
+                        data-aos-delay="200">
+                        Real-time schedules, stats, and standings for every league we run -- built for players, referees, and the communities behind them.
+                    </p>
 
+                    <a href="<?= $baseUrl ?>register" data-partial
+                        data-aos="fade-up" data-aos-duration="800" data-aos-delay="300"
+                        class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-secondary-400 hover:bg-primary-400 text-slate-900 hover:text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-secondary-500/30 transition-all duration-300 active:scale-[0.98]">
+                        Sign Me Up!
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </section>
+
+            <section x-show="!isHome" x-cloak class="flex-1 flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-6 sm:pb-8">
+                <div class="max-w-2xl mx-auto">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] bg-primary-500/20 text-primary-300 border border-primary-500/30 backdrop-blur-sm mb-3">
+                        <i class="fa-solid fa-hockey-puck text-[9px] text-primary-400"></i> Canadian All Star Sports
+                    </span>
+                    <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight uppercase leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] mb-2" x-text="pageTitle"></h1>
+                    <p x-show="pageSummary" x-cloak class="text-sm sm:text-base text-slate-100/90 font-medium leading-relaxed drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]" x-text="pageSummary"></p>
+                </div>
+            </section>
+
+        </div>
     </div>
 </div>
