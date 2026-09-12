@@ -26,8 +26,8 @@ declare(strict_types=1);
                 <div class="space-y-8">
                     <div class="group/item">
                         <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-2">Email Us</p>
-                        <a href="mailto:info@canadianallstarsports.com" class="text-gray-900 dark:text-white font-bold text-base sm:text-lg break-all hover:text-primary-600 transition-colors">
-                            info@canadianallstarsports.com
+                        <a href="mailto:info@essahockey.com" class="text-gray-900 dark:text-white font-bold text-base sm:text-lg break-all hover:text-primary-600 transition-colors">
+                            info@essahockey.com
                         </a>
                     </div>
 

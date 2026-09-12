@@ -44,9 +44,9 @@ $partners = Sponsor::orderBy('sort_order')->orderBy('sponsor_id')->get();
             facility. Every sponsor is also featured right here on our website, and your sponsorship is fully tax deductible.
         </p>
 
-        <a href="mailto:info@canadianallstarsports.com"
+        <a href="mailto:info@essahockey.com"
             class="inline-flex items-center gap-2 mt-8 px-8 py-3 rounded-full bg-secondary-400 hover:bg-primary-400 text-slate-900 hover:text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-secondary-500/20 transition-all active:scale-[0.98]">
-            info@canadianallstarsports.com
+            info@essahockey.com
             <i class="fa-solid fa-arrow-right text-[10px]"></i>
         </a>
     </div>
