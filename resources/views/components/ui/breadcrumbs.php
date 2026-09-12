@@ -15,7 +15,12 @@ if (!isset($breadcrumbs) || empty($breadcrumbs)) {
     return;
 }
 
-$homeCrumb = $breadcrumbHome ?? ['label' => 'Home', 'url' => $baseUrl, 'title' => 'Home', 'summary' => 'Centralized Landlord Infrastructure'];
+// 'summary' left blank on purpose -- Home's real hero (see layout-header.php)
+// shows its own full marketing copy once isHome is true client-side; this
+// data-title/data-summary pair only matters as a fallback for the brief
+// instant before that, and for the (currently unreachable) case where
+// something renders it with isHome false.
+$homeCrumb = $breadcrumbHome ?? ['label' => 'Home', 'url' => $baseUrl, 'title' => 'Home', 'summary' => ''];
 $lastItemLabel = array_key_last($breadcrumbs);
 
 /**

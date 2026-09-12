@@ -7,8 +7,8 @@ import { openLightbox } from '../ui/lightbox.js';
 import { createUploadHandler } from '../modals/upload-modal.js';
 
 /**
- * Admin add/preview/delete controls for the Sponsorship page's logo grid
- * (see SponsorsController). Uses the app's existing custom primitives
+ * Admin add/preview/reorder/delete controls for the Sponsorship page's logo
+ * grid (see SponsorsController). Uses the app's existing custom primitives
  * end-to-end rather than anything bespoke: createUploadHandler() for the
  * add flow, openLightbox() for preview (available to every viewer, not just
  * admins -- clicking any logo to see it bigger is a reasonable guest
@@ -18,7 +18,13 @@ import { createUploadHandler } from '../modals/upload-modal.js';
  * posts a raw file with no room for a name field, so uploadImage() saves
  * the file and hands back a filename, then a small follow-up Modal asks
  * for the sponsor's name before the actual DB row gets created.
+ *
+ * Reorder uses the same click-to-place two-click swap idiom as the
+ * Slideshow admin page (see slideshow-page.js) and the Standards of
+ * Practice / Cover Pages lists elsewhere in this app.
  */
+
+let activeReorderId = null;
 
 let nameModalInstance = null;
 
@@ -111,13 +117,16 @@ function appendSponsorCard(sponsor) {
     card.className = 'sponsor-card group relative p-6 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col items-center text-center';
     card.dataset.sponsorId = sponsor.encoded_id;
 
-    const delBtn = document.createElement('button');
-    delBtn.type = 'button';
-    delBtn.dataset.deleteSponsor = '';
-    delBtn.title = 'Delete sponsor';
-    delBtn.setAttribute('aria-label', 'Delete sponsor');
-    delBtn.className = 'absolute top-3 right-3 h-8 w-8 flex items-center justify-center rounded-full bg-red-600 hover:bg-red-700 text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-md z-10';
-    delBtn.innerHTML = '<i class="fa-solid fa-trash text-xs"></i>';
+    const controls = document.createElement('div');
+    controls.className = 'absolute top-3 right-3 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10';
+    controls.innerHTML = `
+        <button type="button" data-action="reorder-sponsor" title="Move" aria-label="Move sponsor" class="h-8 w-8 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-800 text-white shadow-md">
+            <i class="fa-solid fa-arrows-up-down-left-right text-xs"></i>
+        </button>
+        <button type="button" data-delete-sponsor title="Delete sponsor" aria-label="Delete sponsor" class="h-8 w-8 flex items-center justify-center rounded-full bg-red-600 hover:bg-red-700 text-white shadow-md">
+            <i class="fa-solid fa-trash text-xs"></i>
+        </button>
+    `;
 
     const previewBtn = document.createElement('button');
     previewBtn.type = 'button';
@@ -135,8 +144,68 @@ function appendSponsorCard(sponsor) {
     caption.className = 'text-xs font-bold text-gray-500 dark:text-gray-400';
     caption.textContent = sponsor.name;
 
-    card.append(delBtn, previewBtn, caption);
+    card.append(controls, previewBtn, caption);
     grid.appendChild(card);
+}
+
+async function persistOrder() {
+    const grid = document.getElementById('sponsors-grid');
+    if (!grid) return;
+
+    const ids = Array.from(grid.querySelectorAll('.sponsor-card')).map((c) => c.dataset.sponsorId);
+    if (!ids.length) return;
+
+    try {
+        const baseUrl = window.APP_CONFIG?.baseUrl || '/';
+        const response = await fetch(`${baseUrl}api/sponsors`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'reorder', ids }),
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            showToast('Order updated.', 'success');
+        } else {
+            showToast(result.messages?.[0] || 'Could not save the new order.', 'error');
+        }
+    } catch (err) {
+        console.error('Sponsor reorder error:', err);
+        showToast('Server error. Please try again.', 'error');
+    }
+}
+
+function handleReorderClick(card) {
+    const grid = document.getElementById('sponsors-grid');
+    if (!grid) return;
+
+    const clickedId = card.dataset.sponsorId;
+
+    if (!activeReorderId) {
+        activeReorderId = clickedId;
+        card.classList.add('ring-2', 'ring-secondary-500');
+        return;
+    }
+
+    const sourceCard = grid.querySelector(`[data-sponsor-id="${activeReorderId}"]`);
+    activeReorderId = null;
+    sourceCard?.classList.remove('ring-2', 'ring-secondary-500');
+
+    if (!sourceCard || sourceCard === card) return;
+
+    const allCards = Array.from(grid.querySelectorAll('.sponsor-card'));
+    const sourceIndex = allCards.indexOf(sourceCard);
+    const targetIndex = allCards.indexOf(card);
+    if (sourceIndex === targetIndex) return;
+
+    sourceCard.remove();
+    if (sourceIndex > targetIndex) {
+        card.before(sourceCard);
+    } else {
+        card.after(sourceCard);
+    }
+
+    persistOrder();
 }
 
 function maybeShowEmptyState() {
@@ -210,6 +279,14 @@ export function init() {
         if (deleteBtn) {
             e.preventDefault();
             handleDeleteSponsor(deleteBtn.closest('.sponsor-card'));
+            return;
+        }
+
+        const reorderBtn = e.target.closest('[data-action="reorder-sponsor"]');
+        if (reorderBtn) {
+            e.preventDefault();
+            const card = reorderBtn.closest('.sponsor-card');
+            if (card) handleReorderClick(card);
             return;
         }
 

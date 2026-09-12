@@ -78,6 +78,19 @@ class NavigationConfig
                 'title' => 'Dashboard',
                 'summary' => 'Your registration status, team, schedule, and stats, all in one place.',
             ],
+            // Dashboard/Profile also used to be spliced into the nav for a
+            // signed-in admin, but now they're reached via a dedicated icon
+            // in the topbar (Dashboard) and a tile on the Dashboard's own
+            // workspace grid (Profile) instead of a top nav item -- see
+            // layout-topbar.php. Still need a title/summary for the hero.
+            '/dashboard' => [
+                'title' => 'Operational Dashboard',
+                'summary' => 'Recent activity across the league, and quick links into every workspace module.',
+            ],
+            '/profile' => [
+                'title' => 'Profile Settings',
+                'summary' => 'Manage your account access keys and personal details.',
+            ],
         ];
 
         return $pageOnly[$normalizedPath] ?? null;
@@ -129,71 +142,28 @@ class NavigationConfig
             'Incident Reports' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
             'League Details' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>',
             'Sponsorship' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5a2.5 2.5 0 010-5H12v5H7zm5-5h4.5a2.5 2.5 0 010 5H12m0-5v5m0 0v6.5m0 0h3.5a2 2 0 002-2v-.5m-5.5 2.5H8.5a2 2 0 01-2-2v-.5"></path></svg>',
+            'Slideshow' => '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 4.5h18v15H3V4.5z"></path></svg>',
         ];
     }
 
     /**
      * Returns the topbar nav for the current viewer. The menu items are
      * always the same regardless of who's signed in -- guest, admin, or
-     * registrant -- because authLinks() used to fully REPLACE the guest nav
-     * for a signed-in staff account, which meant an admin could never reach
-     * a guest-facing page (e.g. Sponsorship) from the nav at all. Now
-     * exactly two role-specific extras get spliced into the same base list:
-     * "Dashboard" right after Home (its target depends on which kind of
-     * account is signed in), and "Profile" at the end for admins only.
-     * Every other backend tool (Registrations, League Management, Contacts,
-     * Users, Incident Reports, Gamesheets) lives one level down, reachable
-     * from the Dashboard page's own quick-links instead of the top nav --
-     * see authLinks(), still used as-is for that page's link grid and for
-     * public/index.php's per-app permission check.
+     * registrant. This used to splice a role-dependent "Dashboard" and (for
+     * admins) "Profile" into the list, but both are reached a different way
+     * now: a dedicated Dashboard icon next to the dark-mode toggle (any
+     * signed-in account), and a "Profile" tile on the Dashboard's own
+     * workspace grid (admins) -- see layout-topbar.php. Every other backend
+     * tool (Registrations, League Management, Contacts, Users, Incident
+     * Reports, Gamesheets, Slideshow) lives one level down from there too,
+     * reachable from that same grid instead of the top nav -- see
+     * authLinks(), still used as-is for that page's link grid and for
+     * public/index.php's per-app permission check. $isLoggedIn is accepted
+     * only to match resolveMetaForPath()'s call signature.
      */
     public static function getNavLinks(bool $isLoggedIn): array
     {
-        $nav = self::publicLinks();
-
-        // $isLoggedIn is staff-only semantics (matches AuthService::
-        // isLoggedIn()) -- a registrant session leaves it false, so it can't
-        // gate the early return here or a signed-in registrant would never
-        // reach the isRegistrant() branch below at all.
-        $isAdmin = $isLoggedIn && AuthService::isAdmin();
-        $isRegistrant = AuthService::isRegistrant();
-        if (!$isAdmin && !$isRegistrant) {
-            return $nav;
-        }
-
-        $base = $_ENV['APP_BASE_PATH'] ?? '';
-        $dashboardEntry = null;
-        if ($isAdmin) {
-            $dashboardEntry = [
-                'url' => $base . '/dashboard',
-                'title' => 'Operational Dashboard',
-                'summary' => 'Recent activity across the league, and quick links into every workspace module.',
-            ];
-        } elseif ($isRegistrant) {
-            $dashboardEntry = [
-                'url' => $base . '/my-account',
-                'title' => 'Dashboard',
-                'summary' => 'Your registration status, team, schedule, and stats, all in one place.',
-            ];
-        }
-
-        $result = [];
-        foreach ($nav as $name => $config) {
-            $result[$name] = $config;
-            if ($name === 'Home' && $dashboardEntry) {
-                $result['Dashboard'] = $dashboardEntry;
-            }
-        }
-
-        if ($isAdmin) {
-            $result['Profile'] = [
-                'url' => $base . '/profile',
-                'title' => 'Profile Settings',
-                'summary' => 'Manage your account access keys and personal details.',
-            ];
-        }
-
-        return $result;
+        return self::publicLinks();
     }
 
     /**
@@ -254,6 +224,11 @@ class NavigationConfig
                 'url' => $base . '/users',
                 'title' => 'User Directory Management',
                 'summary' => 'Manage staff accounts and their access to the backend.'
+            ],
+            'Slideshow' => [
+                'url' => $base . '/slideshow',
+                'title' => 'Slideshow',
+                'summary' => 'Add, reorder, and remove the rotating background images on the home page.'
             ],
             'Profile' => [
                 'url' => $base . '/profile',
@@ -359,6 +334,7 @@ class NavigationConfig
             $base . '/league-management',
             $base . '/contacts',
             $base . '/incident-reports',
+            $base . '/slideshow',
         ];
     }
 

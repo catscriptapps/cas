@@ -4,15 +4,18 @@
 declare(strict_types=1);
 
 use Src\Config\NavigationConfig;
+use Src\Controller\SlideshowController;
 
 /** @var bool $isLoggedIn */
 /** @var string $assetBase */
 /** @var string $appName */
 /** @var string $baseUrl */
 
-// Hero background rotation -- a fixed set of stock images rather than a
-// database-managed slideshow (there's no admin module for this yet).
-$slideshowImages = ['hero-1.png', 'hero-2.png', 'hero-4.png', 'hero-7.png', 'hero-9.png', 'hero-11.png', 'hero-13.png', 'hero-17.png'];
+// Hero background rotation -- admin-managed via the /slideshow page (see
+// SlideshowController) rather than a hardcoded array. getFilenames() never
+// throws, and falls back to the original curated defaults on any DB
+// hiccup, since this partial renders on every single page's hero.
+$slideshowImages = (new SlideshowController())->getFilenames();
 
 $totalSlides = count($slideshowImages);
 
@@ -93,7 +96,7 @@ if (!empty($GLOBALS['pageSummary'])) {
 ?>
 <div class="w-full relative bg-gray-900 dark:bg-black transition-all duration-500 font-sans -mt-1.5 flex flex-col"
     x-show="!isDetailPage && !isAboutPage && !isNoHeroPage"
-    :class="(isHome && !isLoggedIn) ? 'min-h-[min(420px,55vh)]' : 'min-h-[min(220px,28vh)] sm:min-h-[min(240px,28vh)]'"
+    :class="isHome ? 'min-h-[min(420px,55vh)]' : 'min-h-[min(220px,28vh)] sm:min-h-[min(240px,28vh)]'"
     x-data="{
         activeSlide: 1,
         slidesCount: <?= $totalSlides ?>,
@@ -129,7 +132,7 @@ if (!empty($GLOBALS['pageSummary'])) {
                 <?php if ($slideNumber > 1): ?>x-cloak<?php endif; ?>
                 x-transition:enter="transition ease-in-out duration-1000"
                 class="absolute inset-0 bg-cover bg-center animate-slideshow-zoom"
-                style="background-image: url('<?= $assetBase ?>images/home/<?= $imageName ?>');">
+                style="background-image: url('<?= $assetBase . $imageName ?>');">
             </div>
         <?php endforeach; ?>
 
@@ -148,7 +151,7 @@ if (!empty($GLOBALS['pageSummary'])) {
 
     <div class="relative z-10 w-full flex flex-col flex-1">
 
-        <section x-show="isHome && !isLoggedIn" x-collapse.duration.500ms class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 sm:pb-16">
+        <section x-show="isHome" x-collapse.duration.500ms class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 sm:pb-16">
             <div class="max-w-4xl mx-auto text-center">
                 <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-primary-500/20 text-primary-300 border border-primary-500/30 backdrop-blur-sm mb-4 drop-shadow-sm"
                     data-aos="fade-down"
@@ -179,7 +182,7 @@ if (!empty($GLOBALS['pageSummary'])) {
             </div>
         </section>
 
-        <section x-show="!isHome || isLoggedIn" x-cloak class="flex-1 flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <section x-show="!isHome" x-cloak class="flex-1 flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <div class="max-w-2xl mx-auto">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] bg-primary-500/20 text-primary-300 border border-primary-500/30 backdrop-blur-sm mb-3">
                     <i class="fa-solid fa-hockey-puck text-[9px] text-primary-400"></i> Canadian All Star Sports

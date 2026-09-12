@@ -51,7 +51,7 @@ $partners = Sponsor::orderBy('sort_order')->orderBy('sponsor_id')->get();
         </a>
     </div>
 
-    <div class="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-gray-100 dark:border-gray-800">
+    <div class="flex items-center justify-between gap-4 mb-3 pb-3 border-b border-gray-100 dark:border-gray-800">
         <h2 class="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight">
             Our Partners
         </h2>
@@ -64,15 +64,27 @@ $partners = Sponsor::orderBy('sort_order')->orderBy('sponsor_id')->get();
         <?php endif; ?>
     </div>
 
+    <?php if ($isAdmin && $partners->isNotEmpty()): ?>
+        <p class="text-xs text-gray-400 font-medium mb-6">
+            Click a sponsor's move icon, then another sponsor's move icon, to swap their order.
+        </p>
+    <?php endif; ?>
+
     <div id="sponsors-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php foreach ($partners as $partner): ?>
             <div class="sponsor-card group relative p-6 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col items-center text-center"
                 data-sponsor-id="<?= htmlspecialchars(\App\Utils\IdEncoder::encode($partner->sponsor_id)) ?>">
                 <?php if ($isAdmin): ?>
-                    <button type="button" data-delete-sponsor title="Delete sponsor" aria-label="Delete sponsor"
-                        class="absolute top-3 right-3 h-8 w-8 flex items-center justify-center rounded-full bg-red-600 hover:bg-red-700 text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-md z-10">
-                        <i class="fa-solid fa-trash text-xs"></i>
-                    </button>
+                    <div class="absolute top-3 right-3 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        <button type="button" data-action="reorder-sponsor" title="Move" aria-label="Move sponsor"
+                            class="h-8 w-8 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-800 text-white shadow-md">
+                            <i class="fa-solid fa-arrows-up-down-left-right text-xs"></i>
+                        </button>
+                        <button type="button" data-delete-sponsor title="Delete sponsor" aria-label="Delete sponsor"
+                            class="h-8 w-8 flex items-center justify-center rounded-full bg-red-600 hover:bg-red-700 text-white shadow-md">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    </div>
                 <?php endif; ?>
                 <button type="button" data-preview-sponsor data-sponsor-src="<?= $assetBase ?>images/sponsors/<?= htmlspecialchars($partner->filename) ?>"
                     class="h-28 w-full flex items-center justify-center mb-4 cursor-zoom-in">

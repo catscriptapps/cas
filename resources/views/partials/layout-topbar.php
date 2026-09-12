@@ -108,6 +108,28 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
                 </button>
             <?php endif; ?>
 
+            <?php if ($isLoggedIn || $isRegistrant): ?>
+                <?php
+                // Dashboard is reached via this icon now, not a top nav
+                // item (see NavigationConfig::getNavLinks()'s docblock) --
+                // kept visually louder than the plain icon buttons around it
+                // (colored pill, not just a hover state) since it's the one
+                // real "go to my workspace" action up here.
+                $isAdminViewer = $isLoggedIn && AuthService::isAdmin();
+                $dashboardUrl = $isAdminViewer ? $baseUrl . 'dashboard' : $baseUrl . 'my-account';
+                $dashboardTitle = $isAdminViewer ? 'Operational Dashboard' : 'Dashboard';
+                $dashboardSummary = $isAdminViewer
+                    ? 'Recent activity across the league, and quick links into every workspace module.'
+                    : 'Your registration status, team, schedule, and stats, all in one place.';
+                ?>
+                <a href="<?= $dashboardUrl ?>" data-partial data-title="<?= htmlspecialchars($dashboardTitle) ?>" data-summary="<?= htmlspecialchars($dashboardSummary) ?>" title="Dashboard" aria-label="Dashboard"
+                    class="flex items-center justify-center h-10 w-10 rounded-xl bg-primary-500/15 hover:bg-primary-500/25 text-primary-400 hover:text-primary-300 border border-primary-500/30 transition-all duration-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                    </svg>
+                </a>
+            <?php endif; ?>
+
             <button id="dark-toggle" title="Toggle Theme"
                 class="group p-2 rounded-xl hover:bg-slate-900 hover:text-white transition-all duration-200">
                 <svg class="w-5 h-5 text-slate-400 block dark:hidden group-hover:scale-125 transition-transform" fill="currentColor" viewBox="0 0 20 20">
@@ -289,10 +311,12 @@ $currentUrlTrimmed = rtrim((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'o
             </div>
         <?php elseif ($isRegistrant): ?>
             <?php
-            // "Dashboard" is already a plain nav item right after Home
-            // above (see NavigationConfig::getNavLinks()) -- this block just
-            // shows who's signed in, matching the staff pattern above, plus
-            // Sign Out.
+            // No separate Dashboard link needed here -- the topbar's
+            // Dashboard icon (next to the dark-mode toggle) is in the
+            // "always visible" icon cluster, not the lg:hidden nav/hamburger
+            // pair, so it's already reachable on mobile without opening this
+            // drawer at all. This block just shows who's signed in, matching
+            // the staff pattern above, plus Sign Out.
             ?>
             <div class="pt-5 border-t-2 border-slate-100 dark:border-slate-900 space-y-3">
                 <div class="flex items-center gap-4 px-4 py-2">

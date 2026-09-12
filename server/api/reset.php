@@ -24,6 +24,7 @@ $tablesToDrop = [
     'recent_activities',
     'home_page_text',
     'sponsors',
+    'slideshow',
     'contacts',
     'contacts_roles',
     'stats',
@@ -73,6 +74,9 @@ $messages = array_merge($messages, resetHomePageTextTable());
 
 require_once __DIR__ . '/../../scripts/reset/sponsors.php';
 $messages = array_merge($messages, resetSponsorsTable());
+
+require_once __DIR__ . '/../../scripts/reset/slideshow.php';
+$messages = array_merge($messages, resetSlideshowTable());
 
 require_once __DIR__ . '/../../scripts/reset/users.php';
 $messages = array_merge($messages, resetUsersTable());

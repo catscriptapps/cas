@@ -143,6 +143,29 @@ class SponsorsController
         }
     }
 
+    /**
+     * @param string[] $encodedIds Ordered list of sponsor ids in their new order
+     */
+    public function reorder(array $encodedIds): array
+    {
+        try {
+            if (!AuthService::isAdmin()) {
+                throw new \Exception("You don't have permission to do that.");
+            }
+
+            foreach ($encodedIds as $position => $encodedId) {
+                $id = IdEncoder::decode((string)$encodedId);
+                if ($id) {
+                    Sponsor::where('sponsor_id', $id)->update(['sort_order' => $position]);
+                }
+            }
+
+            return ['success' => true, 'messages' => ['Order updated.']];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'messages' => [$e->getMessage()]];
+        }
+    }
+
     public function delete(string $encodedId): array
     {
         try {

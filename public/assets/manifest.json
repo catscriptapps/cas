@@ -10,6 +10,10 @@
     "file": "css/app.min2.css",
     "src": "_app.min2.css"
   },
+  "_confirm-BnHqL_fD.min.js": {
+    "file": "js/confirm-BnHqL_fD.min.js",
+    "name": "confirm"
+  },
   "_data-table-9SFXZdzb.min.js": {
     "file": "js/data-table-9SFXZdzb.min.js",
     "name": "data-table"
@@ -323,6 +327,17 @@
       "_data-table-9SFXZdzb.min.js"
     ]
   },
+  "resources/js/pages/slideshow-page.js": {
+    "file": "js/slideshow-page.min.js",
+    "name": "slideshow-page",
+    "src": "resources/js/pages/slideshow-page.js",
+    "isEntry": true,
+    "imports": [
+      "_toast--nIYmWRe.min.js",
+      "_confirm-BnHqL_fD.min.js",
+      "_upload-modal-4-CDXO24.min.js"
+    ]
+  },
   "resources/js/pages/sponsorship-page.js": {
     "file": "js/sponsorship-page.min.js",
     "name": "sponsorship-page",
@@ -331,6 +346,7 @@
     "imports": [
       "_modal-factory-D72OMj0_.min.js",
       "_toast--nIYmWRe.min.js",
+      "_confirm-BnHqL_fD.min.js",
       "_upload-modal-4-CDXO24.min.js"
     ]
   },
