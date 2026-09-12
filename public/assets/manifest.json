@@ -366,7 +366,8 @@
       "_toast--nIYmWRe.min.js",
       "_confirm-BnHqL_fD.min.js",
       "_lightbox-C1gEp4Gg.min.js",
-      "_upload-modal-4-CDXO24.min.js"
+      "_upload-modal-4-CDXO24.min.js",
+      "_form-validator-CSeXGyW6.min.js"
     ]
   },
   "resources/js/pages/stats-page.js": {

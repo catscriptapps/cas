@@ -5,6 +5,7 @@ import { showToast } from '../ui/toast.js';
 import { confirmDialog } from '../ui/confirm.js';
 import { openLightbox } from '../ui/lightbox.js';
 import { createUploadHandler } from '../modals/upload-modal.js';
+import { FormValidator } from '../utils/form-validator.js';
 
 /**
  * Admin add/preview/reorder/delete controls for the Sponsorship page's logo
@@ -37,29 +38,37 @@ function openNamePrompt(uploadedFile) {
         id: 'sponsor-name-modal',
         title: 'Name This Sponsor',
         content: `
-            <div class="space-y-4 font-sans">
+            <form id="sponsor-name-form" class="space-y-4 font-sans" novalidate>
                 <div class="flex justify-center p-4 rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
                     <img src="${assetBase}${uploadedFile.url}" class="max-h-28 max-w-full object-contain">
                 </div>
                 <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1.5">Sponsor Name</label>
-                    <input type="text" id="sponsor-name-input" placeholder="e.g. Thornton Pharmacy" autofocus
+                    <label for="sponsor-name-input" class="block text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1.5">Sponsor Name</label>
+                    <input type="text" id="sponsor-name-input" name="name" placeholder="e.g. Thornton Pharmacy" autofocus required
                         class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
                 </div>
                 <div class="api-message"></div>
                 <div class="flex justify-end pt-2">
-                    <button type="button" id="save-sponsor-btn"
+                    <button type="submit" id="save-sponsor-btn"
                         class="inline-flex items-center gap-2 py-2.5 px-6 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-primary-500/20 transition-all active:scale-[0.98]">
                         Add Sponsor
                     </button>
                 </div>
-            </div>
+            </form>
         `,
         size: 'sm',
         showFooter: false,
     });
 
-    document.getElementById('save-sponsor-btn')?.addEventListener('click', () => saveSponsor(uploadedFile));
+    const form = document.getElementById('sponsor-name-form');
+    const validator = new FormValidator(form);
+
+    form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!validator.validateForEmptyFields(e)) return;
+        saveSponsor(uploadedFile);
+    });
+
     nameModalInstance.open();
 }
 

@@ -51,9 +51,23 @@ $primaryRole = 'User Profile';
             <div class="relative p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
 
                 <div class="relative shrink-0 group" id="avatar-preview-wrapper">
+                    <?php
+                    // data-img-src is what the global previewer (see
+                    // registerImagePreview() in preview.js) keys off of --
+                    // it's a document-wide delegated listener that opens the
+                    // lightbox for ANY element with this attribute, so
+                    // leaving it in place (even pointing at an empty
+                    // $avatarUrl) when there's no photo meant clicking the
+                    // initials-only placeholder still opened the preview
+                    // modal with a blank image. Only rendering it (and the
+                    // zoom cursor/hover affordance below) when $hasAvatar is
+                    // what actually gates that.
+                    ?>
                     <div id="avatar-container"
+                        <?php if ($hasAvatar): ?>
                         data-action="view-avatar"
                         data-img-src="<?= $avatarUrl; ?>"
+                        <?php endif; ?>
                         class="h-28 w-28 md:h-32 md:w-32 rounded-[1.75rem] overflow-hidden ring-4 ring-gray-50 dark:ring-white/5 shadow-xl bg-gradient-to-br from-primary-500 to-secondary-600 flex items-center justify-center transition-all duration-500 group-hover:scale-105 <?= $hasAvatar ? 'cursor-zoom-in' : ''; ?>">
 
                         <span id="avatar-initial" class="text-4xl font-black text-white tracking-tighter <?= $hasAvatar ? 'hidden' : 'block'; ?>">
@@ -63,11 +77,13 @@ $primaryRole = 'User Profile';
                         <img id="avatar-img" src="<?= $avatarUrl; ?>" alt="Profile"
                             class="w-full h-full object-cover <?= $hasAvatar ? 'block' : 'hidden'; ?>">
 
+                        <?php if ($hasAvatar): ?>
                         <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" stroke-width="3" />
                             </svg>
                         </div>
+                        <?php endif; ?>
                     </div>
 
                     <button id="change-avatar-btn" data-action="upload" title="Change photo"
