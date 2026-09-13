@@ -20,13 +20,33 @@ extract(NavigationConfig::getUserDisplayInfo());
 // the logo and the nav itself -- the topbar is now the sole home for both) ---
 $navLinks = NavigationConfig::getNavLinks($isLoggedIn);
 
-// Path-only, not a full absolute URL -- every $config['url'] this gets
-// compared against (below, and in the mobile drawer loop) is itself always
-// a bare path like "/schedules", never scheme+host+path. Comparing a full
-// "http://host/schedules" against that bare path could never match, which
-// silently broke "is this the current nav item" (and therefore the active
-// styling below) for every link, on every page, until this was path-only too.
-$currentUrlTrimmed = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/', '/');
+// Every nav link's "is this the current page" state below is now driven
+// entirely by Alpine's reactive `currentPath` (declared on the shared
+// x-data in layout-header.php, kept in sync via @spa-navigation.window)
+// rather than a PHP boolean baked into the class list at render time. The
+// topbar/hero only render ONCE per hard page load -- SPA navigation after
+// that only ever swaps #main-content -- so a PHP-computed $isActive could
+// never update again after the very first click, which is exactly the bug
+// that was reported: the nav item you'd navigated AWAY from stayed
+// highlighted, and the one you navigated TO never picked up the highlight.
+//
+// $toBarePath() mirrors normalizePath()'s convention (the same one
+// $normalizedCurrentPath/isHome/isDetailPage/etc. already use) so both
+// sides of every `currentPath === '...'` comparison below speak the same
+// language: a bare, base-path-stripped, trailing-slash-free path, with the
+// site root normalized to '/home' either way.
+$toBarePath = function (string $url, bool $isHomeLink = false) use ($currentBasePath): string {
+    if ($isHomeLink) {
+        return '/home';
+    }
+    $bare = $url;
+    if ($currentBasePath !== '' && str_starts_with($bare, '/' . $currentBasePath)) {
+        $bare = substr($bare, strlen('/' . $currentBasePath));
+    }
+    $bare = '/' . ltrim($bare, '/');
+    $bare = rtrim($bare, '/');
+    return $bare === '' ? '/home' : $bare;
+};
 ?>
 
 <?php
@@ -201,13 +221,13 @@ $currentUrlTrimmed = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PAT
                         // and shrinking back on hover-out reads as the
                         // opposite (its only moving edge retreats
                         // rightward-to-leftward toward the fixed left anchor).
-                        $isActive = ($currentUrlTrimmed === rtrim($targetUrl, '/'));
                         $underline = "relative before:content-[''] before:absolute before:left-0 before:-bottom-1.5 before:h-[3px] before:bg-white before:transition-[width] before:duration-300 before:ease-in-out";
-                        $desktopClasses = $isActive
-                            ? "text-amber-400 group-hover:text-amber-300 transition-colors flex items-center gap-1.5 focus:outline-none {$underline} before:w-full"
-                            : "text-slate-200 hover:text-amber-300 transition-colors flex items-center gap-1.5 focus:outline-none {$underline} before:w-0 group-hover:before:w-full focus:before:w-full";
+                        $activeClasses = "text-amber-400 group-hover:text-amber-300 transition-colors flex items-center gap-1.5 focus:outline-none {$underline} before:w-full";
+                        $inactiveClasses = "text-slate-200 hover:text-amber-300 transition-colors flex items-center gap-1.5 focus:outline-none {$underline} before:w-0 group-hover:before:w-full focus:before:w-full";
+                        $bareTarget = $toBarePath($targetUrl, $isHomeItem);
                         ?>
-                        <a href="<?= $targetUrl ?>" data-partial data-title="<?= htmlspecialchars($config['title']) ?>" data-summary="<?= htmlspecialchars($config['summary']) ?>" class="<?= $desktopClasses ?>">
+                        <a href="<?= $targetUrl ?>" data-partial data-title="<?= htmlspecialchars($config['title']) ?>" data-summary="<?= htmlspecialchars($config['summary']) ?>"
+                            :class="currentPath === '<?= addslashes($bareTarget) ?>' ? '<?= addslashes($activeClasses) ?>' : '<?= addslashes($inactiveClasses) ?>'">
                             <span><?= $name ?></span>
                             <svg class="w-3.5 h-3.5 transform group-hover:rotate-180 transition-transform duration-200 stroke-[3]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -217,7 +237,7 @@ $currentUrlTrimmed = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PAT
                         <div class="absolute top-full left-0 min-w-[240px] bg-slate-950 dark:bg-black border-2 border-slate-800 dark:border-slate-900 rounded-xl shadow-2xl py-3 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
                             <?php foreach ($config['children'] as $childName => $childConfig): ?>
                                 <?php
-                                $isChildActive = ($currentUrlTrimmed === rtrim($childConfig['url'], '/'));
+                                $bareChildTarget = $toBarePath($childConfig['url']);
                                 // Static file links (PDFs) open in a new tab and skip the SPA
                                 // fetch entirely -- bindPartialLinks() already ignores clicks on
                                 // any [target="_blank"] link, so this alone is enough; no need to
@@ -225,7 +245,8 @@ $currentUrlTrimmed = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PAT
                                 $childTargetAttr = isset($childConfig['target']) ? ' target="' . htmlspecialchars($childConfig['target']) . '"' : '';
                                 ?>
                                 <a href="<?= $childConfig['url'] ?>"<?= $childTargetAttr ?> data-partial data-title="<?= htmlspecialchars($childConfig['title']) ?>" data-summary="<?= htmlspecialchars($childConfig['summary']) ?>"
-                                    class="block px-5 py-3 text-sm font-bold tracking-wide transition-colors <?= $isChildActive ? 'text-amber-400 bg-slate-900' : 'text-slate-200 hover:bg-slate-900 hover:text-amber-300' ?>">
+                                    class="block px-5 py-3 text-sm font-bold tracking-wide transition-colors"
+                                    :class="currentPath === '<?= addslashes($bareChildTarget) ?>' ? 'text-amber-400 bg-slate-900' : 'text-slate-200 hover:bg-slate-900 hover:text-amber-300'">
                                     <?= $childName ?>
                                 </a>
                             <?php endforeach; ?>
@@ -233,13 +254,13 @@ $currentUrlTrimmed = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PAT
                     </div>
                 <?php else: ?>
                     <?php
-                    $isActive = ($currentUrlTrimmed === rtrim($targetUrl, '/'));
                     $underline = "relative before:content-[''] before:absolute before:left-0 before:-bottom-1.5 before:h-[3px] before:bg-white before:transition-[width] before:duration-300 before:ease-in-out";
-                    $desktopClasses = $isActive
-                        ? "text-amber-400 hover:text-amber-300 transition-colors focus:outline-none {$underline} before:w-full"
-                        : "text-slate-200 hover:text-amber-300 transition-colors focus:outline-none {$underline} before:w-0 hover:before:w-full focus:before:w-full";
+                    $activeClasses = "text-amber-400 hover:text-amber-300 transition-colors focus:outline-none {$underline} before:w-full";
+                    $inactiveClasses = "text-slate-200 hover:text-amber-300 transition-colors focus:outline-none {$underline} before:w-0 hover:before:w-full focus:before:w-full";
+                    $bareTarget = $toBarePath($targetUrl, $isHomeItem);
                     ?>
-                    <a href="<?= $targetUrl ?>" data-partial data-title="<?= htmlspecialchars($config['title']) ?>" data-summary="<?= htmlspecialchars($config['summary']) ?>" class="<?= $desktopClasses ?>"><?= $name ?></a>
+                    <a href="<?= $targetUrl ?>" data-partial data-title="<?= htmlspecialchars($config['title']) ?>" data-summary="<?= htmlspecialchars($config['summary']) ?>"
+                        :class="currentPath === '<?= addslashes($bareTarget) ?>' ? '<?= addslashes($activeClasses) ?>' : '<?= addslashes($inactiveClasses) ?>'"><?= $name ?></a>
                 <?php endif; ?>
             <?php endforeach; ?>
         </nav>
@@ -467,11 +488,12 @@ $currentUrlTrimmed = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PAT
                         class="pl-4 border-l-4 border-slate-300 dark:border-slate-700 space-y-2 ml-4">
                         <?php foreach ($config['children'] as $childName => $childConfig): ?>
                             <?php
-                            $isChildActive = ($currentUrlTrimmed === rtrim($childConfig['url'], '/'));
+                            $bareChildTarget = $toBarePath($childConfig['url']);
                             $childTargetAttr = isset($childConfig['target']) ? ' target="' . htmlspecialchars($childConfig['target']) . '"' : '';
                             ?>
                             <a href="<?= $childConfig['url'] ?>"<?= $childTargetAttr ?> data-partial data-title="<?= htmlspecialchars($childConfig['title']) ?>" data-summary="<?= htmlspecialchars($childConfig['summary']) ?>" @click="mobileMenuOpen = false"
-                                class="block px-4 py-3 rounded-lg text-sm <?= $isChildActive ? 'text-primary-600 dark:text-amber-400 font-black bg-primary-50/50 dark:bg-amber-400/10' : 'text-slate-600 dark:text-slate-300 font-bold hover:text-primary-600 dark:hover:text-amber-400' ?> transition-colors">
+                                class="block px-4 py-3 rounded-lg text-sm transition-colors"
+                                :class="currentPath === '<?= addslashes($bareChildTarget) ?>' ? 'text-primary-600 dark:text-amber-400 font-black bg-primary-50/50 dark:bg-amber-400/10' : 'text-slate-600 dark:text-slate-300 font-bold hover:text-primary-600 dark:hover:text-amber-400'">
                                 <?= $childName ?>
                             </a>
                         <?php endforeach; ?>
@@ -479,12 +501,12 @@ $currentUrlTrimmed = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PAT
                 </div>
             <?php else: ?>
                 <?php
-                $isActive = ($currentUrlTrimmed === rtrim($targetUrl, '/'));
-                $mobileClasses = $isActive
-                    ? "block px-4 py-3 rounded-xl bg-primary-50 dark:bg-amber-400/10 text-primary-600 dark:text-amber-400 font-black text-base border-2 border-primary-200 dark:border-amber-400/30"
-                    : "block px-4 py-3 rounded-xl text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 font-bold text-base transition-colors hover:text-primary-600 dark:hover:text-amber-400 border border-transparent hover:border-slate-200 dark:hover:border-slate-800";
+                $activeMobileClasses = "block px-4 py-3 rounded-xl bg-primary-50 dark:bg-amber-400/10 text-primary-600 dark:text-amber-400 font-black text-base border-2 border-primary-200 dark:border-amber-400/30";
+                $inactiveMobileClasses = "block px-4 py-3 rounded-xl text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 font-bold text-base transition-colors hover:text-primary-600 dark:hover:text-amber-400 border border-transparent hover:border-slate-200 dark:hover:border-slate-800";
+                $bareTarget = $toBarePath($targetUrl, $isHomeItem);
                 ?>
-                <a href="<?= $targetUrl ?>" data-partial data-title="<?= htmlspecialchars($config['title']) ?>" data-summary="<?= htmlspecialchars($config['summary']) ?>" @click="mobileMenuOpen = false" class="<?= $mobileClasses ?>"><?= $name ?></a>
+                <a href="<?= $targetUrl ?>" data-partial data-title="<?= htmlspecialchars($config['title']) ?>" data-summary="<?= htmlspecialchars($config['summary']) ?>" @click="mobileMenuOpen = false"
+                    :class="currentPath === '<?= addslashes($bareTarget) ?>' ? '<?= addslashes($activeMobileClasses) ?>' : '<?= addslashes($inactiveMobileClasses) ?>'"><?= $name ?></a>
             <?php endif; ?>
         <?php endforeach; ?>
 

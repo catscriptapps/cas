@@ -121,11 +121,19 @@ declare(strict_types=1);
                 </div>
                 <div>
                     <label for="reg-password" class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 block">Password</label>
-                    <input type="password" id="reg-password" name="password" minlength="8" placeholder="8+ characters" autocomplete="new-password" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white text-sm font-semibold focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all">
+                    <div class="relative">
+                        <input type="password" id="reg-password" name="password" minlength="8" placeholder="8+ characters" autocomplete="new-password" class="w-full px-4 py-2.5 pr-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white text-sm font-semibold focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all">
+                        <?php $targetId = 'reg-password';
+                        include __DIR__ . '/../components/ui/password-toggle-button.php'; ?>
+                    </div>
                 </div>
                 <div>
                     <label for="reg-password-confirm" class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 block">Confirm Password</label>
-                    <input type="password" id="reg-password-confirm" name="password_confirmation" minlength="8" autocomplete="new-password" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white text-sm font-semibold focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all">
+                    <div class="relative">
+                        <input type="password" id="reg-password-confirm" name="password_confirmation" minlength="8" autocomplete="new-password" class="w-full px-4 py-2.5 pr-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 text-gray-900 dark:text-white text-sm font-semibold focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all">
+                        <?php $targetId = 'reg-password-confirm';
+                        include __DIR__ . '/../components/ui/password-toggle-button.php'; ?>
+                    </div>
                     <p id="reg-password-mismatch" class="hidden text-[11px] font-bold text-red-500 mt-1.5">Passwords do not match.</p>
                 </div>
 

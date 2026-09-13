@@ -125,6 +125,11 @@ if (!empty($GLOBALS['pageSummary'])) {
         pageTitle: '<?= addslashes($initialPageTitle) ?>',
         pageSummary: '<?= addslashes($initialPageSummary) ?>',
         unreadMessagesCount: <?= (int)$initialUnreadMessagesCount ?>,
+        // Drives every nav link's active/inactive styling in layout-topbar.php
+        // (both desktop and the mobile drawer) -- see that file's $toBarePath()
+        // comment for why this has to be bare/normalized the same way
+        // $normalizedCurrentPath already is server-side.
+        currentPath: '<?= addslashes($normalizedCurrentPath) ?>',
         init() {
             setInterval(() => {
                 this.activeSlide = this.activeSlide === this.slidesCount ? 1 : this.activeSlide + 1;
@@ -139,6 +144,7 @@ if (!empty($GLOBALS['pageSummary'])) {
         isNoHeroPage = ['/dashboard', '/users', '/profile'].includes($event.detail.path || '');
         pageTitle = $event.detail.title || '';
         pageSummary = $event.detail.summary || '';
+        currentPath = $event.detail.isHome ? '/home' : ($event.detail.path || '/home');
     "
     @messages-unread-changed.window="unreadMessagesCount = $event.detail.count">
 

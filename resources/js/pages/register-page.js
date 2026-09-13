@@ -7,6 +7,7 @@ import { enableDynamicRegionLoading } from '../components/regions-component.js';
 import { attachPostalFormatter } from '../utils/postal-formatter.js';
 import { FormValidator } from '../utils/form-validator.js';
 import { showToast } from '../ui/toast.js';
+import { initPasswordToggles } from '../utils/password-toggle.js';
 
 const state = {
     sportId: null,
@@ -370,5 +371,6 @@ export function init() {
     loadSourceOptions();
     wireDetailsForm();
     wireWaiverStep();
+    initPasswordToggles();
     document.getElementById('register-pay-later-btn')?.addEventListener('click', skipPayment);
 }
